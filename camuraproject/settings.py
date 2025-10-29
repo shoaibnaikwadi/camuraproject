@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-yd!_0y5(2$9q74qyatztp!jqg0tu7%ie-%ej8c1^_b)u(zzl83
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['camura.in', 'www.camura.in', '127.0.0.1:8000']
+ALLOWED_HOSTS = ["camura.in", "www.camura.in", "127.0.0.1:8000"]
 
 
 # Application definition
@@ -126,7 +126,7 @@ STATICFILES_DIRS = [
 
 # STATIC_URL = "/static/"
 MEDIA_URL = "/media/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = BASE_DIR / "static"
 MEDIA_ROOT = BASE_DIR / "media"
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
