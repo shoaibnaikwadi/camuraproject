@@ -21,7 +21,8 @@ db.sqlite3
 Thumbs.db
 
 # Django
-/static/
+# /static/
+staticfiles/
 media/
 *.log
 local_settings.py
