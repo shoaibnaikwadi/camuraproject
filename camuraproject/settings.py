@@ -27,6 +27,16 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["camura.in", "www.camura.in", "127.0.0.1"]
 
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'home'
+LOGIN_URL = 'login'
+
+
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+
 
 # Application definition
 
@@ -38,6 +48,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'home',
+    'crispy_forms',
+    'crispy_bootstrap5',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [

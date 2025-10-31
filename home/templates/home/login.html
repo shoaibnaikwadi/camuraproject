@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="container mt-5" style="max-width: 400px;">
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <h3 class="text-center mb-4">Login</h3>
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" name="username" class="form-control" id="username" placeholder="Enter your username" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control" id="password" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+            </form>
+            <p class="text-center mt-3 mb-0">
+                Don’t have an account? <a href="{% url 'register' %}">Register</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
