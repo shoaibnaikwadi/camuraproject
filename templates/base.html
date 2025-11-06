@@ -242,6 +242,60 @@
     </script>
 
     {% block extra_js %}{% endblock %}
+    <!-- ✅ Sticky WhatsApp Button with Animation -->
+    <a href="https://wa.me/919850504728?text=Hi%20I%20have%20visited%20Camura.in%20and%20I%20need%20some%20help."
+        class="whatsapp-float" target="_blank" title="Chat with us on WhatsApp">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="whatsapp-icon">
+    </a>
+    
+    <style>
+        .whatsapp-float {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            bottom: 20px;
+            right: 20px;
+            background-color: #25d366;
+            border-radius: 50%;
+            text-align: center;
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: pulse 2s infinite;
+            transition: transform 0.3s ease;
+        }
+    
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+        }
+    
+        .whatsapp-icon {
+            width: 36px;
+            height: 36px;
+            filter: brightness(0) invert(1);
+        }
+    
+        /* 🔄 Pulsing animation */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.4);
+            }
+    
+            70% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 10px rgba(37, 211, 102, 0);
+            }
+    
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+            }
+        }
+    </style>
+
 </body>
 
 </html>
