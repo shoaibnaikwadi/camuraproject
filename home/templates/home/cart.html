@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <h3>🛒 Your Cart</h3>
+  {% if items %}
+  <table class="table table-bordered">
+    <thead>
+      <tr><th>Product</th><th>Qty</th><th>Price</th><th>Subtotal</th><th>Action</th></tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        <td>{{ item.combo.name }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>₹{{ item.combo.total_price|floatformat:2 }}</td>
+        <td>₹{{ item.subtotal|floatformat:2 }}</td>
+        <td>
+          <form action="{% url 'remove_cart_item' item.id %}" method="post">
+            {% csrf_token %}
+            <button class="btn btn-danger btn-sm">Remove</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+
+  </table>
+  <h5 class="text-end">Total: ₹{{ total|floatformat:2 }}</h5>
+  <div class="text-end">
+    <a href="{% url 'cart_checkout' %}" class="btn btn-success">Proceed to Checkout</a>
+  </div>
+  {% else %}
+  <p>Your cart is empty.</p>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+  <h3>Checkout</h3>
+
+  <h5>Shipping Details</h5>
+  <p>
+    <strong>{{ profile.full_name }}</strong><br>
+    {{ profile.address }}<br>
+    {{ profile.city }}, {{ profile.state }} - {{ profile.pincode }}<br>
+    Mobile: {{ profile.mobile }}<br>
+    Email: {{ profile.email }}
+  </p>
+
+  <hr>
+  <h5>Order Summary</h5>
+  <ul>
+    {% for item in cart_items %}
+      <li>{{ item.combo.name }} × {{ item.quantity }} — ₹{{ item.subtotal|floatformat:2 }}</li>
+    {% endfor %}
+  </ul>
+
+  <h4>Total: ₹{{ total|floatformat:2 }}</h4>
+
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-success">Confirm Order</button>
+  </form>
+</div>
+{% endblock %}

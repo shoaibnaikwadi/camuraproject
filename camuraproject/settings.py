@@ -37,6 +37,8 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 
+RAZORPAY_KEY_ID = "rzp_test_eceD19siWPPSac"
+RAZORPAY_KEY_SECRET = "nvSfyM9NpNNSkZcjScFdhVq6"
 
 # Application definition
 
@@ -77,6 +79,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'home.context_processors.cart_count',    # this is for cart count
             ],
         },
     },
