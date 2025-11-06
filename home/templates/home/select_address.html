@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h3 class="mb-4 text-center">🏠 Select Delivery Address</h3>
+
+    <div class="row">
+        <!-- Address Selection Section -->
+        <div class="col-lg-7">
+            {% if addresses %}
+            <form method="POST">
+                {% csrf_token %}
+                <div class="row">
+                    {% for address in addresses %}
+                    <div class="col-md-6 mb-3">
+                        <div
+                            class="card border-0 shadow-sm address-card {% if address.is_default %}border-success{% endif %}">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ address.full_name }}</h5>
+                                <p class="mb-1">{{ address.address }}</p>
+                                <p class="text-muted small mb-1">{{ address.city }}, {{ address.state }} - {{
+                                    address.pincode }}</p>
+                                <p class="small">📞 {{ address.mobile }}</p>
+                                <button type="submit" name="address_id" value="{{ address.id }}"
+                                    class="btn btn-primary w-100 mt-2">
+                                    Deliver to this address
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </form>
+            {% else %}
+            <div class="alert alert-info text-center">No saved addresses yet. Please add one below 👇</div>
+            {% endif %}
+
+            <!-- Add New Address Form -->
+            <div class="card shadow-sm mt-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">➕ Add New Address</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6 mb-3"><input name="full_name" class="form-control"
+                                    placeholder="Full Name" required></div>
+                            <div class="col-md-6 mb-3"><input name="email" type="email" class="form-control"
+                                    placeholder="Email" required></div>
+                            <div class="col-md-6 mb-3"><input name="mobile" class="form-control"
+                                    placeholder="Mobile Number" required></div>
+                            <div class="col-md-6 mb-3"><input name="pincode" class="form-control" placeholder="Pincode"
+                                    required></div>
+                            <div class="col-12 mb-3"><textarea name="address" class="form-control"
+                                    placeholder="Full Address" required></textarea></div>
+                            <div class="col-md-6 mb-3"><input name="city" class="form-control" placeholder="City"
+                                    required></div>
+                            <div class="col-md-6 mb-3"><input name="state" class="form-control" placeholder="State"
+                                    required></div>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">Save Address</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Summary Section -->
+        <div class="col-lg-5 mt-4 mt-lg-0">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">🧾 Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        {% for item in items %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>{{ item.name }} × {{ item.qty }}</span>
+                            <strong>₹{{ item.subtotal|floatformat:2 }}</strong>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <h5>Total:</h5>
+                        <h5 class="text-success">₹{{ total|floatformat:2 }}</h5>
+                    </div>
+                    <p class="text-muted small mt-2 mb-0">* Prices include GST and standard delivery.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .address-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .address-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    @media (max-width: 576px) {
+        .address-card {
+            font-size: 14px;
+        }
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center mb-4">Refund & Cancellation Policy</h2>
+    <p>At <strong>Camura</strong>, customer satisfaction is our priority. Please read our policy below:</p>
+
+    <h5>1. Order Cancellation</h5>
+    <p>Orders can be canceled within 24 hours of placing them. Once shipped, cancellations are not possible.</p>
+
+    <h5>2. Refunds</h5>
+    <p>Refunds are issued only if the product is defective or damaged on arrival. Refunds will be processed within 7–10
+        business days to the original payment method.</p>
+
+    <h5>3. Return Conditions</h5>
+    <ul>
+        <li>The product must be unused and in original packaging.</li>
+        <li>Return requests must be made within 7 days of delivery.</li>
+    </ul>
+
+    <h5>4. Contact Us</h5>
+    <p>For any refund or cancellation queries, please contact us at <a
+            href="mailto:support@camura.com">support@camura.com</a>.</p>
+
+    <p class="mt-4">Updated on {{ now|date:"F d, Y" }}</p>
+</div>
+{% endblock %}

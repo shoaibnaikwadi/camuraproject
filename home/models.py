@@ -168,7 +168,7 @@ class OrderItem(models.Model):
 
 
 class CustomerProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='addresses')
     full_name = models.CharField(max_length=100)
     email = models.EmailField()
     mobile = models.CharField(max_length=15)
@@ -177,6 +177,7 @@ class CustomerProfile(models.Model):
     state = models.CharField(max_length=50)
     pincode = models.CharField(max_length=10)
     created_at = models.DateTimeField(auto_now_add=True)
+    is_default = models.BooleanField(default=False)
 
     def __str__(self):
         return self.full_name

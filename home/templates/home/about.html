@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Hero Section -->
+<section class="about-hero text-center text-white d-flex align-items-center justify-content-center">
+    <div class="overlay"></div>
+    <div class="container position-relative">
+        <h1 class="display-5 fw-bold">About Camura</h1>
+        <p class="lead">Your trusted partner in advanced CCTV and security solutions.</p>
+    </div>
+</section>
+
+<!-- Company Overview -->
+<section class="container py-5">
+    <div class="row align-items-center">
+        <div class="col-md-6 mb-4 mb-md-0">
+            <img src="{% static 'img/about-us.jpg' %}" class="img-fluid rounded shadow" alt="Camura CCTV Store">
+        </div>
+        <div class="col-md-6">
+            <h2 class="fw-bold mb-3">Who We Are</h2>
+            <p>
+                Founded with a mission to make safety affordable and accessible, <strong>Camura</strong> provides
+                premium CCTV and surveillance systems for homes, businesses, and industries.
+            </p>
+            <p>
+                From compact 2MP camera setups to high-performance 32-channel DVR solutions, we offer end-to-end
+                security
+                products — including installation and technical support. Our commitment to innovation and reliability
+                has
+                helped us build long-lasting relationships with customers across India.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Our Values -->
+<section class="bg-light py-5">
+    <div class="container text-center">
+        <h2 class="fw-bold mb-4">Our Core Values</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body">
+                        <i class="bi bi-shield-lock display-5 text-primary mb-3"></i>
+                        <h5>Security & Trust</h5>
+                        <p>We prioritize your safety with reliable, certified, and high-quality security solutions.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body">
+                        <i class="bi bi-lightning-charge display-5 text-warning mb-3"></i>
+                        <h5>Innovation</h5>
+                        <p>We continually upgrade our product range with the latest security technologies and trends.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body">
+                        <i class="bi bi-people display-5 text-success mb-3"></i>
+                        <h5>Customer Satisfaction</h5>
+                        <p>Our customers are at the heart of everything we do — from product design to after-sales
+                            support.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Team / Call to Action -->
+<section class="container py-5 text-center">
+    <h2 class="fw-bold mb-4">Why Choose Camura?</h2>
+    <p class="lead mb-4">
+        With years of experience, expert installation teams, and thousands of satisfied customers,
+        <strong>Camura</strong> stands as a trusted name in CCTV and surveillance systems.
+    </p>
+    <a href="{% url 'product_list' %}" class="btn btn-primary btn-lg">
+        <i class="bi bi-shop"></i> Explore Our Products
+    </a>
+</section>
+
+<!-- Styles -->
+<style>
+    .about-hero {
+        background: url("{% static 'img/about-bg.jpg' %}") center/cover no-repeat;
+        height: 60vh;
+        position: relative;
+    }
+
+    .about-hero .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.55);
+    }
+
+    .about-hero .container {
+        z-index: 2;
+    }
+
+    .card i {
+        transition: transform 0.3s ease;
+    }
+
+    .card:hover i {
+        transform: scale(1.1);
+    }
+</style>
+
+{% endblock %}

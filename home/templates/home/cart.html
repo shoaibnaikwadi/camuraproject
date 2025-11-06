@@ -27,7 +27,10 @@
   </table>
   <h5 class="text-end">Total: ₹{{ total|floatformat:2 }}</h5>
   <div class="text-end">
-    <a href="{% url 'cart_checkout' %}" class="btn btn-success">Proceed to Checkout</a>
+    <!-- <a href="{% url 'cart_checkout' %}" class="btn btn-success">Proceed to Checkout</a> -->
+    <a href="{% url 'select_address' %}?from=cart" class="btn btn-success">Proceed to Checkout</a>
+    <a href="{% url 'product_list' %}" class="btn btn-danger btn-sm">Keep Shopping</a>
+
   </div>
   {% else %}
   <p>Your cart is empty.</p>

@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center mb-4">Privacy Policy</h2>
+    <p>At <strong>Camura</strong>, we value your privacy. This policy outlines how we collect, use, and protect your
+        personal information.</p>
+
+    <h5>1. Information We Collect</h5>
+    <p>We may collect personal information such as your name, email address, mobile number, and address when you
+        register, make a purchase, or contact us.</p>
+
+    <h5>2. How We Use Your Information</h5>
+    <ul>
+        <li>To process your orders and payments</li>
+        <li>To communicate updates and offers</li>
+        <li>To improve user experience</li>
+    </ul>
+
+    <h5>3. Data Protection</h5>
+    <p>We use secure servers and encryption to protect your data. We do not share your information with third parties
+        except for payment and delivery partners.</p>
+
+    <h5>4. Your Rights</h5>
+    <p>You may request to access, update, or delete your personal data by contacting us at <a
+            href="mailto:support@camura.com">support@camura.com</a>.</p>
+
+    <p class="mt-4">Updated on {{ now|date:"F d, Y" }}</p>
+</div>
+{% endblock %}

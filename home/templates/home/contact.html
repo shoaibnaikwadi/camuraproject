@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Hero Section -->
+<section class="contact-hero text-white text-center d-flex align-items-center justify-content-center">
+    <div class="overlay"></div>
+    <div class="container position-relative">
+        <h1 class="display-5 fw-bold">Contact Us</h1>
+        <p class="lead">We’d love to hear from you. Let’s stay connected!</p>
+    </div>
+</section>
+
+<!-- Contact Info + Form -->
+<section class="container py-5">
+    <div class="row g-5">
+        <!-- Contact Info -->
+        <div class="col-lg-5">
+            <h3 class="fw-bold mb-4">Get In Touch</h3>
+            <p>
+                Have questions about our CCTV systems or need a custom security solution?
+                Reach out to our team, and we’ll respond within 24 hours.
+            </p>
+
+            <ul class="list-unstyled mt-4">
+                <li class="mb-3">
+                    <i class="bi bi-geo-alt-fill text-primary me-2"></i>
+                    <strong>Camura CCTV Store</strong><br>
+                    12/45, Techno Park, Andheri East, Mumbai, India
+                </li>
+                <li class="mb-3">
+                    <i class="bi bi-telephone-fill text-primary me-2"></i>
+                    +91 98765 43210
+                </li>
+                <li class="mb-3">
+                    <i class="bi bi-envelope-fill text-primary me-2"></i>
+                    support@camura.in
+                </li>
+            </ul>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="col-lg-7">
+            <h3 class="fw-bold mb-4">Send Us a Message</h3>
+
+            <form method="post" action="{% url 'contact' %}" class="needs-validation" novalidate>
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="name" class="form-label">Full Name</label>
+                    <input type="text" name="name" id="name" class="form-control" placeholder="Enter your name"
+                        required>
+                    <div class="invalid-feedback">Please enter your name.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" name="email" id="email" class="form-control" placeholder="you@example.com"
+                        required>
+                    <div class="invalid-feedback">Please enter a valid email address.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="message" class="form-label">Message</label>
+                    <textarea name="message" id="message" rows="5" class="form-control"
+                        placeholder="How can we help you?" required></textarea>
+                    <div class="invalid-feedback">Please enter your message.</div>
+                </div>
+
+                <button type="submit" class="btn btn-primary px-4">Send Message</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Google Map -->
+<section class="mt-5">
+    <div class="ratio ratio-16x9">
+        <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3770.5567599629044!2d72.87056191541964!3d19.08955888708637!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c8226e96a1b9%3A0x75217a4c7c1eae5f!2sAndheri%20East%2C%20Mumbai!5e0!3m2!1sen!2sin!4v1705000000000!5m2!1sen!2sin"
+            width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+    </div>
+</section>
+
+<!-- Styles -->
+<style>
+    .contact-hero {
+        background: url("{% static 'img/contact-bg.jpg' %}") center/cover no-repeat;
+        height: 50vh;
+        position: relative;
+    }
+
+    .contact-hero .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+    }
+
+    .contact-hero .container {
+        z-index: 2;
+    }
+
+    .form-control {
+        border-radius: 8px;
+    }
+
+    .btn-primary {
+        border-radius: 8px;
+    }
+
+    .ratio iframe {
+        border: 0;
+    }
+</style>
+
+<script>
+    // Bootstrap form validation
+    (() => {
+        'use strict'
+        const forms = document.querySelectorAll('.needs-validation')
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
+</script>
+
+{% endblock %}

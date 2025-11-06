@@ -104,21 +104,28 @@
                             class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
                             href="{% url 'home' %}">Home</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'product_list' %}">Shop</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">About</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+                    <!-- <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact</a></li> -->
 
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" data-bs-toggle="dropdown"
                             aria-expanded="false">Categories</a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">DSLR Cameras</a></li>
-                            <li><a class="dropdown-item" href="#">Mirrorless Cameras</a></li>
+                            <li><a class="dropdown-item" href="#">DVR</a></li>
+                            <li><a class="dropdown-item" href="#">Cameras</a></li>
+                            <li><a class="dropdown-item" href="#">Power Supply</a></li>
+                            <li><a class="dropdown-item" href="#">CCTV Cable</a></li>
+                            <li><a class="dropdown-item" href="#">Hard Disks</a></li>
+
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item" href="#">Lenses & Accessories</a></li>
+                            <li><a class="dropdown-item" href="#">Other Accesories</a></li>
                         </ul>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white bg-success rounded px-3" href="#">Service Booking</a>
+                    </li>
+
                 </ul>
 
                 <!-- Right side -->
@@ -185,30 +192,32 @@
             <div class="row text-center text-md-start">
                 <div class="col-md-3 col-lg-3 col-xl-3 mx-auto mt-3">
                     <h5 class="text-uppercase mb-4 fw-bold text-warning">Camura.in</h5>
-                    <p>Your ultimate destination for high-quality cameras, lenses, and accessories.</p>
+                    <p>Your ultimate destination for high-quality cctv Cameras, IP Cameras and Security devices.</p>
                 </div>
 
                 <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mt-3">
                     <h5 class="text-uppercase mb-4 fw-bold text-warning">Products</h5>
-                    <p><a href="#" class="text-white text-decoration-none">All Cameras</a></p>
-                    <p><a href="#" class="text-white text-decoration-none">DSLR</a></p>
-                    <p><a href="#" class="text-white text-decoration-none">Mirrorless</a></p>
-                    <p><a href="#" class="text-white text-decoration-none">Lenses</a></p>
+                    <p><a href="#" class="text-white text-decoration-none">CCTV cAMERAS</a></p>
+                    <p><a href="#" class="text-white text-decoration-none">DVR</a></p>
+                    <p><a href="#" class="text-white text-decoration-none">Hard Disk's</a></p>
+                    <p><a href="#" class="text-white text-decoration-none">Cables</a></p>
                 </div>
 
                 <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mt-3">
                     <h5 class="text-uppercase mb-4 fw-bold text-warning">Useful Links</h5>
-                    <p><a href="#" class="text-white text-decoration-none">Your Account</a></p>
-                    <p><a href="#" class="text-white text-decoration-none">Order Tracking</a></p>
-                    <p><a href="#" class="text-white text-decoration-none">Shipping Policy</a></p>
-                    <p><a href="#" class="text-white text-decoration-none">Help Center</a></p>
+                    <p><a href="{% url 'about' %}" class="text-white text-decoration-none">About Us</a></p>
+                    <p><a href="{% url 'contact' %}" class="text-white text-decoration-none">Contact Us</a></p>
+                    <p><a href="{% url 'privacy_policy' %}" class="text-white text-decoration-none">Privacy Policy</a></p>
+                    <p><a href="{% url 'refund_cancellation_policy' %}" class="text-white text-decoration-none">Refund & Cancelation Policy</a></p>
+                    <p><a href="{% url 'terms_and_conditions' %}" class="text-white text-decoration-none">Terms & Conditions</a></p>
+
                 </div>
 
                 <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mt-3">
                     <h5 class="text-uppercase mb-4 fw-bold text-warning">Contact</h5>
-                    <p><i class="bi bi-geo-alt-fill me-2"></i> 123 Camera Lane, Photo City</p>
-                    <p><i class="bi bi-envelope-fill me-2"></i> info@camura.in</p>
-                    <p><i class="bi bi-telephone-fill me-2"></i> +91 98765 43210</p>
+                    <p><i class="bi bi-geo-alt-fill me-2"></i> Pawar Complex, Shop No.1 Dharashiv - 413501</p>
+                    <p><i class="bi bi-envelope-fill me-2"></i> support@camura.in</p>
+                    <p><i class="bi bi-telephone-fill me-2"></i> +91 98 5050 4728</p>
                 </div>
             </div>
 
