@@ -222,7 +222,7 @@ def user_profile(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Profile updated successfully!")
-            return redirect("user_profile")
+            return redirect("customer_profile")
     else:
         form = CustomerProfileForm(instance=profile)
 
