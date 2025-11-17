@@ -1,21 +1,97 @@
 {% extends 'base.html' %}
 {% block content %}
+
 <div class="container mt-4">
-    <h3>My Orders</h3>
+    <h3 class="mb-4">📦 My Orders</h3>
+
+    {% if orders %}
     {% for order in orders %}
-    <div class="card mb-3 p-3">
-        <h5>Order #{{ order.id }}</h5>
-        <p>Date: {{ order.created_at }}</p>
-        <p>Status: {{ order.payment_status }}</p>
-        <p>Total: ₹{{ order.total_amount }}</p>
-        <ul>
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+
+            <!-- Order Header -->
+            <div class="d-flex justify-content-between">
+                <div>
+                    <h5>Order #{{ order.id }}</h5>
+                    <p class="text-muted mb-1">
+                        Ordered on: {{ order.created_at|date:"d M Y, h:i A" }}
+                    </p>
+                    <span class="badge 
+                            {% if order.payment_status == 'Paid' %}
+                                bg-success
+                            {% elif order.payment_status == 'Failed' %}
+                                bg-danger
+                            {% else %}
+                                bg-warning text-dark
+                            {% endif %}
+                        ">
+                        {{ order.payment_status }}
+                    </span>
+                </div>
+
+                <div class="text-end">
+                    <p class="fw-bold fs-5">₹{{ order.total_amount }}</p>
+                </div>
+            </div>
+
+            <hr>
+
+            <!-- Order Items -->
             {% for item in order.items.all %}
-            <li>{{ item.combo.name }} × {{ item.quantity }} — ₹{{ item.subtotal|floatformat:2 }}</li>
+            <div class="d-flex mb-3 align-items-start order-item">
+
+                <!-- Product Image -->
+                <a href="{% url 'product_detail' item.combo.id %}">
+                    {% if item.combo.image %}
+                    <img src="{{ item.combo.image.url }}" class="order-item-img" alt="{{ item.combo.name }}">
+                    {% else %}
+                    <img src="/static/img/no-image.png" class="order-item-img" alt="No image">
+                    {% endif %}
+                </a>
+
+                <!-- Product Details -->
+                <div class="ms-3">
+                    <a href="{% url 'product_detail' item.combo.id %}" class="text-dark fw-bold"
+                        style="text-decoration:none;">
+                        {{ item.combo.name }}
+                    </a>
+                    <p class="mb-0">Quantity: {{ item.quantity }}</p>
+                    <p class="fw-bold mb-0">₹{{ item.subtotal|floatformat:2 }}</p>
+
+                    <!-- Buy Again Button -->
+                    <a href="{% url 'buy_now' item.combo.id %}" class="btn btn-outline-primary btn-sm mt-2">
+                        Buy Again
+                    </a>
+                </div>
+
+            </div>
             {% endfor %}
-        </ul>
+        </div>
     </div>
-    {% empty %}
-    <p>No orders yet.</p>
     {% endfor %}
+    {% else %}
+    <div class="alert alert-info text-center">
+        You haven't placed any orders yet.
+    </div>
+    {% endif %}
+
 </div>
+
+<style>
+    .order-item-img {
+        width: 90px;
+        height: 90px;
+        object-fit: cover;
+        border-radius: 10px;
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .order-item:hover {
+        background: #fafafa;
+        border-radius: 12px;
+        padding: 8px;
+        transition: 0.2s;
+    }
+</style>
+
 {% endblock %}

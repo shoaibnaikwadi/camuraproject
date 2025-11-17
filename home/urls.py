@@ -58,7 +58,7 @@ urlpatterns = [
     path('cart/', views.cart, name='cart'),
     path('add-to-cart/<int:combo_id>/', views.add_to_cart, name='add_to_cart'),
 
-    path('customer-profile/', views.customer_profile, name='customer_profile'),
+    path('customer-profile/', views.user_profile, name='customer_profile'),
     path('myorders/', views.my_orders, name='my_orders'),
     path('payment-success/', views.payment_success, name='payment_success'),
     path('order-success/', TemplateView.as_view(template_name='home/order_success.html'), name='order_success'),

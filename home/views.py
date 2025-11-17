@@ -189,25 +189,51 @@ def cart(request):
 
 
 
-@login_required
-def customer_profile(request):
-    try:
-        profile = CustomerProfile.objects.get(user=request.user)
-    except CustomerProfile.DoesNotExist:
-        profile = None
+# @login_required
+# def customer_profile(request):
+#     try:
+#         profile = CustomerProfile.objects.get(user=request.user)
+#     except CustomerProfile.DoesNotExist:
+#         profile = None
 
-    if request.method == 'POST':
+#     if request.method == 'POST':
+#         form = CustomerProfileForm(request.POST, instance=profile)
+#         if form.is_valid():
+#             profile = form.save(commit=False)
+#             profile.user = request.user
+#             profile.save()
+#             messages.success(request, "Profile updated successfully!")
+#             return redirect('customer_profile')
+#     else:
+#         form = CustomerProfileForm(instance=profile)
+
+#     return render(request, 'home/customer_profile.html', {'form': form})
+
+
+
+
+
+@login_required
+def user_profile(request):
+    profile = CustomerProfile.objects.filter(user=request.user).first()
+
+    if request.method == "POST":
         form = CustomerProfileForm(request.POST, instance=profile)
         if form.is_valid():
-            profile = form.save(commit=False)
-            profile.user = request.user
-            profile.save()
+            form.save()
             messages.success(request, "Profile updated successfully!")
-            return redirect('customer_profile')
+            return redirect("user_profile")
     else:
         form = CustomerProfileForm(instance=profile)
 
-    return render(request, 'home/customer_profile.html', {'form': form})
+    edit_mode = request.GET.get("edit")  # ?edit=1 triggers edit mode
+
+    return render(request, "home/customer_profile.html", {
+        "profile": profile,
+        "form": form,
+        "edit_mode": edit_mode
+    })
+
 
 
 

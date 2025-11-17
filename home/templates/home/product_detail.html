@@ -1,33 +1,103 @@
-<!-- templates/shop/product_detail.html -->
 {% extends 'base.html' %}
 {% block content %}
-<div class="container mt-4">
-  <div class="card p-4">
-    <h3>{{ combo.name }}</h3>
-    <p style="white-space:pre-line;">{{ combo.description }}</p>
-    <ul>
-      <li>Camera: {{ combo.camera_qty }} × {{ combo.camera.get_camera_type_display }} (₹{{ combo.camera.price }} each)</li>
-      <li>DVR: {{ combo.dvr.get_resolution_display }} {{ combo.dvr.get_channels_display }} — ₹{{ combo.dvr.price }}</li>
-      <li>Cable: {{ combo.cable.get_length_display }} — ₹{{ combo.cable.price }}</li>
-      <li>Power: {{ combo.power.get_range_slug_display }} — ₹{{ combo.power.price }}</li>
-      <li>BNC: ₹{{ combo.bnc_connector.price }}, DC: ₹{{ combo.dc_connector.price }}</li>
-      <li>Installation: ₹{{ combo.installation.price }}</li>
-    </ul>
-    <h4>Total: ₹{{ combo.total_price }}</h4>
 
-    <form action="{% url 'add_to_cart' combo.id %}" method="post" class="mb-2">
-      {% csrf_token %}
-      <div class="input-group mb-2" style="max-width:140px;">
-        <input type="number" name="qty" value="1" min="1" class="form-control form-control-sm">
-        <button class="btn btn-success btn-sm" type="submit">Add to Cart</button>
+<div class="container mt-5">
+
+  <div class="row">
+
+    <!-- PRODUCT IMAGE -->
+    <div class="col-lg-5 text-center">
+      <div class="product-image-box shadow-sm p-3 rounded">
+        {% if combo.image %}
+        <img src="{{ combo.image.url }}" class="main-product-image" alt="{{ combo.name }}">
+        {% else %}
+        <img src="/static/img/no-image.png" class="main-product-image" alt="No Image">
+        {% endif %}
       </div>
-    </form>
+    </div>
 
-    <form action="{% url 'buy_now' combo.id %}" method="post">
-      {% csrf_token %}
-      <input type="hidden" name="qty" value="1">
-      <button class="btn btn-warning">Buy Now</button>
-    </form>
+    <!-- PRODUCT DETAILS -->
+    <div class="col-lg-4 mt-4 mt-lg-0">
+      <h3 class="fw-bold">{{ combo.name }}</h3>
+
+      <p class="text-muted" style="white-space:pre-line;">{{ combo.description }}</p>
+
+      <hr>
+
+      <h5 class="fw-bold mb-3">📦 What's Included</h5>
+      <ul class="spec-list">
+        <li><b>Camera:</b> {{ combo.camera_qty }} × {{ combo.camera.get_camera_type_display }}
+          (₹{{ combo.camera.price }} each)</li>
+
+        <li><b>DVR:</b> {{ combo.dvr.get_resolution_display }} {{ combo.dvr.get_channels_display }}
+          — ₹{{ combo.dvr.price }}</li>
+
+        <li><b>Cable:</b> {{ combo.cable.get_length_display }} — ₹{{ combo.cable.price }}</li>
+
+        <li><b>Power Supply:</b> {{ combo.power.get_range_slug_display }} — ₹{{ combo.power.price }}</li>
+
+        <li><b>BNC Connector:</b> ₹{{ combo.bnc_connector.price }},
+          <b>DC Connector:</b> ₹{{ combo.dc_connector.price }}
+        </li>
+
+        <li><b>Installation Charges:</b> ₹{{ combo.installation.price }}</li>
+      </ul>
+
+      <hr>
+
+      <h4 class="text-success fw-bold">Total: ₹{{ combo.total_price }}</h4>
+    </div>
+
+    <!-- BUY BOX -->
+    <div class="col-lg-3 mt-4 mt-lg-0">
+      <div class="card shadow buy-box p-3">
+        <h4 class="text-success fw-bold mb-3">₹{{ combo.total_price }}</h4>
+
+        <form action="{% url 'add_to_cart' combo.id %}" method="post" class="mb-2">
+          {% csrf_token %}
+          <label class="fw-semibold">Quantity</label>
+          <div class="input-group mb-3" style="max-width:140px;">
+            <input type="number" name="qty" value="1" min="1" class="form-control form-control-sm">
+          </div>
+          <button class="btn btn-success w-100 mb-2">Add to Cart</button>
+        </form>
+
+        <form action="{% url 'buy_now' combo.id %}" method="post">
+          {% csrf_token %}
+          <input type="hidden" name="qty" value="1">
+          <button class="btn btn-warning w-100">Buy Now</button>
+        </form>
+      </div>
+    </div>
+
   </div>
 </div>
+
+
+<style>
+  .main-product-image {
+    width: 100%;
+    height: 350px;
+    object-fit: contain;
+  }
+
+  .product-image-box {
+    background: #fff;
+    border-radius: 12px;
+  }
+
+  .spec-list li {
+    margin-bottom: 6px;
+    font-size: 15px;
+  }
+
+  .buy-box {
+    border-radius: 12px;
+  }
+
+  .buy-box button {
+    border-radius: 20px;
+  }
+</style>
+
 {% endblock %}
