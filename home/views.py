@@ -472,14 +472,71 @@ def my_orders(request):
 
 
 
+# @login_required
+# def select_address(request):
+#     addresses = CustomerProfile.objects.filter(user=request.user)
+#     cart_items = CartItem.objects.filter(user=request.user)
+#     from_page = request.GET.get('from')  # 'cart' or 'buy_now'
+#     combo_id = request.GET.get('combo_id')
+
+#     # Determine order items
+#     if combo_id:
+#         request.session['buy_now_combo_id'] = combo_id
+#         combo = get_object_or_404(ComboProduct, id=combo_id)
+#         total = combo.total_price()
+#         items = [{'name': combo.name, 'qty': 1, 'subtotal': total}]
+#     else:
+#         items = [{'name': i.combo.name, 'qty': i.quantity, 'subtotal': i.subtotal()} for i in cart_items]
+#         total = sum(i['subtotal'] for i in items)
+
+#     if request.method == "POST":
+#         # Select address
+#         if 'address_id' in request.POST:
+#             request.session['selected_address_id'] = request.POST.get('address_id')
+
+#             # Redirect to checkout page based on source
+#             if 'buy_now_combo_id' in request.session:
+#                 return redirect('buy_now', combo_id=request.session['buy_now_combo_id'])
+#             elif from_page == 'cart' or not combo_id:
+#                 return redirect('cart_checkout')
+#             else:
+#                 return redirect('product_list')
+
+#         # Add new address
+#         CustomerProfile.objects.create(
+#             user=request.user,
+#             full_name=request.POST['full_name'],
+#             email=request.POST['email'],
+#             mobile=request.POST['mobile'],
+#             address=request.POST['address'],
+#             city=request.POST['city'],
+#             state=request.POST['state'],
+#             pincode=request.POST['pincode']
+#         )
+#         messages.success(request, "New address added successfully!")
+#         return redirect(request.path)
+
+#     context = {
+#         'addresses': addresses,
+#         'items': items,
+#         'total': total,
+#     }
+#     return render(request, 'home/select_address.html', context)
+
+
+
+
+
+
 @login_required
 def select_address(request):
     addresses = CustomerProfile.objects.filter(user=request.user)
     cart_items = CartItem.objects.filter(user=request.user)
-    from_page = request.GET.get('from')  # 'cart' or 'buy_now'
+
+    from_page = request.GET.get('from')       # 'cart' or 'buy_now'
     combo_id = request.GET.get('combo_id')
 
-    # Determine order items
+    # ----- Determine items -----
     if combo_id:
         request.session['buy_now_combo_id'] = combo_id
         combo = get_object_or_404(ComboProduct, id=combo_id)
@@ -489,20 +546,25 @@ def select_address(request):
         items = [{'name': i.combo.name, 'qty': i.quantity, 'subtotal': i.subtotal()} for i in cart_items]
         total = sum(i['subtotal'] for i in items)
 
+    # ----- POST Request -----
     if request.method == "POST":
-        # Select address
+
+        # ---- Selecting an address ----
         if 'address_id' in request.POST:
             request.session['selected_address_id'] = request.POST.get('address_id')
 
-            # Redirect to checkout page based on source
+            # If Buy Now flow → redirect back to buy_now
             if 'buy_now_combo_id' in request.session:
-                return redirect('buy_now', combo_id=request.session['buy_now_combo_id'])
-            elif from_page == 'cart' or not combo_id:
-                return redirect('cart_checkout')
-            else:
-                return redirect('product_list')
+                combo_id = request.session['buy_now_combo_id']
+                return redirect('process_buy_now', combo_id=combo_id)
 
-        # Add new address
+            # If Cart flow
+            if from_page == 'cart' or not combo_id:
+                return redirect('cart_checkout')
+
+            return redirect('product_list')
+
+        # ---- Adding a new address ----
         CustomerProfile.objects.create(
             user=request.user,
             full_name=request.POST['full_name'],
@@ -522,6 +584,9 @@ def select_address(request):
         'total': total,
     }
     return render(request, 'home/select_address.html', context)
+
+
+
 
 
 
@@ -580,12 +645,23 @@ def cart_checkout(request):
     return render(request, 'home/payment.html', context)
 
 
+# Because buy_now must ONLY redirect to address selection, while
+# process_buy_now must ONLY handle the payment logic.
+# If you put both things in one view, it breaks the flow.
 
 @login_required
 def buy_now(request, combo_id):
+
+    # Always force address selection first
+    return redirect(f'/select_address/?from=buy_now&combo_id={combo_id}')
+
+
+@login_required
+def process_buy_now(request, combo_id):
     address_id = request.session.get('selected_address_id')
+
     if not address_id:
-        return redirect('select_address')
+        return redirect(f'/select_address/?from=buy_now&combo_id={combo_id}')
 
     profile = get_object_or_404(CustomerProfile, id=address_id, user=request.user)
     combo = get_object_or_404(ComboProduct, id=combo_id)
@@ -620,6 +696,50 @@ def buy_now(request, combo_id):
         'payment_id': payment['id']
     }
     return render(request, 'home/payment.html', context)
+
+
+
+
+
+# @login_required
+# def buy_now(request, combo_id):
+#     address_id = request.session.get('selected_address_id')
+#     if not address_id:
+#         return redirect('select_address')
+
+#     profile = get_object_or_404(CustomerProfile, id=address_id, user=request.user)
+#     combo = get_object_or_404(ComboProduct, id=combo_id)
+#     total = combo.total_price()
+
+#     client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+#     payment = client.order.create({
+#         'amount': int(total * 100),
+#         'currency': 'INR',
+#         'payment_capture': '1'
+#     })
+
+#     order = Order.objects.create(
+#         user=request.user,
+#         profile=profile,
+#         total_amount=total,
+#         razorpay_order_id=payment['id']
+#     )
+
+#     OrderItem.objects.create(
+#         order=order,
+#         combo=combo,
+#         quantity=1,
+#         price=combo.total_price()
+#     )
+
+#     context = {
+#         'order': order,
+#         'profile': profile,
+#         'razorpay_key': settings.RAZORPAY_KEY_ID,
+#         'amount': total,
+#         'payment_id': payment['id']
+#     }
+#     return render(request, 'home/payment.html', context)
 
 
 from django.core.mail import send_mail

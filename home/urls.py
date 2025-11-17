@@ -29,6 +29,7 @@ urlpatterns = [
 
     # Buy Now checkout
     path('buy-now/<int:combo_id>/', views.buy_now, name='buy_now'),
+    path('process-buy-now/<int:combo_id>/', views.process_buy_now, name='process_buy_now'),
 
 
     # path('cart/', views.view_cart, name='view_cart'),
@@ -63,8 +64,9 @@ urlpatterns = [
     path('order-success/', TemplateView.as_view(template_name='home/order_success.html'), name='order_success'),
     path('my-orders/', views.my_orders, name='my_orders'),
     # path('checkout/<int:combo_id>/', views.checkout, name='checkout_with_combo'),
+    path('select_address/', views.select_address, name='select_address'),
 
-    path('select-address/', views.select_address, name='select_address'),
+    # path('select-address/', views.select_address, name='select_address'),
     path('about/', TemplateView.as_view(template_name='home/about.html'), name='about'),
     path('contact/', views.contact_view, name='contact'),
     path('privacy-policy/', views.privacy_policy, name='privacy_policy'),
