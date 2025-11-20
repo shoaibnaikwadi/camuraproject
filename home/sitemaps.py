@@ -12,8 +12,6 @@ class StaticViewSitemap(Sitemap):
             'home',
             'about',
             'contact',
-            # 'cart',
-            # 'checkout',
             'login',
             'register',
             'privacy_policy',
@@ -31,6 +29,9 @@ class ProductSitemap(Sitemap):
 
     def items(self):
         return ComboProduct.objects.all()
+
+    def location(self, obj):
+        return reverse('product_detail', args=[obj.pk])
 
     def lastmod(self, obj):
         return obj.updated_at if hasattr(obj, 'updated_at') else None
