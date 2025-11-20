@@ -9,7 +9,7 @@ class StaticViewSitemap(Sitemap):
 
     def items(self):
         return [
-            'index',
+            'home',
             'about',
             'contact',
             'cart',
@@ -30,7 +30,7 @@ class ProductSitemap(Sitemap):
     changefreq = "daily"
 
     def items(self):
-        return Product.objects.all()
+        return ComboProduct.objects.all()
 
     def lastmod(self, obj):
         return obj.updated_at if hasattr(obj, 'updated_at') else None
