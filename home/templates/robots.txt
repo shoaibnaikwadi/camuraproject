@@ -1,0 +1,11 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /cart/
+Disallow: /checkout/
+Disallow: /accounts/
+Disallow: /media/private/
+Disallow: /staticfiles/
+
+Allow: /
+
+Sitemap: https://www.camura.in/sitemap.xml
