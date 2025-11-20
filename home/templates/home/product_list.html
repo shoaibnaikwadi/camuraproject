@@ -1,60 +1,75 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
+
 <div class="container mt-5">
   <h2 class="text-center mb-4">📦 CCTV Packages</h2>
 
   <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+
     {% for combo in combos %}
     <div class="col">
       <div class="card h-100 shadow-sm product-card">
-        <!-- Badge -->
+
         {% if combo.is_best_seller %}
         <span class="badge bg-danger position-absolute top-0 start-0 m-2">Best Seller</span>
         {% elif combo.is_new %}
         <span class="badge bg-success position-absolute top-0 start-0 m-2">New</span>
         {% endif %}
 
-        <!-- Product Image -->
-        <a href="#" class="product-quickview" data-bs-toggle="modal" data-bs-target="#quickViewModal">
-          <!-- {% if combo.image %}
-          <img src="{{ combo.image.url }}" class="card-img-top product-img" alt="{{ combo.name }}">
-          {% else %}
-          <img src="{% static 'img/default-product.jpg' %}" class="card-img-top product-img" alt="No image">
-          {% endif %} -->
-          {% if combo.image %}
-          <img src="{{ combo.image.url }}" class="card-img-top product-img" alt="{{ combo.name }}">
-          {% else %}
-          <img src="{% static 'img/default-product.jpg' %}" class="card-img-top product-img" alt="No image">
-          {% endif %}
+        <!-- PRODUCT IMAGE -->
+        <a href="#" class="openQuickView" data-id="{{ combo.id }}" data-name="{{ combo.name }}"
+          data-price="{{ combo.total_price }}"
+          data-image="{% if combo.image %}{{ combo.image.url }}{% else %}{% static 'img/default-product.jpg' %}{% endif %}"
+          data-camera="{{ combo.camera_qty }} × {{ combo.camera.get_camera_type_display }}"
+          data-dvr="{{ combo.dvr.get_resolution_display }} {{ combo.dvr.get_channels_display }} DVR"
+          data-cable="{{ combo.cable_qty }} × {{ combo.cable.get_length_display }}"
+          data-power="{{ combo.power_qty }} × {{ combo.power.get_range_slug_display }}"
+          data-bnc="{{ combo.bnc_qty }} × {{ combo.bnc_connector.name }}"
+          data-dc="{{ combo.dc_qty }} × {{ combo.dc_connector.name }}"
+          data-install="{{ combo.installation_qty }} × {{ combo.installation.description }}"
+          data-hdd="{{ combo.hard_disk_qty }} × {{ combo.hard_disk.size }} HDD" data-bs-toggle="modal"
+          data-bs-target="#quickViewModal">
 
+          <img
+            src="{% if combo.image %}{{ combo.image.url }}{% else %}{% static 'img/default-product.jpg' %}{% endif %}"
+            class="card-img-top product-img" alt="{{ combo.name }}">
         </a>
 
         <div class="card-body d-flex flex-column">
-          <!-- Product Name -->
           <h6 class="card-title">
-            <a href="#" class="text-decoration-none text-dark product-quickview" data-bs-toggle="modal"
+            <a href="#" class="text-decoration-none text-dark openQuickView" data-id="{{ combo.id }}"
+              data-name="{{ combo.name }}" data-price="{{ combo.total_price }}"
+              data-image="{% if combo.image %}{{ combo.image.url }}{% else %}{% static 'img/default-product.jpg' %}{% endif %}"
+              data-camera="{{ combo.camera_qty }} × {{ combo.camera.get_camera_type_display }}"
+              data-dvr="{{ combo.dvr.get_resolution_display }} {{ combo.dvr.get_channels_display }} DVR"
+              data-cable="{{ combo.cable_qty }} × {{ combo.cable.get_length_display }}"
+              data-power="{{ combo.power_qty }} × {{ combo.power.get_range_slug_display }}"
+              data-bnc="{{ combo.bnc_qty }} × {{ combo.bnc_connector.name }}"
+              data-dc="{{ combo.dc_qty }} × {{ combo.dc_connector.name }}"
+              data-install="{{ combo.installation_qty }} × {{ combo.installation.description }}"
+              data-hdd="{{ combo.hard_disk_qty }} × {{ combo.hard_disk.size }} HDD" data-bs-toggle="modal"
               data-bs-target="#quickViewModal">
               {{ combo.name }}
             </a>
           </h6>
 
-          <!-- Price -->
           <h5 class="text-success mt-auto mb-2">₹{{ combo.total_price|floatformat:2 }}</h5>
 
-          <!-- Action Buttons -->
           <div class="d-flex gap-2 flex-wrap">
             <form action="{% url 'add_to_cart' combo.id %}" method="post" class="flex-fill">
               {% csrf_token %}
               <input type="hidden" name="qty" value="1">
               <button class="btn btn-success btn-sm w-100 add-to-cart-btn" type="submit">Add to Cart</button>
             </form>
+
             <form action="{% url 'buy_now' combo.id %}" method="post" class="flex-fill">
               {% csrf_token %}
               <input type="hidden" name="qty" value="1">
               <button class="btn btn-warning btn-sm w-100" type="submit">Buy Now</button>
             </form>
           </div>
+
         </div>
       </div>
     </div>
@@ -62,66 +77,75 @@
   </div>
 </div>
 
-<!-- Quick View Carousel Modal -->
+<!-- ===================== QUICK VIEW MODAL ===================== -->
 <div class="modal fade" id="quickViewModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-xl">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
+
       <div class="modal-header">
-        <h5 class="modal-title">Product Preview</h5>
+        <h5 class="modal-title" id="modalProductName">Product Preview</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
+
       <div class="modal-body">
-        <div id="quickViewCarousel" class="carousel slide" data-bs-ride="carousel">
-          <div class="carousel-inner">
-            {% for combo in combos %}
-            <div class="carousel-item {% if forloop.first %}active{% endif %}">
-              <div class="row">
-                <div class="col-md-6 text-center">
-                  {% if combo.image %}
-                  <img src="{{ combo.image.url }}" class="img-fluid" alt="{{ combo.name }}">
-                  {% else %}
-                  <img src="{% static 'img/default-product.jpg' %}" class="img-fluid" alt="No image">
-                  {% endif %}
-                </div>
-                <div class="col-md-6">
-                  <h5>{{ combo.name }}</h5>
-                  <p>
-                    {{ combo.camera_qty }} × {{ combo.camera.get_camera_type_display }}<br>
-                    {{ combo.dvr.get_resolution_display }} {{ combo.dvr.get_channels_display }}<br>
-                    Cable: {{ combo.cable.get_length_display }}<br>
-                    Power: {{ combo.power.get_range_slug_display }}
-                  </p>
-                  <h4 class="text-success">₹{{ combo.total_price|floatformat:2 }}</h4>
-                  <div class="d-flex gap-2 mt-3">
-                    <form action="{% url 'add_to_cart' combo.id %}" method="post">
-                      {% csrf_token %}
-                      <input type="hidden" name="qty" value="1">
-                      <button class="btn btn-success">Add to Cart</button>
-                    </form>
-                    <form action="{% url 'buy_now' combo.id %}" method="post">
-                      {% csrf_token %}
-                      <input type="hidden" name="qty" value="1">
-                      <button class="btn btn-warning">Buy Now</button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-            {% endfor %}
+        <div class="row">
+
+          <div class="col-md-6 text-center">
+            <img id="modalProductImage" src="" class="img-fluid rounded shadow-sm" alt="">
           </div>
-          <button class="carousel-control-prev" type="button" data-bs-target="#quickViewCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon"></span>
-          </button>
-          <button class="carousel-control-next" type="button" data-bs-target="#quickViewCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon"></span>
-          </button>
+
+          <div class="col-md-6">
+            <h4 class="fw-bold text-success">₹<span id="modalProductPrice"></span></h4>
+
+            <p class="mt-3 small">
+              <strong>Package Includes:</strong><br>
+              <span id="modalCamera"></span><br>
+              <span id="modalDvr"></span><br>
+              <span id="modalCable"></span><br>
+              <span id="modalPower"></span><br>
+              <span id="modalBnc"></span><br>
+              <span id="modalDc"></span><br>
+              <span id="modalInstall"></span><br>
+              <span id="modalHdd"></span><br>
+            </p>
+
+            <div class="d-flex gap-2 mt-3">
+              <a id="addToCartLink" class="btn btn-success w-50">Add to Cart</a>
+              <a id="buyNowLink" class="btn btn-warning w-50">Buy Now</a>
+            </div>
+          </div>
+
         </div>
       </div>
+
     </div>
   </div>
 </div>
 
-<!-- Styles -->
+<!-- ===================== JS ===================== -->
+<script>
+  document.querySelectorAll(".openQuickView").forEach(btn => {
+    btn.addEventListener("click", function () {
+
+      document.getElementById("modalProductName").textContent = this.dataset.name;
+      document.getElementById("modalProductPrice").textContent = this.dataset.price;
+      document.getElementById("modalProductImage").src = this.dataset.image;
+
+      document.getElementById("modalCamera").textContent = this.dataset.camera;
+      document.getElementById("modalDvr").textContent = this.dataset.dvr;
+      document.getElementById("modalCable").textContent = this.dataset.cable;
+      document.getElementById("modalPower").textContent = this.dataset.power;
+      document.getElementById("modalBnc").textContent = this.dataset.bnc;
+      document.getElementById("modalDc").textContent = this.dataset.dc;
+      document.getElementById("modalInstall").textContent = this.dataset.install;
+      document.getElementById("modalHdd").textContent = this.dataset.hdd;
+
+      document.getElementById("addToCartLink").href = "/add-to-cart/" + this.dataset.id + "/";
+      document.getElementById("buyNowLink").href = "/buy-now/" + this.dataset.id + "/";
+    });
+  });
+</script>
+
 <style>
   .product-card {
     position: relative;
@@ -137,14 +161,6 @@
     height: 180px;
     object-fit: cover;
     cursor: pointer;
-  }
-
-  .add-to-cart-btn {
-    transition: all 0.3s;
-  }
-
-  .add-to-cart-btn:active {
-    transform: scale(0.95);
   }
 </style>
 

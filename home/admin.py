@@ -9,7 +9,7 @@ from .models import (
     Accessory,
     InstallationCharge,
     ComboProduct,
-    CartItem, Order, CustomerProfile
+    CartItem, Order, CustomerProfile, HardDisk
 )
 
 @admin.register(Camera)
@@ -24,6 +24,11 @@ class DVRAdmin(admin.ModelAdmin):
     list_display = ('resolution', 'channels', 'price')
     list_filter = ('resolution', 'channels')
     search_fields = ('resolution', 'channels')
+
+
+@admin.register(HardDisk)
+class HardDiskAdmin(admin.ModelAdmin):
+    list_display = ("size", "price")
 
 
 @admin.register(Cable)
@@ -54,44 +59,90 @@ class InstallationChargeAdmin(admin.ModelAdmin):
 
 
 
+
+
+
 @admin.register(ComboProduct)
 class ComboProductAdmin(admin.ModelAdmin):
     list_display = (
-        'thumbnail',  # <-- Add thumbnail first
+        'thumbnail',
         'name',
-        'camera',
-        'camera_qty',
+        'camera', 'camera_qty',
         'dvr',
-        'cable',
-        'power',
-        'bnc_connector',
-        'dc_connector',
-        'installation',
+        'hard_disk', 'hard_disk_qty',
+        'cable', 'cable_qty',
+        'power', 'power_qty',
+        'bnc_connector', 'bnc_qty',
+        'dc_connector', 'dc_qty',
+        'installation', 'installation_qty',
         'total_price',
         'created_at',
     )
-    search_fields = ('name', 'description')
-    list_filter = ('camera', 'dvr', 'power', 'installation')
 
     fields = (
         'name',
-        'camera',
-        'camera_qty',
+        'camera', 'camera_qty',
         'dvr',
-        'cable',
-        'power',
-        'bnc_connector',
-        'dc_connector',
-        'installation',
+        'hard_disk', 'hard_disk_qty',
+        'cable', 'cable_qty',
+        'power', 'power_qty',
+        'bnc_connector', 'bnc_qty',
+        'dc_connector', 'dc_qty',
+        'installation', 'installation_qty',
         'description',
-        'image',  # file upload
+        'image',
     )
+
+    search_fields = ('name', 'description')
+    list_filter = ('camera', 'dvr', 'power', 'installation')
 
     def thumbnail(self, obj):
         if obj.image:
             return format_html('<img src="{}" width="50" height="50" style="object-fit:cover; border-radius:4px;" />', obj.image.url)
         return "-"
     thumbnail.short_description = "Image"
+
+
+
+
+# @admin.register(ComboProduct)
+# class ComboProductAdmin(admin.ModelAdmin):
+#     list_display = (
+#         'thumbnail',  # <-- Add thumbnail firs
+#         'name',
+#         'camera',
+#         'camera_qty',
+#         'dvr',
+#         'cable',
+#         'power',
+#         'bnc_connector',
+#         'dc_connector',
+#         'installation',
+#         'total_price',
+#         'created_at',
+#     )
+#     search_fields = ('name', 'description')
+#     list_filter = ('camera', 'dvr', 'power', 'installation')
+
+#     fields = (
+#         'name',
+#         'camera',
+#         'camera_qty',
+#         'dvr',
+#         'cable',
+#         'power',
+#         'bnc_connector',
+#         'dc_connector',
+#         'installation',
+#         'description',
+#         'image',  # file upload
+#     )
+
+#     def thumbnail(self, obj):
+#         if obj.image:
+#             return format_html('<img src="{}" width="50" height="50" style="object-fit:cover; border-radius:4px;" />', obj.image.url)
+#         return "-"
+#     thumbnail.short_description = "Image"
 
 
 

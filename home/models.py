@@ -40,6 +40,22 @@ class DVR(models.Model):
         return f"{self.get_resolution_display()} {self.get_channels_display()} DVR (₹{self.price})"
 
 
+# class HardDisk(models.Model):
+#     brand = models.CharField(max_length=100)
+#     capacity = models.CharField(max_length=50)   # Example: "500GB", "1TB"
+#     model_number = models.CharField(max_length=100)
+
+#     def __str__(self):
+#         return f"{self.brand} {self.capacity} ({self.model_number})"
+
+
+class HardDisk(models.Model):
+    size = models.CharField(max_length=50)   # e.g., 1TB, 2TB
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.size} HDD (₹{self.price})"
+
 # CABLE MASTER
 class Cable(models.Model):
     LENGTH_CHOICES = [('90m', '90 Meter'), ('180m', '180 Meter')]
@@ -83,39 +99,98 @@ class InstallationCharge(models.Model):
         return f"{self.description} (₹{self.price})"
 
 
+
+
+
+
 # COMBO / PRODUCT (built from masters)
 class ComboProduct(models.Model):
     name = models.CharField(max_length=150)
+
     camera = models.ForeignKey(Camera, on_delete=models.CASCADE)
     camera_qty = models.PositiveIntegerField(default=2)
+
     dvr = models.ForeignKey(DVR, on_delete=models.CASCADE)
+
+    # hard_disk = models.ForeignKey(HardDisk, on_delete=models.SET_NULL, null=True, blank=True)
+    # hard_disk_qty = models.PositiveIntegerField(default=1)
+
+    hard_disk = models.ForeignKey(HardDisk, on_delete=models.CASCADE, null=True, blank=True)
+    hard_disk_qty = models.PositiveIntegerField(default=1)
+
     cable = models.ForeignKey(Cable, on_delete=models.CASCADE)
+    cable_qty = models.PositiveIntegerField(default=1)   # NEW
+
     power = models.ForeignKey(PowerSupply, on_delete=models.CASCADE)
+    power_qty = models.PositiveIntegerField(default=1)   # NEW
+
     bnc_connector = models.ForeignKey(Accessory, on_delete=models.CASCADE, related_name='bnc_in_combo')
+    bnc_qty = models.PositiveIntegerField(default=2)     # NEW
+
     dc_connector = models.ForeignKey(Accessory, on_delete=models.CASCADE, related_name='dc_in_combo')
+    dc_qty = models.PositiveIntegerField(default=2)      # NEW
+
     installation = models.ForeignKey(InstallationCharge, on_delete=models.CASCADE)
+    installation_qty = models.PositiveIntegerField(default=1)  # NEW
+
     description = models.TextField(blank=True)
-    image = models.ImageField(upload_to='product_images/', null=True, blank=True)  # New field
+    image = models.ImageField(upload_to='product_images/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def total_price(self):
         total = Decimal('0.00')
-        # cameras
+
         total += (self.camera.price * Decimal(self.camera_qty))
-        # DVR
         total += self.dvr.price
-        # Cable
-        total += self.cable.price
-        # Power supply
-        total += self.power.price
-        # connectors
-        total += self.bnc_connector.price + self.dc_connector.price
-        # installation
-        total += self.installation.price
+        total += (self.cable.price * Decimal(self.cable_qty))
+        total += (self.power.price * Decimal(self.power_qty))
+        total += (self.bnc_connector.price * Decimal(self.bnc_qty))
+        total += (self.dc_connector.price * Decimal(self.dc_qty))
+        total += (self.installation.price * Decimal(self.installation_qty))
+
         return total
 
     def __str__(self):
         return f"{self.name} (₹{self.total_price()})"
+
+
+
+
+
+
+# # COMBO / PRODUCT (built from masters)
+# class ComboProduct(models.Model):
+#     name = models.CharField(max_length=150)
+#     camera = models.ForeignKey(Camera, on_delete=models.CASCADE)
+#     camera_qty = models.PositiveIntegerField(default=2)
+#     dvr = models.ForeignKey(DVR, on_delete=models.CASCADE)
+#     cable = models.ForeignKey(Cable, on_delete=models.CASCADE)
+#     power = models.ForeignKey(PowerSupply, on_delete=models.CASCADE)
+#     bnc_connector = models.ForeignKey(Accessory, on_delete=models.CASCADE, related_name='bnc_in_combo')
+#     dc_connector = models.ForeignKey(Accessory, on_delete=models.CASCADE, related_name='dc_in_combo')
+#     installation = models.ForeignKey(InstallationCharge, on_delete=models.CASCADE)
+#     description = models.TextField(blank=True)
+#     image = models.ImageField(upload_to='product_images/', null=True, blank=True)  # New field
+#     created_at = models.DateTimeField(auto_now_add=True)
+
+#     def total_price(self):
+#         total = Decimal('0.00')
+#         # cameras
+#         total += (self.camera.price * Decimal(self.camera_qty))
+#         # DVR
+#         total += self.dvr.price
+#         # Cable
+#         total += self.cable.price
+#         # Power supply
+#         total += self.power.price
+#         # connectors
+#         total += self.bnc_connector.price + self.dc_connector.price
+#         # installation
+#         total += self.installation.price
+#         return total
+
+#     def __str__(self):
+#         return f"{self.name} (₹{self.total_price()})"
 
 
 
@@ -165,6 +240,22 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.combo.name} x {self.quantity}"    
+
+
+# class OrderItem(models.Model):
+#     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
+#     combo = models.ForeignKey('ComboProduct', on_delete=models.SET_NULL, null=True)
+
+#     # Snapshot fields
+#     product_name = models.CharField(max_length=200)
+#     product_image = models.ImageField(upload_to="order_snapshots/", null=True, blank=True)
+#     product_description = models.TextField(blank=True)
+
+#     quantity = models.PositiveIntegerField(default=1)
+#     price = models.DecimalField(max_digits=10, decimal_places=2)
+
+#     def subtotal(self):
+#         return self.quantity * self.price
 
 
 class CustomerProfile(models.Model):

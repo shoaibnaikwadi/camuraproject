@@ -41,27 +41,47 @@
             <div class="d-flex mb-3 align-items-start order-item">
 
                 <!-- Product Image -->
+                {% if item.combo %}
                 <a href="{% url 'product_detail' item.combo.id %}">
                     {% if item.combo.image %}
-                    <img src="{{ item.combo.image.url }}" class="order-item-img" alt="{{ item.combo.name }}">
+                        <img src="{{ item.combo.image.url }}" class="order-img">
                     {% else %}
-                    <img src="/static/img/no-image.png" class="order-item-img" alt="No image">
+                        <img src="/static/default.png" class="order-img">
                     {% endif %}
                 </a>
+                {% else %}
+                    <span class="text-danger">Product deleted</span>
+                {% endif %}
+
 
                 <!-- Product Details -->
                 <div class="ms-3">
-                    <a href="{% url 'product_detail' item.combo.id %}" class="text-dark fw-bold"
-                        style="text-decoration:none;">
-                        {{ item.combo.name }}
-                    </a>
+                
+                    {% if item.combo %}
+                        <a href="{% url 'product_detail' item.combo.id %}" class="text-dark fw-bold" style="text-decoration:none;">
+                            {{ item.combo.name }}
+                        </a>
+                    {% else %}
+                        <span class="text-danger fw-bold">Product Deleted</span>
+                    {% endif %}
+                
                     <p class="mb-0">Quantity: {{ item.quantity }}</p>
                     <p class="fw-bold mb-0">₹{{ item.subtotal|floatformat:2 }}</p>
+                </div>
+
 
                     <!-- Buy Again Button -->
-                    <a href="{% url 'buy_now' item.combo.id %}" class="btn btn-outline-primary btn-sm mt-2">
-                        Buy Again
-                    </a>
+                    <!-- Buy Again Button -->
+                    {% if item.combo %}
+                        <a href="{% url 'buy_now' item.combo.id %}" class="btn btn-outline-primary btn-sm mt-2">
+                            Buy Again
+                        </a>
+                    {% else %}
+                        <button class="btn btn-secondary btn-sm mt-2" disabled>
+                            Product Unavailable
+                        </button>
+                    {% endif %}
+
                 </div>
 
             </div>
