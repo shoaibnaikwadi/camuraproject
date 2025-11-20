@@ -239,7 +239,11 @@ class OrderItem(models.Model):
         return self.quantity * self.price
 
     def __str__(self):
-        return f"{self.combo.name} x {self.quantity}"    
+        if self.combo:
+            return f"{self.combo.name} x {self.quantity}"
+        else:
+            return f"Deleted Product x {self.quantity}"
+  
 
 
 # class OrderItem(models.Model):
