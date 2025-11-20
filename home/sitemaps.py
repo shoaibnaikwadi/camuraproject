@@ -1,6 +1,6 @@
 from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
-from .models import Product  # adjust model name if different
+from .models import ComboProduct  # adjust model name if different
 
 
 class StaticViewSitemap(Sitemap):
