@@ -244,14 +244,13 @@ def google_feed(request):
         desc = f"{desc}\n\nIncluded in Combo: {components}"
 
         # Link to product page
-        link = f"https://camura.in/product/{combo.id}/"
+        link = request.build_absolute_uri(f"/product/{combo.id}/")
 
-        # Image
-        image = (
-            combo.image.url
-            if combo.image
-            else "https://camura.in/static/no-image.jpg"
-        )
+        # Image absolute URL
+        if combo.image:
+            image = request.build_absolute_uri(combo.image.url)
+        else:
+            image = request.build_absolute_uri("/static/no-image.jpg")
 
         # Google Product Category → CCTV
         gmc_category = "Electronics > Video Surveillance > Security Cameras"
