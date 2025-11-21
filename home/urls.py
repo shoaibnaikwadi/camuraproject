@@ -72,6 +72,7 @@ urlpatterns = [
     path('privacy-policy/', views.privacy_policy, name='privacy_policy'),
     path('terms-and-conditions/', views.terms_and_conditions, name='terms_and_conditions'),
     path('refund-cancellation-policy/', views.refund_cancellation_policy, name='refund_cancellation_policy'),
+    path("google-feed/", views.google_feed, name="google_feed"),
     
 
 ]
