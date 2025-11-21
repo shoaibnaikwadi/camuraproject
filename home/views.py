@@ -211,6 +211,71 @@ def cart(request):
 
 
 
+from django.http import HttpResponse
+from django.utils.html import strip_tags
+from django.urls import reverse
+from .models import ComboProduct
+
+def google_feed(request):
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = "inline; filename=google_feed.csv"
+
+    # Header
+    response.write(
+        "id,title,description,link,image_link,price,availability,condition,brand,google_product_category,mpn,item_group_id,product_type,included_items\n"
+    )
+
+    for combo in ComboProduct.objects.all():
+
+        # Generate component list (Google likes this)
+        components = (
+            f"Camera: {combo.camera.camera_type} x {combo.camera_qty}, "
+            f"DVR: {combo.dvr.channels}, "
+            f"Hard Disk: {combo.hard_disk.size if combo.hard_disk else 'No HDD'}, "
+            f"Cable: {combo.cable.length} x {combo.cable_qty}, "
+            f"Power Supply: {combo.power.range_slug} x {combo.power_qty}, "
+            f"BNC Connector: {combo.bnc_connector.name} x {combo.bnc_qty}, "
+            f"DC Connector: {combo.dc_connector.name} x {combo.dc_qty}, "
+            f"Installation Included"
+        )
+
+        # Description (clean HTML)
+        desc = strip_tags(combo.description) if combo.description else ""
+        desc = f"{desc}\n\nIncluded in Combo: {components}"
+
+        # Link to product page
+        link = f"https://camura.in/product/{combo.id}/"
+
+        # Image
+        image = (
+            combo.image.url
+            if combo.image
+            else "https://camura.in/static/no-image.jpg"
+        )
+
+        # Google Product Category → CCTV
+        gmc_category = "Electronics > Video Surveillance > Security Cameras"
+
+        # Write row
+        response.write(
+            f"{combo.id},"
+            f"\"{combo.name}\","
+            f"\"{desc}\","
+            f"{link},"
+            f"{image},"
+            f"{combo.total_price()} INR,"
+            f"in stock,"
+            f"new,"
+            f"Servisco,"
+            f"6720,"
+            f"{combo.id},"
+            f"combo_{combo.id},"
+            f"\"CCTV Combo Kit\","
+            f"\"{components}\"\n"
+        )
+
+    return response
+
 
 
 @login_required
