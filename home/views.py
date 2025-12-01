@@ -1018,11 +1018,10 @@ import requests, random
 
 from decouple import config
 import random, requests
-import os
 
-SMS_API_KEY = os.environ.get('SMS_API_KEY')
-SMS_SENDER = os.environ.get('SMS_SENDER')
-SMS_MESSAGE = os.environ.get('SMS_MESSAGE')
+SMS_API_KEY = config('SMS_API_KEY')
+SMS_SENDER = config('SMS_SENDER')
+SMS_MESSAGE = config('SMS_MESSAGE')
 
 
 def send_otp(mobile):
