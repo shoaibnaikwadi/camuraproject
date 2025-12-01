@@ -12,6 +12,35 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+from decouple import Config, RepositoryEnv
+
+# Decide which .env file to load
+env_file = '.env'  # default development
+if os.getenv('DJANGO_ENV') == 'production':
+    env_file = '.env.production'
+
+config = Config(RepositoryEnv(env_file))
+
+# Django settings
+SECRET_KEY = config('SECRET_KEY')
+ENVIRONMENT = config('DJANGO_ENV', default='development')
+
+# SMS Config
+SMS_API_KEY = config('SMS_API_KEY')
+SMS_SENDER = config('SMS_SENDER')
+SMS_MESSAGE = config('SMS_MESSAGE', default="Your OTP is {otp}")
+
+
+
+
+
+
+
+
+
+
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 

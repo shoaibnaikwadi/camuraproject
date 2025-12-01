@@ -27,6 +27,8 @@ media/
 *.log
 local_settings.py
 .env
+.env.production
+
 
 # Migrations (optional, but usually you keep them)
 # */migrations/

@@ -1016,15 +1016,22 @@ from django.contrib.auth.decorators import login_required
 from .models import Profile
 import requests, random
 
+from decouple import config
+import random, requests
+
+SMS_API_KEY = config('SMS_API_KEY')
+SMS_SENDER = config('SMS_SENDER')
+SMS_MESSAGE = config('SMS_MESSAGE')
+
 
 def send_otp(mobile):
     otp = random.randint(100000, 999999)
     url = "https://www.smsalert.co.in/api/push.json"
     data = {
-        "apikey": "692028c4ce0e5 ",
-        "sender": "camura",
+        "apikey": SMS_API_KEY,
+        "sender": SMS_SENDER,
         "mobileno": mobile,
-        "text": f"Your OTP is {otp} for camura.in. Thanks for visiting the website."
+        "text": SMS_MESSAGE.format(otp=otp)
     }
     requests.post(url, data=data)
     return otp
