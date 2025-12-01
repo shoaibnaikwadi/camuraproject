@@ -1,22 +1,23 @@
 
 
-
 import os
 from pathlib import Path
 from decouple import Config, RepositoryEnv
 
+BASE_DIR = Path(__file__).resolve().parent.parent  # /var/www/camuraproject/camuraproject
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+# Project root = /var/www/camuraproject
+PROJECT_ROOT = BASE_DIR.parent
 
 ENVIRONMENT = os.environ.get("DJANGO_ENV", "development")
 
-# Use absolute path for env files
 if ENVIRONMENT == "production":
-    env_file = BASE_DIR.parent / ".env.production"
+    env_file = PROJECT_ROOT / ".env.production"
 else:
-    env_file = BASE_DIR.parent / ".env"
+    env_file = PROJECT_ROOT / ".env"
 
 config = Config(RepositoryEnv(str(env_file)))
+
 
 SECRET_KEY = config("SECRET_KEY")
 SMS_API_KEY = config("SMS_API_KEY")
