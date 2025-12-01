@@ -20,45 +20,23 @@ from decouple import Config, RepositoryEnv
 # ----------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ----------------------------
-# Load .env file
-# ----------------------------
-# First, check if DJANGO_ENV is set (for production)
-DJANGO_ENV = os.environ.get("DJANGO_ENV", "development")
 
-if DJANGO_ENV == "production":
-    # Use absolute path to env file in production
-    env_file = BASE_DIR / ".env.production"
+import os
+from decouple import Config, RepositoryEnv
+
+ENVIRONMENT = os.environ.get("DJANGO_ENV", "development")  # default is development
+
+if ENVIRONMENT == "production":
+    env_file = ".env.production"
 else:
-    # Local development
-    env_file = BASE_DIR / ".env"
+    env_file = ".env"
 
-# Load environment variables
 config = Config(RepositoryEnv(env_file))
 
-# ----------------------------
-# SECRET KEY
-# ----------------------------
-# SECRET_KEY = config("SECRET_KEY")
-SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-localfallback")
-
-# ----------------------------
-# SMS Settings
-# ----------------------------
+SECRET_KEY = config("SECRET_KEY")
 SMS_API_KEY = config("SMS_API_KEY")
 SMS_SENDER = config("SMS_SENDER")
 SMS_MESSAGE = config("SMS_MESSAGE")
-
-
-# Django settings
-SECRET_KEY = config('SECRET_KEY')
-ENVIRONMENT = config('DJANGO_ENV', default='development')
-
-# SMS Config
-SMS_API_KEY = config('SMS_API_KEY')
-SMS_SENDER = config('SMS_SENDER')
-SMS_MESSAGE = config('SMS_MESSAGE', default="Your OTP is {otp}")
-
 
 
 
