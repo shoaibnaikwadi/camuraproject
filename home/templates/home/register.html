@@ -1,47 +1,33 @@
 {% extends 'base.html' %}
-{% load crispy_forms_tags %}
-{% load widget_tweaks %}
 {% block content %}
-<div class="container mt-5" style="max-width: 400px;">
-    <div class="card shadow-sm border-0">
-        <div class="card-body">
-            <h3 class="text-center mb-4">Register</h3>
-            <form method="post">
-                {% csrf_token %}
-                {% if form.errors %}
-                    <div class="alert alert-danger">
-                        <ul class="mb-0">
-                            {% for field in form %}
-                                {% for error in field.errors %}
-                                    <li><strong>{{ field.label }}:</strong> {{ error }}</li>
-                                {% endfor %}
-                            {% endfor %}
-                        {% for error in form.non_field_errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-                {% endif %}
 
-                {{ form.non_field_errors }}
-                <div class="mb-3">
-                    <label class="form-label">Username</label>
-                    {{ form.username|add_class:"form-control" }}
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Password</label>
-                    {{ form.password1|add_class:"form-control" }}
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Confirm Password</label>
-                    {{ form.password2|add_class:"form-control" }}
-                </div>
-                <button type="submit" class="btn btn-success w-100">Register</button>
-            </form>
-            <p class="text-center mt-3 mb-0">
-                Already have an account? <a href="{% url 'login' %}">Login</a>
-            </p>
-        </div>
-    </div>
+<div class="container mt-5" style="max-width: 450px;">
+    <h3 class="text-center mb-4">Register with Mobile OTP</h3>
+
+    {% if stage == "mobile" %}
+    <!-- ============= MOBILE INPUT ============= -->
+    <form method="POST">
+        {% csrf_token %}
+        <label>Mobile Number</label>
+        <input type="text" name="mobile" class="form-control" required>
+
+        <button class="btn btn-primary w-100 mt-3" name="send_otp">Send OTP</button>
+    </form>
+
+    {% elif stage == "otp" %}
+    <!-- ============= OTP INPUT ============= -->
+    <form method="POST">
+        {% csrf_token %}
+        <label>Enter OTP</label>
+        <input type="text" name="otp" class="form-control" required>
+
+        <button class="btn btn-success w-100 mt-3" name="verify_otp">Verify OTP</button>
+
+        <p class="text-center mt-3">
+            <a href="{% url 'register' %}">Change Number</a>
+        </p>
+    </form>
+    {% endif %}
 </div>
+
 {% endblock %}

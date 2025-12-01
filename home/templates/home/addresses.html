@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+    <h3 class="mb-4 text-center">📍 My Addresses</h3>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            {% if addresses %}
+            <div class="row">
+                {% for address in addresses %}
+                <div class="col-md-6 mb-3">
+                    <div class="card border-0 shadow-sm address-card">
+                        <div class="card-body">
+
+                            <h5 class="card-title">{{ address.full_name }}</h5>
+
+                            <p class="mb-1">{{ address.address }}</p>
+                            <p class="text-muted small mb-1">
+                                {{ address.city }}, {{ address.state }} - {{ address.pincode }}
+                            </p>
+                            <p class="small">📞 {{ address.mobile }}</p>
+
+                            <div class="d-flex gap-2 mt-3">
+
+                                <!-- Edit Button -->
+                                <button class="btn btn-secondary w-50" data-bs-toggle="modal"
+                                    data-bs-target="#editAddressModal" onclick="loadEditData(
+                                        '{{ address.id }}',
+                                        '{{ address.full_name }}',
+                                        '{{ address.email }}',
+                                        '{{ address.mobile }}',
+                                        '{{ address.pincode }}',
+                                        `{{ address.address }}`,
+                                        '{{ address.city }}',
+                                        '{{ address.state }}'
+                                    )">
+                                    Edit
+                                </button>
+
+                                <!-- Delete Button -->
+                                <a href="{% url 'delete_address' address.id %}" class="btn btn-danger w-50"
+                                    onclick="return confirm('Delete this address?')">
+                                    Delete
+                                </a>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% else %}
+            <div class="alert alert-info text-center">
+                No saved addresses yet. Add one below 👇
+            </div>
+            {% endif %}
+
+            <!-- Add New Address Button -->
+            <button class="btn btn-success w-100 mt-3" data-bs-toggle="modal" data-bs-target="#addAddressModal">
+                + Add New Address
+            </button>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- ADD ADDRESS MODAL -->
+<div class="modal fade" id="addAddressModal" tabindex="-1">
+    <div class="modal-dialog">
+        <form method="POST" class="modal-content">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="add">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Add Address</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="mb-3"><input name="full_name" class="form-control" placeholder="Full Name" required></div>
+
+                <div class="mb-3"><input name="email" type="email" class="form-control" placeholder="Email" required>
+                </div>
+
+                <div class="mb-3"><input name="mobile" class="form-control" placeholder="Mobile" required></div>
+
+                <div class="mb-3"><input name="pincode" class="form-control" placeholder="Pincode" required></div>
+
+                <div class="mb-3">
+                    <textarea name="address" class="form-control" placeholder="Full Address" required></textarea>
+                </div>
+
+                <div class="mb-3"><input name="city" class="form-control" placeholder="City" required></div>
+
+                <div class="mb-3"><input name="state" class="form-control" placeholder="State" required></div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-success w-100">Save Address</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- EDIT ADDRESS MODAL -->
+<div class="modal fade" id="editAddressModal" tabindex="-1">
+    <div class="modal-dialog">
+        <form method="POST" class="modal-content">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="edit">
+            <input type="hidden" name="address_id" id="edit_id">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Address</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="mb-3"><input name="full_name" id="edit_full_name" class="form-control" required></div>
+
+                <div class="mb-3"><input name="email" id="edit_email" type="email" class="form-control" required></div>
+
+                <div class="mb-3"><input name="mobile" id="edit_mobile" class="form-control" required></div>
+
+                <div class="mb-3"><input name="pincode" id="edit_pincode" class="form-control" required></div>
+
+                <div class="mb-3">
+                    <textarea name="address" id="edit_address" class="form-control" required></textarea>
+                </div>
+
+                <div class="mb-3"><input name="city" id="edit_city" class="form-control" required></div>
+
+                <div class="mb-3"><input name="state" id="edit_state" class="form-control" required></div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-primary w-100">Update Address</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- BOOTSTRAP TOASTS FOR DJANGO MESSAGES -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 2000">
+    {% for message in messages %}
+    <div class="toast show text-white 
+         {% if 'success' in message.tags %}bg-success{% else %}bg-danger{% endif %} 
+         mb-2" role="alert" aria-live="assertive" aria-atomic="true">
+
+        <div class="toast-header">
+            <strong class="me-auto">
+                {% if 'success' in message.tags %}✔ Success{% else %}⚠ Alert{% endif %}
+            </strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+        </div>
+
+        <div class="toast-body">
+            {{ message }}
+        </div>
+
+    </div>
+    {% endfor %}
+</div>
+
+
+<!-- AUTO-SHOW TOASTS -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var toastList = [].slice.call(document.querySelectorAll('.toast'));
+        toastList.map(function (toastEl) {
+            new bootstrap.Toast(toastEl, { delay: 3000 }).show();
+        });
+    });
+</script>
+
+
+<!-- LOAD EDIT DATA -->
+<script>
+    function loadEditData(id, full_name, email, mobile, pincode, address, city, state) {
+        document.getElementById("edit_id").value = id;
+        document.getElementById("edit_full_name").value = full_name;
+        document.getElementById("edit_email").value = email;
+        document.getElementById("edit_mobile").value = mobile;
+        document.getElementById("edit_pincode").value = pincode;
+        document.getElementById("edit_address").value = address;
+        document.getElementById("edit_city").value = city;
+        document.getElementById("edit_state").value = state;
+    }
+</script>
+
+
+<style>
+    .address-card {
+        transition: 0.2s;
+    }
+
+    .address-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+    }
+</style>
+
+{% endblock %}

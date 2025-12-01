@@ -10,7 +10,7 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('login/', auth_views.LoginView.as_view(template_name='home/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='home'), name='logout'),
-    path('register/', views.register, name='register'),
+    path('registerold/', views.registerold, name='registerold'),
 ###########################################
     path('productlist/', views.product_list, name='product_list'),
     path('product/<int:pk>/', views.product_detail, name='product_detail'),
@@ -58,7 +58,7 @@ urlpatterns = [
     path('cart/', views.cart, name='cart'),
     path('add-to-cart/<int:combo_id>/', views.add_to_cart, name='add_to_cart'),
 
-    path('customer-profile/', views.user_profile, name='customer_profile'),
+    path('profile/', views.profile, name='profile'),
     path('myorders/', views.my_orders, name='my_orders'),
     path('payment-success/', views.payment_success, name='payment_success'),
     path('order-success/', TemplateView.as_view(template_name='home/order_success.html'), name='order_success'),
@@ -73,6 +73,12 @@ urlpatterns = [
     path('terms-and-conditions/', views.terms_and_conditions, name='terms_and_conditions'),
     path('refund-cancellation-policy/', views.refund_cancellation_policy, name='refund_cancellation_policy'),
     path("google-feed/", views.google_feed, name="google_feed"),
+    path("addresses/", views.address_list, name="address_list"),
+
+    path("address/delete/<int:id>/", views.delete_address, name="delete_address"),
+    path("register/", views.register, name="register"),
+
+    # path("profile/", views.profile, name="profile"),
     
 
 ]

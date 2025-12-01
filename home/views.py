@@ -21,7 +21,7 @@ def home(request):
 
 
 
-def register(request):
+def registerold(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
@@ -31,7 +31,7 @@ def register(request):
             return redirect('login')
     else:
         form = UserCreationForm()
-    return render(request, 'home/register.html', {'form': form})
+    return render(request, 'home/registerold.html', {'form': form})
 
 # @login_required
 # def dashboard(request):
@@ -49,6 +49,9 @@ from .forms import (CameraForm, DVRForm, CableForm, PowerSupplyForm,
 # PUBLIC SHOP VIEWS
 
 def product_list(request):
+    profile = request.user.profile
+    if not profile.full_name or not profile.email:
+        return redirect("profile")
     combos = ComboProduct.objects.all()
     return render(request, 'home/product_list.html', {'combos': combos})
 
@@ -870,3 +873,284 @@ def terms_and_conditions(request):
 def refund_cancellation_policy(request):
     return render(request, 'home/refund_cancellation_policy.html')
 
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def address_list(request):
+    addresses = CustomerProfile.objects.filter(user=request.user)
+
+    # ADD NEW ADDRESS
+    if request.method == "POST" and request.POST.get("form_type") == "add":
+        CustomerProfile.objects.create(
+            user=request.user,
+            full_name=request.POST.get("full_name"),
+            email=request.POST.get("email"),
+            mobile=request.POST.get("mobile"),
+            pincode=request.POST.get("pincode"),
+            address=request.POST.get("address"),
+            city=request.POST.get("city"),
+            state=request.POST.get("state"),
+        )
+        messages.success(request, "Address added successfully!")
+        return redirect("address_list")
+
+    # EDIT EXISTING ADDRESS
+    if request.method == "POST" and request.POST.get("form_type") == "edit":
+        address = get_object_or_404(CustomerProfile, id=request.POST.get("address_id"), user=request.user)
+
+        address.full_name = request.POST.get("full_name")
+        address.email = request.POST.get("email")
+        address.mobile = request.POST.get("mobile")
+        address.pincode = request.POST.get("pincode")
+        address.address = request.POST.get("address")
+        address.city = request.POST.get("city")
+        address.state = request.POST.get("state")
+        address.save()
+
+        messages.success(request, "Address updated successfully!")
+        return redirect("address_list")
+
+    return render(request, "home/addresses.html", {"addresses": addresses})
+
+
+
+@login_required
+def delete_address(request, id):
+    address = get_object_or_404(CustomerProfile, id=id, user=request.user)
+    address.delete()
+    
+    messages.success(request, "Address deleted.")
+    return redirect("address_list")
+
+
+
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .models import Profile
+
+# @login_required
+# def profile_page(request):
+#     profile = request.user.profile
+
+#     if request.method == "POST":
+#         full_name = request.POST.get('full_name')
+#         email = request.POST.get('email')
+#         mobile = request.POST.get('mobile')
+
+#         # Update data
+#         profile.full_name = full_name
+#         profile.email = email
+#         profile.mobile = mobile
+#         profile.save()
+
+#         return redirect('profile')
+
+#     return render(request, "home/profile.html", {"profile": profile})
+
+
+
+
+# from django.shortcuts import render, redirect
+# from django.contrib.auth.decorators import login_required
+
+# @login_required
+# def profile_page(request):
+#     profile = request.user.profile
+
+#     # Redirect if incomplete profile
+#     if not profile.full_name or not profile.email or not profile.mobile:
+#         pass  # This page itself will be used to fill missing fields
+
+#     if request.method == "POST":
+#         full_name = request.POST.get('full_name')
+
+#         profile.full_name = full_name
+#         profile.save()
+
+#         return redirect('profile')
+
+#     return render(request, "home/profile.html", {"profile": profile})
+
+
+
+
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+
+@login_required
+def profile(request):
+    profile = request.user.profile
+
+    if request.method == "POST":
+        full_name = request.POST.get("full_name")
+        email = request.POST.get("email")
+
+        if not full_name:
+            messages.error(request, "Full name is required.")
+            return redirect("profile")
+
+        profile.full_name = full_name
+        profile.email = email  # optional
+        profile.save()
+        messages.success(request, "Profile updated successfully!")
+        return redirect("product_list")
+
+    return render(request, "home/profile.html", {"profile": profile})
+
+
+
+
+
+
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.models import User
+from django.contrib.auth import login
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from .models import Profile
+import requests, random
+
+
+def send_otp(mobile):
+    otp = random.randint(100000, 999999)
+    url = "https://www.smsalert.co.in/api/push.json"
+    data = {
+        "apikey": "692028c4ce0e5 ",
+        "sender": "camura",
+        "mobileno": mobile,
+        "text": f"Your OTP is {otp} for camura.in. Thanks for visiting the website."
+    }
+    requests.post(url, data=data)
+    return otp
+
+
+# ----------------------------------------------------
+#   REGISTER & VERIFY OTP IN SINGLE PAGE
+# ----------------------------------------------------
+# def register(request):
+#     stage = "mobile"   # default stage
+
+#     if request.method == "POST":
+
+#         # ---------------------------------------
+#         # STAGE 1 → SEND OTP
+#         # ---------------------------------------
+#         if "send_otp" in request.POST:
+#             mobile = request.POST.get("mobile")
+
+#             otp = send_otp(mobile)
+
+#             request.session["reg_mobile"] = mobile
+#             request.session["reg_otp"] = otp
+
+#             stage = "otp"   # show OTP form
+#             messages.success(request, "OTP Sent Successfully!")
+
+#         # ---------------------------------------
+#         # STAGE 2 → VERIFY OTP
+#         # ---------------------------------------
+#         elif "verify_otp" in request.POST:
+#             entered = request.POST.get("otp")
+#             real = str(request.session["reg_otp"])
+#             mobile = request.session["reg_mobile"]
+
+#             if entered == real:
+#                 # Create user
+#                 user = User.objects.create_user(username=mobile, password=mobile)
+
+#                 # login user
+#                 login(request, user)
+
+#                 # Update profile
+#                 profile = user.profile
+#                 profile.mobile = mobile
+#                 # profile.email = f"{mobile}@temp.com"
+#                 profile.save()
+
+#                 # clean session
+#                 del request.session["reg_mobile"]
+#                 del request.session["reg_otp"]
+
+#                 return redirect("profile")
+
+#             else:
+#                 messages.error(request, "Invalid OTP")
+#                 stage = "otp"
+
+#     return render(request, "home/register.html", {"stage": stage})
+
+
+
+
+
+def register(request):
+    stage = "mobile"   # default stage
+
+    if request.method == "POST":
+
+        # ---------------------------------------
+        # STAGE 1 → SEND OTP
+        # ---------------------------------------
+        if "send_otp" in request.POST:
+            mobile = request.POST.get("mobile")
+
+            otp = send_otp(mobile)
+
+            request.session["reg_mobile"] = mobile
+            request.session["reg_otp"] = otp
+
+            # Check if user exists
+            request.session["user_exists"] = User.objects.filter(username=mobile).exists()
+
+            stage = "otp"   # show OTP form
+            messages.success(request, "OTP Sent Successfully!")
+
+        # ---------------------------------------
+        # STAGE 2 → VERIFY OTP
+        # ---------------------------------------
+        elif "verify_otp" in request.POST:
+            entered = request.POST.get("otp")
+            real = str(request.session["reg_otp"])
+            mobile = request.session["reg_mobile"]
+
+            if entered == real:
+                # If user exists → login
+                if request.session.get("user_exists"):
+                    user = User.objects.get(username=mobile)
+                # Else → create new user
+                else:
+                    user = User.objects.create_user(username=mobile, password=mobile)
+
+                # Login user
+                login(request, user)
+
+                # Ensure profile exists
+                profile, created = Profile.objects.get_or_create(user=user)
+                profile.mobile = mobile
+                profile.save()
+
+                # Clean session
+                request.session.pop("reg_mobile", None)
+                request.session.pop("reg_otp", None)
+                request.session.pop("user_exists", None)
+
+
+                # ------------------------------
+                # Conditional redirect
+                # ------------------------------
+                if profile.full_name and profile.email:
+                    return redirect("product_list")  # already completed profile
+                else:
+                    return redirect("profile")      # complete profile
+
+            else:
+                messages.error(request, "Invalid OTP")
+                stage = "otp"
+
+    return render(request, "home/register.html", {"stage": stage})

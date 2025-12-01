@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-5">
+  <div class="col-md-6 mx-auto">
+
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white text-center">
+        <h4>Complete Your Profile</h4>
+      </div>
+
+      <div class="card-body">
+        <form method="POST">
+          {% csrf_token %}
+
+          <!-- Full Name -->
+          <div class="mb-3">
+            <label class="form-label">Full Name *</label>
+            <input type="text" name="full_name" class="form-control" value="{{ profile.full_name }}" required>
+          </div>
+
+          <!-- Email (optional) -->
+          <div class="mb-3">
+            <label class="form-label">Email (Optional)</label>
+            <input type="email" name="email" class="form-control" value="{{ profile.email }}">
+          </div>
+
+          <!-- Mobile (read-only) -->
+          <div class="mb-3">
+            <label class="form-label">Mobile</label>
+            <input type="text" class="form-control" value="{{ profile.mobile }}" readonly>
+          </div>
+
+          <button class="btn btn-success w-100">Save Profile</button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

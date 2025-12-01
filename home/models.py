@@ -260,7 +260,7 @@ class OrderItem(models.Model):
 #     def subtotal(self):
 #         return self.quantity * self.price
 
-
+# now this is used for addresses
 class CustomerProfile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='addresses')
     full_name = models.CharField(max_length=100)
@@ -275,3 +275,62 @@ class CustomerProfile(models.Model):
 
     def __str__(self):
         return self.full_name
+    
+
+    # now this model is for only customer models
+
+# from django.db import models
+# from django.contrib.auth.models import User
+
+# class Profile(models.Model):
+#     user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+#     full_name = models.CharField(max_length=100)
+#     email = models.EmailField(unique=True)
+#     mobile = models.CharField(max_length=15, unique=True)
+
+#     def save(self, *args, **kwargs):
+#         # Prevent changing email or mobile after created
+#         if self.pk:
+#             old = Profile.objects.get(pk=self.pk)
+#             self.email = old.email
+#             self.mobile = old.mobile
+#         super().save(*args, **kwargs)
+
+#     def __str__(self):
+#         return self.full_name
+
+
+# from django.db import models
+# from django.contrib.auth.models import User
+
+# class Profile(models.Model):
+#     user = models.OneToOneField(User, on_delete=models.CASCADE)
+#     full_name = models.CharField(max_length=100, blank=True)
+#     email = models.EmailField(unique=True, blank=True)
+#     mobile = models.CharField(max_length=15, unique=True)
+
+#     def save(self, *args, **kwargs):
+#         # LOCK email and mobile from being updated
+#         if self.pk:
+#             old = Profile.objects.get(pk=self.pk)
+#             self.email = old.email
+#             self.mobile = old.mobile
+#         super().save(*args, **kwargs)
+
+#     def __str__(self):
+#         return self.full_name if self.full_name else self.mobile
+
+
+
+from django.db import models
+from django.contrib.auth.models import User
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    full_name = models.CharField(max_length=100, blank=True)
+    email = models.EmailField(unique=True, null=True, blank=True)
+    mobile = models.CharField(max_length=20, unique=True)
+
+    def __str__(self):
+        return self.full_name if self.full_name else self.mobile

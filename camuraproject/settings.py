@@ -49,11 +49,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'home',
+    # 'home',
     'crispy_forms',
     'crispy_bootstrap5',
     'widget_tweaks',
     'django.contrib.sitemaps',
+    'home.apps.HomeConfig',    #this is for create profile after user signup
+
 
 ]
 

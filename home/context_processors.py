@@ -7,3 +7,7 @@ def cart_count(request):
     else:
         total_qty = 0
     return {'cart_items_count': total_qty}
+
+
+
+
