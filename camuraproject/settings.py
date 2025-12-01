@@ -12,14 +12,42 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+from pathlib import Path
 from decouple import Config, RepositoryEnv
 
-# Decide which .env file to load
-env_file = '.env'  # default development
-if os.getenv('DJANGO_ENV') == 'production':
-    env_file = '.env.production'
+# ----------------------------
+# BASE DIR
+# ----------------------------
+BASE_DIR = Path(__file__).resolve().parent.parent
 
+# ----------------------------
+# Load .env file
+# ----------------------------
+# First, check if DJANGO_ENV is set (for production)
+DJANGO_ENV = os.environ.get("DJANGO_ENV", "development")
+
+if DJANGO_ENV == "production":
+    # Use absolute path to env file in production
+    env_file = BASE_DIR / ".env.production"
+else:
+    # Local development
+    env_file = BASE_DIR / ".env"
+
+# Load environment variables
 config = Config(RepositoryEnv(env_file))
+
+# ----------------------------
+# SECRET KEY
+# ----------------------------
+SECRET_KEY = config("SECRET_KEY")
+
+# ----------------------------
+# SMS Settings
+# ----------------------------
+SMS_API_KEY = config("SMS_API_KEY")
+SMS_SENDER = config("SMS_SENDER")
+SMS_MESSAGE = config("SMS_MESSAGE")
+
 
 # Django settings
 SECRET_KEY = config('SECRET_KEY')
