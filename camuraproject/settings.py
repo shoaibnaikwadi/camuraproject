@@ -1,22 +1,21 @@
 
 
-import os
 from pathlib import Path
+import os
 from decouple import Config, RepositoryEnv
 
-BASE_DIR = Path(__file__).resolve().parent.parent  # /var/www/camuraproject/camuraproject
-
-# Project root = /var/www/camuraproject
-PROJECT_ROOT = BASE_DIR.parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 ENVIRONMENT = os.environ.get("DJANGO_ENV", "development")
 
 if ENVIRONMENT == "production":
-    env_file = PROJECT_ROOT / ".env.production"
+    env_file = BASE_DIR / ".env.production"
 else:
-    env_file = PROJECT_ROOT / ".env"
+    env_file = BASE_DIR / ".env"
 
-config = Config(RepositoryEnv(str(env_file)))
+
+config = Config(RepositoryEnv(env_file))
+
 
 
 SECRET_KEY = config("SECRET_KEY")
@@ -35,7 +34,7 @@ SMS_MESSAGE = config("SMS_MESSAGE")
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+# BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
