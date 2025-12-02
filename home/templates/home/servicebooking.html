@@ -1,74 +1,74 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Service Booking</title>
+{% block content %}
 
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    body {
+        background: #f8f9fa;
+    }
 
-    <style>
-        body {
-            background: #f8f9fa;
-        }
+    .booking-card {
+        max-width: 600px;
+        margin: 30px auto;
+        border-radius: 12px;
+    }
 
-        .booking-card {
-            max-width: 600px;
-            margin: 40px auto;
-        }
-    </style>
-</head>
+    .form-container {
+        padding: 20px;
+    }
 
-<body>
+    .btn-group-custom {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+    }
+</style>
 
-    <div class="container">
-        <div class="card booking-card shadow-sm">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">Service Booking Form</h4>
+<div class="container">
+    <div class="card booking-card shadow-lg">
+        <div class="card-header bg-primary text-white text-center py-3">
+            <h4 class="mb-0">Service Booking Form</h4>
+        </div>
+
+        <div class="card-body form-container">
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% crispy form %}
+
+                <a href="/productlist/" class="btn btn-outline-secondary w-50 mt-2">Cancel</a>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<!-- SUCCESS POPUP -->
+{% if booking_id %}
+<div class="modal fade show" id="successModal" style="display:block; background: rgba(0,0,0,0.45);" aria-modal="true"
+    role="dialog">
+
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-success shadow-lg">
+
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">Booking Successful!</h5>
             </div>
-            <div class="card-body">
 
-                <form method="POST" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    {{ form.as_p }}
-
-                    <button type="submit" class="btn btn-primary mt-3 w-100">Submit Booking</button>
-                    <a href="/productlist/" class="btn btn-secondary w-50">Cancel</a>
-                </form>
-
+            <div class="modal-body text-center">
+                <p>Your booking has been submitted successfully.</p>
+                <h4>Your Booking ID: <strong>#{{ booking_id }}</strong></h4>
             </div>
+
+            <div class="modal-footer">
+                <a href="" class="btn btn-success w-100">OK</a>
+            </div>
+
         </div>
     </div>
 
+</div>
+{% endif %}
 
-    <!-- SHOW SUCCESS POPUP -->
-    {% if booking_id %}
-    <div class="modal fade show" id="successModal" style="display:block; background: rgba(0,0,0,0.5);" aria-modal="true"
-        role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content border-success">
-                <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title">Booking Successful!</h5>
-                </div>
-                <div class="modal-body">
-                    <p>Your booking has been submitted successfully.</p>
-                    <h4>Your Booking ID: <strong>#{{ booking_id }}</strong></h4>
-                </div>
-                <div class="modal-footer">
-                    <!-- reload to hide modal -->
-                    <a href="" class="btn btn-success">OK</a>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-</body>
-
-</html>
+{% endblock %}
