@@ -1177,3 +1177,28 @@ def register(request):
                 stage = "otp"
 
     return render(request, "home/register.html", {"stage": stage})
+
+
+
+
+
+
+from django.shortcuts import render
+from .forms import ServiceBookingForm
+
+def book_service(request):
+    booking_id = None
+
+    if request.method == "POST":
+        form = ServiceBookingForm(request.POST, request.FILES)
+        if form.is_valid():
+            booking = form.save()   # SAVE AND GET BOOKING OBJECT
+            booking_id = booking.id
+    else:
+        form = ServiceBookingForm()
+
+    return render(request, "home/servicebooking.html", {
+        "form": form,
+        "booking_id": booking_id,
+    })
+

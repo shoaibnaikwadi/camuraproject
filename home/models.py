@@ -335,3 +335,46 @@ class Profile(models.Model):
     def __str__(self):
         return self.full_name if self.full_name else self.mobile
  
+
+
+
+
+class ServiceBooking(models.Model):
+    SERVICE_TYPES = [
+        ("cctvrepair", "CCTV Repair"),
+        # ("desotherktop", "Other Repair"),
+        # ("onsite", "On-site Visit"),
+        ("other", "Other"),
+    ]
+
+    STATUS_CHOICES = [
+        ("new", "New"),
+        ("scheduled", "Scheduled"),
+        ("completed", "Completed"),
+        ("cancelled", "Cancelled"),
+    ]
+
+    name = models.CharField(max_length=100)
+    mobile = models.CharField(max_length=15)
+    email = models.EmailField(blank=True, null=True)
+    problem_description = models.TextField()
+
+    service_type = models.CharField(
+        max_length=20, choices=SERVICE_TYPES, default="onsite"
+    )
+
+    preferred_date = models.DateField()
+    preferred_time = models.TimeField()
+
+    address = models.TextField(blank=True, null=True)
+
+    attachment = models.FileField(upload_to="service_attachments/", blank=True, null=True)
+
+    status = models.CharField(
+        max_length=20, choices=STATUS_CHOICES, default="new"
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name} - {self.mobile}"

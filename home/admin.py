@@ -184,3 +184,44 @@ class OrderAdmin(admin.ModelAdmin):
 
 admin.site.register(Order, OrderAdmin)
 admin.site.register(OrderItem)  # Optional: You can register separately if needed
+
+
+
+
+
+from django.contrib import admin
+from .models import ServiceBooking
+
+@admin.register(ServiceBooking)
+class ServiceBookingAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "name",
+        "mobile",
+        "service_type",
+        "preferred_date",
+        "preferred_time",
+        "status",
+        "created_at",
+    )
+
+    list_filter = (
+        "service_type",
+        "status",
+        "preferred_date",
+        "created_at",
+    )
+
+    search_fields = (
+        "name",
+        "mobile",
+        "problem_description",
+    )
+
+    list_editable = (
+        "status",
+    )
+
+    readonly_fields = ("created_at",)
+
+    ordering = ("-created_at",)

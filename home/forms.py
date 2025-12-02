@@ -45,3 +45,18 @@ class CustomerProfileForm(forms.ModelForm):
         widgets = {
             'address': forms.Textarea(attrs={'rows': 3}),
         }
+
+
+from django import forms
+from .models import ServiceBooking
+
+class ServiceBookingForm(forms.ModelForm):
+    class Meta:
+        model = ServiceBooking
+        fields = "__all__"
+        widgets = {
+            "preferred_date": forms.DateInput(attrs={"type": "date"}),
+            "preferred_time": forms.TimeInput(attrs={"type": "time"}),
+            "problem_description": forms.Textarea(attrs={"rows": 3}),
+            "address": forms.Textarea(attrs={"rows": 2}),
+        }

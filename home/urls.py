@@ -78,7 +78,7 @@ urlpatterns = [
     path("address/delete/<int:id>/", views.delete_address, name="delete_address"),
     path("register/", views.register, name="register"),
 
-    # path("profile/", views.profile, name="profile"),
+    path("book_service/", views.book_service, name="book_service"),
     
 
 ]
