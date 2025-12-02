@@ -334,3 +334,4 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.full_name if self.full_name else self.mobile
+ 

@@ -176,7 +176,7 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown"
                             data-bs-toggle="dropdown">
-                            <i class="bi bi-person-circle fs-5 me-1"></i> {{ user.username }}
+                            <i class="bi bi-person-circle fs-5 me-1"></i> {{ user.profile.full_name|default:user.username }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="{% url 'profile' %}">My Account</a></li>

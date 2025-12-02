@@ -48,12 +48,28 @@ from .forms import (CameraForm, DVRForm, CableForm, PowerSupplyForm,
 
 # PUBLIC SHOP VIEWS
 
-def product_list(request):
-    profile = request.user.profile
-    if not profile.full_name or not profile.email:
-        return redirect("profile")
+# def product_list(request): 
+#     profile = request.user.profile
+#     if not profile.full_name or not profile.email:
+#         return redirect("profile")
+#     combos = ComboProduct.objects.all()
+#     return render(request, 'home/product_list.html', {'combos': combos})
+
+
+
+
+def product_list(request): 
+    if request.user.is_authenticated:
+        profile = request.user.profile
+        if not profile.full_name or not profile.email:
+            return redirect("profile")
+
     combos = ComboProduct.objects.all()
     return render(request, 'home/product_list.html', {'combos': combos})
+
+
+
+
 
 def product_detail(request, pk):
     combo = get_object_or_404(ComboProduct, pk=pk)

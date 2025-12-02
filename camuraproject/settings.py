@@ -45,8 +45,8 @@ SECRET_KEY = 'django-insecure-yd!_0y5(2$9q74qyatztp!jqg0tu7%ie-%ej8c1^_b)u(zzl83
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-# DEBUG = True
-DEBUG = False
+DEBUG = True
+# DEBUG = False
 ALLOWED_HOSTS = ["camura.in", "www.camura.in", "127.0.0.1"]
 
 LOGIN_REDIRECT_URL = 'home'
