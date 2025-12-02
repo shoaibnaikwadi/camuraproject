@@ -225,3 +225,15 @@ class ServiceBookingAdmin(admin.ModelAdmin):
     readonly_fields = ("created_at",)
 
     ordering = ("-created_at",)
+
+
+
+
+from django.contrib import admin
+from .models import Profile
+
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ('full_name', 'mobile', 'email', 'user')
+    search_fields = ('full_name', 'mobile', 'email', 'user__username')
+    list_filter = ('email',)

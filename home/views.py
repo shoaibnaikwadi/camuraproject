@@ -1191,9 +1191,13 @@ def book_service(request):
 
     if request.method == "POST":
         form = ServiceBookingForm(request.POST, request.FILES)
+
         if form.is_valid():
-            booking = form.save()   # SAVE AND GET BOOKING OBJECT
+            booking = form.save()
             booking_id = booking.id
+        else:
+            print("FORM ERRORS:", form.errors)   # <-- ADD THIS LINE
+
     else:
         form = ServiceBookingForm()
 
@@ -1201,4 +1205,5 @@ def book_service(request):
         "form": form,
         "booking_id": booking_id,
     })
+
 

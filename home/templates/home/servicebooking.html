@@ -36,9 +36,11 @@
             <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 {% crispy form %}
-
-                <a href="/productlist/" class="btn btn-outline-secondary w-50 mt-2">Cancel</a>
+            
+                <button type="submit" class="btn btn-primary w-100 mt-2">Submit</button>
+                <a href="/productlist/" class="btn btn-outline-secondary w-100 mt-2">Cancel</a>
             </form>
+
 
         </div>
     </div>

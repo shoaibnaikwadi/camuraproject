@@ -371,7 +371,7 @@ class ServiceBooking(models.Model):
     attachment = models.FileField(upload_to="service_attachments/", blank=True, null=True)
 
     status = models.CharField(
-        max_length=20, choices=STATUS_CHOICES, default="new"
+        max_length=20, choices=STATUS_CHOICES, default="new", blank=True
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
