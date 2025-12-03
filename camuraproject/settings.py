@@ -51,7 +51,7 @@ ALLOWED_HOSTS = ["camura.in", "www.camura.in", "127.0.0.1"]
 
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
-LOGIN_URL = 'login'
+LOGIN_URL = 'register'
 
 
 
