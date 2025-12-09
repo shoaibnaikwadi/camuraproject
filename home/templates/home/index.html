@@ -1,14 +1,298 @@
-{% extends "base.html" %} 
-
-{% block title %}
-    Home | Camura.in
-{% endblock %}
+{% extends "base.html" %}
+{% block title %}CCTV Installation in Dharashiv | Hikvision | CP Plus | Camura{% endblock %}
 
 {% block content %}
-    <div class="p-5 mb-4 bg-light rounded-3">
-        <div class="container-fluid py-5">
-            <h1 class="display-5 fw-bold">Welcome to Camura.in!!</h1>
-            <p class="col-md-8 fs-4">Your one-stop shop for professional cameras and lenses.</p>
+
+<!-- ⭐ JSON-LD SEO SCHEMA -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "Camura - Netshop Sales",
+  "image": "",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Pawar Complex Shop No.1, Opp. Judge Quarter, Behind Tuljabhawani Stadium",
+    "addressLocality": "Dharashiv",
+    "addressRegion": "Maharashtra",
+    "postalCode": "413501",
+    "addressCountry": "IN"
+  },
+  "telephone": "9850504728",
+  "email": "support@camura.in",
+  "url": "https://camura.in",
+  "priceRange": "₹₹",
+  "paymentAccepted": "Cash, UPI, Card",
+  "openingHours": "Mo-Su 00:00-23:59",
+  "servesLocation": "Dharashiv, Osmanabad, Solapur, Beed"
+}
+</script>
+
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "Service",
+ "serviceType": "CCTV Installation",
+ "provider": {
+   "@type": "LocalBusiness",
+   "name": "Camura - Netshop Sales"
+ },
+ "areaServed": ["Dharashiv", "Osmanabad"],
+ "description": "Professional CCTV installation, DVR/NVR setup, WiFi cameras, home/office surveillance systems"
+}
+</script>
+
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "FAQPage",
+ "mainEntity": [{
+   "@type": "Question",
+   "name": "Do you provide CCTV installation in Dharashiv?",
+   "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "Yes, we provide same-day CCTV camera installation in Dharashiv for homes, shops, offices & industries."
+   }
+ },{
+   "@type": "Question",
+   "name": "Which CCTV brands do you sell?",
+   "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "We sell Hikvision, CP Plus, Dahua, Godrej, TP-Link WiFi Cameras, and more."
+   }
+ },{
+   "@type": "Question",
+   "name": "Do you provide DVR/NVR installation?",
+   "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "Yes, we provide installation and configuration for DVR, NVR, hard drives, and remote mobile view."
+   }
+ }]
+}
+</script>
+
+<!-- 🌟 HERO SECTION (PREMIUM) -->
+<section class="py-5 text-white"
+    style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1557770347-47c8fe3c5f0b') center/cover;">
+    <div class="container text-center py-5">
+        <h1 class="display-4 fw-bold">Best CCTV Camera Installation in Dharashiv</h1>
+        <p class="lead mt-3">
+            Secure your home & business with Hikvision, CP Plus & Dahua CCTV Systems. Same Day Installation.
+        </p>
+        <a href="/productlist" class="btn btn-primary btn-lg mt-3 px-4">Shop CCTV Cameras</a>
+        <a href="#services" class="btn btn-outline-light btn-lg mt-3 ms-2 px-4">Our Services</a>
+    </div>
+</section>
+
+<!-- 💥 FEATURES STRIP -->
+<section class="bg-primary text-white py-3">
+    <div class="container">
+        <div class="row text-center">
+
+            <div class="col-6 col-md-3"><i class="bi bi-lightning-charge"></i> Same-Day Installation</div>
+            <div class="col-6 col-md-3"><i class="bi bi-shield-check"></i> Warranty Included</div>
+            <div class="col-6 col-md-3"><i class="bi bi-camera-video"></i> HD & WiFi Cameras</div>
+            <div class="col-6 col-md-3"><i class="bi bi-headset"></i> 24/7 Support</div>
+
         </div>
     </div>
+</section>
+
+<!-- 🎯 SERVICES -->
+<section class="py-5" id="services">
+    <div class="container">
+        <h2 class="text-center fw-bold mb-4">Premium CCTV Services in Dharashiv</h2>
+
+        <div class="row g-4">
+
+            <div class="col-md-4">
+                <div class="card shadow-lg h-100 border-0">
+                    <img src="https://images.unsplash.com/photo-1581091012184-5c4c37e7cb18" class="card-img-top">
+                    <div class="card-body text-center">
+                        <h4>CCTV Installation</h4>
+                        <p>Professional and clean installation for home, shops, offices & industries.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card shadow-lg h-100 border-0">
+                    <img src="https://images.unsplash.com/photo-1581093458793-61b1a5b75e87" class="card-img-top">
+                    <div class="card-body text-center">
+                        <h4>DVR / NVR Setup</h4>
+                        <p>Complete DVR/NVR configuration with remote mobile view setup.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card shadow-lg h-100 border-0">
+                    <img src="https://images.unsplash.com/photo-1562892841-2d0b6b0c8f20" class="card-img-top">
+                    <div class="card-body text-center">
+                        <h4>WiFi Smart Cameras</h4>
+                        <p>Wireless cameras with two-way audio, night vision & motion alerts.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- 🛍 POPULAR PACKAGES -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center fw-bold mb-4">CCTV Installation Packages</h2>
+
+        <div class="row g-4">
+
+            <div class="col-md-4">
+                <div class="card shadow border-0">
+                    <div class="card-body text-center">
+                        <h4>2 Camera Package</h4>
+                        <p>Includes wiring, DVR setup & installation</p>
+                        <h3 class="text-primary">₹6,999</h3>
+                        <a href="/productlist" class="btn btn-primary mt-2">View Details</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card shadow border-0">
+                    <div class="card-body text-center">
+                        <h4>4 Camera Package</h4>
+                        <p>HD cameras + DVR + full installation</p>
+                        <h3 class="text-primary">₹10,999</h3>
+                        <a href="/productlist" class="btn btn-primary mt-2">View Details</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card shadow border-0">
+                    <div class="card-body text-center">
+                        <h4>8 Camera Package</h4>
+                        <p>High clarity cameras with full setup</p>
+                        <h3 class="text-primary">₹18,999</h3>
+                        <a href="/productlist" class="btn btn-primary mt-2">View Details</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ⭐ CUSTOMER REVIEWS -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center fw-bold mb-4">What Our Customers Say</h2>
+
+        <div class="row g-4">
+
+            <div class="col-md-4">
+                <div class="card shadow border-0">
+                    <div class="card-body">
+                        <p>"Quick installation and very professional. Best CCTV service in Dharashiv."</p>
+                        <strong>- Rahul S.</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card shadow border-0">
+                    <div class="card-body">
+                        <p>"Affordable and reliable. Mobile view setup is perfect."</p>
+                        <strong>- Priya K.</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card shadow border-0">
+                    <div class="card-body">
+                        <p>"Used their package for my shop. Very satisfied with clarity."</p>
+                        <strong>- Imran M.</strong>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- 📸 GALLERY -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center fw-bold mb-4">Our Installation Work</h2>
+
+        <div class="row g-3">
+
+            <div class="col-6 col-md-3">
+                <img src="https://images.unsplash.com/photo-1581091745912-3a9bfa95ecc5"
+                    class="img-fluid rounded shadow">
+            </div>
+
+            <div class="col-6 col-md-3">
+                <img src="https://images.unsplash.com/photo-1603791452906-b253cbe2b1d5"
+                    class="img-fluid rounded shadow">
+            </div>
+
+            <div class="col-6 col-md-3">
+                <img src="https://images.unsplash.com/photo-1581091723150-bf27c84a6eab"
+                    class="img-fluid rounded shadow">
+            </div>
+
+            <div class="col-6 col-md-3">
+                <img src="https://images.unsplash.com/photo-1593950326584-038f2c15f361"
+                    class="img-fluid rounded shadow">
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ❓ FAQ SECTION -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="fw-bold text-center mb-4">Frequently Asked Questions</h2>
+
+        <div class="accordion" id="faq">
+
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#q1">
+                        Do you provide same-day installation in Dharashiv?
+                    </button>
+                </h2>
+                <div id="q1" class="accordion-collapse collapse show">
+                    <div class="accordion-body">Yes, same-day installation is available for most locations in Dharashiv.
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item mt-2">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#q2">
+                        Which brands do you install?
+                    </button>
+                </h2>
+                <div id="q2" class="accordion-collapse collapse">
+                    <div class="accordion-body">Hikvision, CP Plus, Dahua, Godrej, TP-Link, and more.</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- 🔥 FINAL CTA -->
+<section class="py-5 bg-primary text-white text-center">
+    <div class="container">
+        <h2 class="fw-bold">Secure Your Home Today</h2>
+        <p>Best pricing, fastest delivery & expert technicians.</p>
+        <a href="/productlist" class="btn btn-light btn-lg">Browse CCTV Products</a>
+    </div>
+</section>
+
 {% endblock %}
