@@ -1,29 +1,36 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% block title %}Privacy Policy - Camura{% endblock %}
+
 {% block content %}
-<div class="container my-5">
-    <h2 class="text-center mb-4">Privacy Policy</h2>
-    <p>At <strong>Camura</strong>, we value your privacy. This policy outlines how we collect, use, and protect your
-        personal information.</p>
+<h1>Privacy Policy</h1>
+<p><strong>Last Updated:</strong> 09-12-2025</p>
 
-    <h5>1. Information We Collect</h5>
-    <p>We may collect personal information such as your name, email address, mobile number, and address when you
-        register, make a purchase, or contact us.</p>
+<p>At <strong>Camura (Netshop Sales)</strong>, accessible from camura.in, your privacy is extremely important to us.</p>
 
-    <h5>2. How We Use Your Information</h5>
-    <ul>
-        <li>To process your orders and payments</li>
-        <li>To communicate updates and offers</li>
-        <li>To improve user experience</li>
-    </ul>
+<h3>Information We Collect</h3>
+<ul>
+    <li>Name, phone number, email</li>
+    <li>Billing and installation address</li>
+    <li>Device and IP data</li>
+    <li>Order and payment details</li>
+</ul>
 
-    <h5>3. Data Protection</h5>
-    <p>We use secure servers and encryption to protect your data. We do not share your information with third parties
-        except for payment and delivery partners.</p>
+<h3>How We Use Your Information</h3>
+<ul>
+    <li>Process orders and schedule installation</li>
+    <li>Customer support</li>
+    <li>Fraud prevention</li>
+    <li>Website improvement</li>
+</ul>
 
-    <h5>4. Your Rights</h5>
-    <p>You may request to access, update, or delete your personal data by contacting us at <a
-            href="mailto:support@camura.com">support@camura.com</a>.</p>
+<h3>Sharing of Information</h3>
+<p>We share your data only with delivery partners, installation staff, payment gateways, or legal authorities when
+    required.</p>
 
-    <p class="mt-4">Updated on {{ now|date:"F d, Y" }}</p>
-</div>
+<h3>Your Rights</h3>
+<p>You can request correction or deletion of your data anytime at:</p>
+
+<p>Email: <strong>support@camura.in</strong><br>
+    Phone: <strong>9850504728</strong></p>
+
 {% endblock %}

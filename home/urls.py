@@ -70,6 +70,8 @@ urlpatterns = [
     path('about/', TemplateView.as_view(template_name='home/about.html'), name='about'),
     path('contact/', views.contact_view, name='contact'),
     path('privacy-policy/', views.privacy_policy, name='privacy_policy'),
+    path('shipping-policy/', views.shipping_policy, name='shipping_policy'),
+    path('warranty/', views.warranty, name='warranty'),
     path('terms-and-conditions/', views.terms_and_conditions, name='terms_and_conditions'),
     path('refund-cancellation-policy/', views.refund_cancellation_policy, name='refund_cancellation_policy'),
     path("google-feed/", views.google_feed, name="google_feed"),

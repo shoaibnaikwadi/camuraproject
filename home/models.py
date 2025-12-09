@@ -40,13 +40,6 @@ class DVR(models.Model):
         return f"{self.get_resolution_display()} {self.get_channels_display()} DVR (₹{self.price})"
 
 
-# class HardDisk(models.Model):
-#     brand = models.CharField(max_length=100)
-#     capacity = models.CharField(max_length=50)   # Example: "500GB", "1TB"
-#     model_number = models.CharField(max_length=100)
-
-#     def __str__(self):
-#         return f"{self.brand} {self.capacity} ({self.model_number})"
 
 
 class HardDisk(models.Model):
@@ -157,39 +150,7 @@ class ComboProduct(models.Model):
 
 
 
-# # COMBO / PRODUCT (built from masters)
-# class ComboProduct(models.Model):
-#     name = models.CharField(max_length=150)
-#     camera = models.ForeignKey(Camera, on_delete=models.CASCADE)
-#     camera_qty = models.PositiveIntegerField(default=2)
-#     dvr = models.ForeignKey(DVR, on_delete=models.CASCADE)
-#     cable = models.ForeignKey(Cable, on_delete=models.CASCADE)
-#     power = models.ForeignKey(PowerSupply, on_delete=models.CASCADE)
-#     bnc_connector = models.ForeignKey(Accessory, on_delete=models.CASCADE, related_name='bnc_in_combo')
-#     dc_connector = models.ForeignKey(Accessory, on_delete=models.CASCADE, related_name='dc_in_combo')
-#     installation = models.ForeignKey(InstallationCharge, on_delete=models.CASCADE)
-#     description = models.TextField(blank=True)
-#     image = models.ImageField(upload_to='product_images/', null=True, blank=True)  # New field
-#     created_at = models.DateTimeField(auto_now_add=True)
 
-#     def total_price(self):
-#         total = Decimal('0.00')
-#         # cameras
-#         total += (self.camera.price * Decimal(self.camera_qty))
-#         # DVR
-#         total += self.dvr.price
-#         # Cable
-#         total += self.cable.price
-#         # Power supply
-#         total += self.power.price
-#         # connectors
-#         total += self.bnc_connector.price + self.dc_connector.price
-#         # installation
-#         total += self.installation.price
-#         return total
-
-#     def __str__(self):
-#         return f"{self.name} (₹{self.total_price()})"
 
 
 
@@ -203,16 +164,7 @@ class CartItem(models.Model):
         return self.combo.total_price() * self.quantity
 
  
-# class Order(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE)
-#     name = models.CharField(max_length=100)
-#     mobile = models.CharField(max_length=15)
-#     address = models.TextField()
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
 
-#     def __str__(self):
-#         return f"Order #{self.id} by {self.name}"
 
 
 
@@ -245,20 +197,6 @@ class OrderItem(models.Model):
   
 
 
-# class OrderItem(models.Model):
-#     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
-#     combo = models.ForeignKey('ComboProduct', on_delete=models.SET_NULL, null=True)
-
-#     # Snapshot fields
-#     product_name = models.CharField(max_length=200)
-#     product_image = models.ImageField(upload_to="order_snapshots/", null=True, blank=True)
-#     product_description = models.TextField(blank=True)
-
-#     quantity = models.PositiveIntegerField(default=1)
-#     price = models.DecimalField(max_digits=10, decimal_places=2)
-
-#     def subtotal(self):
-#         return self.quantity * self.price
 
 # now this is used for addresses
 class CustomerProfile(models.Model):
@@ -276,50 +214,6 @@ class CustomerProfile(models.Model):
     def __str__(self):
         return self.full_name
     
-
-    # now this model is for only customer models
-
-# from django.db import models
-# from django.contrib.auth.models import User
-
-# class Profile(models.Model):
-#     user = models.OneToOneField(User, on_delete=models.CASCADE)
-
-#     full_name = models.CharField(max_length=100)
-#     email = models.EmailField(unique=True)
-#     mobile = models.CharField(max_length=15, unique=True)
-
-#     def save(self, *args, **kwargs):
-#         # Prevent changing email or mobile after created
-#         if self.pk:
-#             old = Profile.objects.get(pk=self.pk)
-#             self.email = old.email
-#             self.mobile = old.mobile
-#         super().save(*args, **kwargs)
-
-#     def __str__(self):
-#         return self.full_name
-
-
-# from django.db import models
-# from django.contrib.auth.models import User
-
-# class Profile(models.Model):
-#     user = models.OneToOneField(User, on_delete=models.CASCADE)
-#     full_name = models.CharField(max_length=100, blank=True)
-#     email = models.EmailField(unique=True, blank=True)
-#     mobile = models.CharField(max_length=15, unique=True)
-
-#     def save(self, *args, **kwargs):
-#         # LOCK email and mobile from being updated
-#         if self.pk:
-#             old = Profile.objects.get(pk=self.pk)
-#             self.email = old.email
-#             self.mobile = old.mobile
-#         super().save(*args, **kwargs)
-
-#     def __str__(self):
-#         return self.full_name if self.full_name else self.mobile
 
 
 
