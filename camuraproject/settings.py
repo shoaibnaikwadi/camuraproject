@@ -378,7 +378,7 @@ SMS_SENDER = config("SMS_SENDER", default="")
 SMS_MESSAGE = config("SMS_MESSAGE", default="")
 
 # =========================
-# Email settingss
+# Email settings
 # =========================
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = config('EMAIL_HOST')
