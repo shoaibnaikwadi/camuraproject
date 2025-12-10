@@ -241,26 +241,39 @@ class ProfileAdmin(admin.ModelAdmin):
 
 
 
-
 from django.contrib import admin
+from django.utils.html import format_html
 from .models import CCTVEngineer
 
 @admin.register(CCTVEngineer)
 class CCTVEngineerAdmin(admin.ModelAdmin):
     list_display = ("full_name", "mobile", "email", "city", "experience", "certified", "date_registered")
-    list_filter = ("city", "certified", "experience", "date_registered")
+    readonly_fields = ("preview_government_id",)
     search_fields = ("full_name", "mobile", "email", "city")
-    ordering = ("-date_registered",)
-    readonly_fields = ("date_registered",)
+    list_filter = ("city", "certified", "experience")
 
     fieldsets = (
-        ("Personal Details", {
+        ("Personal Info", {
             "fields": ("full_name", "mobile", "email", "address", "city")
         }),
-        ("Professional Info", {
+        ("Professional Details", {
             "fields": ("experience", "certified")
         }),
-        ("System Info", {
+        ("Government ID", {
+            "fields": ("government_id", "preview_government_id")
+        }),
+        ("System", {
             "fields": ("date_registered",),
         }),
     )
+
+    def preview_government_id(self, obj):
+        if obj.government_id:
+            url = obj.government_id.url
+            if url.endswith(('.jpg', '.jpeg', '.png')):
+                return format_html('<img src="{}" width="200" style="border-radius:6px;">', url)
+            else:
+                return format_html('<a href="{}" target="_blank">View PDF File</a>', url)
+        return "No file uploaded"
+
+    preview_government_id.short_description = "ID Preview"

@@ -67,6 +67,12 @@
                             <div class="text-danger small">{{ form.certified.errors }}</div>
                         </div>
 
+                        <div class="mb-3">
+                            <label class="form-label">Government Identity (Aadhaar / PAN / License)</label>
+                            {{ form.government_id }}
+                            <div class="text-danger small">{{ form.government_id.errors }}</div>
+                        </div>
+
                         <button type="submit" class="btn btn-primary w-100 py-2">
                             Register Now
                         </button>

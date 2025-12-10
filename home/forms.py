@@ -116,21 +116,87 @@ class ServiceBookingForm(forms.ModelForm):
 
 
 
+# from django import forms
+# from .models import CCTVEngineer
+
+# class CCTVEngineerForm(forms.ModelForm):
+#     class Meta:
+#         model = CCTVEngineer
+#         fields = ['full_name', 'mobile', 'email', 'experience', 'city', 'address', 'certified']
+
+#         widgets = {
+#             'full_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'John Doe'}),
+#             'mobile': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '9876543210'}),
+#             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'email@example.com'}),
+#             'experience': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. 3 Years'}),
+#             'city': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Mumbai, Delhi'}),
+#             'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+#             'certified': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+#         }
+
+
+
+# from django import forms
+# from .models import CCTVEngineer
+
+# class CCTVEngineerForm(forms.ModelForm):
+#     class Meta:
+#         model = CCTVEngineer
+#         fields = [
+#             'full_name', 'mobile', 'email', 'experience',
+#             'city', 'address', 'government_id', 'certified'
+#         ]
+
+#         widgets = {
+#             'full_name': forms.TextInput(attrs={'class': 'form-control'}),
+#             'mobile': forms.TextInput(attrs={'class': 'form-control'}),
+#             'email': forms.EmailInput(attrs={'class': 'form-control'}),
+#             'experience': forms.TextInput(attrs={'class': 'form-control'}),
+#             'city': forms.TextInput(attrs={'class': 'form-control'}),
+#             'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+#             'certified': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+#         }
+
+
+
+
 from django import forms
 from .models import CCTVEngineer
+import os
 
 class CCTVEngineerForm(forms.ModelForm):
+
+    def clean_government_id(self):
+        file = self.cleaned_data.get("government_id")
+
+        if file:
+            ext = os.path.splitext(file.name)[1].lower()
+
+            allowed_extensions = ['.jpg', '.jpeg', '.png', '.pdf']
+
+            # Validate file type
+            if ext not in allowed_extensions:
+                raise forms.ValidationError("Only JPG, JPEG, PNG and PDF files are allowed.")
+
+            # Validate file size < 5 MB
+            if file.size > 5 * 1024 * 1024:
+                raise forms.ValidationError("File size must be less than 5MB.")
+
+        return file
+
     class Meta:
         model = CCTVEngineer
-        fields = ['full_name', 'mobile', 'email', 'experience', 'city', 'address', 'certified']
+        fields = [
+            'full_name', 'mobile', 'email', 'experience',
+            'city', 'address', 'government_id', 'certified',
+        ]
 
         widgets = {
-            'full_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'John Doe'}),
-            'mobile': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '9876543210'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'email@example.com'}),
-            'experience': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. 3 Years'}),
-            'city': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Mumbai, Delhi'}),
+            'full_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'mobile': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'experience': forms.TextInput(attrs={'class': 'form-control'}),
+            'city': forms.TextInput(attrs={'class': 'form-control'}),
             'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'certified': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
-

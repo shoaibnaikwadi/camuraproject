@@ -279,15 +279,59 @@ class ServiceBooking(models.Model):
 
 from django.db import models
 
+# class CCTVEngineer(models.Model):
+#     full_name = models.CharField(max_length=100)
+#     mobile = models.CharField(max_length=15, unique=True)
+#     email = models.EmailField(unique=True)
+#     experience = models.CharField(max_length=50)
+#     city = models.CharField(max_length=100)
+#     address = models.TextField()
+#     government_id = models.FileField(upload_to='engineer_ids/', blank=False, null=False)  # 🆕 NEW FIELD
+#     certified = models.BooleanField(default=False)
+#     date_registered = models.DateTimeField(auto_now_add=True)
+
+#     def __str__(self):
+#         return self.full_name
+
+from django.db import models
+from PIL import Image
+from io import BytesIO
+from django.core.files.base import ContentFile
+
 class CCTVEngineer(models.Model):
     full_name = models.CharField(max_length=100)
     mobile = models.CharField(max_length=15, unique=True)
     email = models.EmailField(unique=True)
-    experience = models.CharField(max_length=50, help_text="e.g. 2 Years, 5 Years")
+    experience = models.CharField(max_length=50)
     city = models.CharField(max_length=100)
     address = models.TextField()
-    certified = models.BooleanField(default=False, help_text="Are you a certified CCTV technician?")
+    government_id = models.FileField(upload_to='engineer_ids/')
+    certified = models.BooleanField(default=False)
     date_registered = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        # compress ONLY if image
+        if self.government_id:
+            file = self.government_id
+            file_ext = file.name.split('.')[-1].lower()
+
+            if file_ext in ['jpg', 'jpeg', 'png']:
+                img = Image.open(file)
+
+                # convert PNG to RGB (JPEG-friendly)
+                if img.mode in ("RGBA", "P"):
+                    img = img.convert("RGB")
+
+                buffer = BytesIO()
+                img.save(buffer, format='JPEG', quality=70)  # compress to 70%
+                buffer.seek(0)
+
+                self.government_id = ContentFile(
+                    buffer.read(),
+                    name=f"{file.name.split('.')[0]}_compressed.jpg"
+                )
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.full_name
