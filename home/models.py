@@ -307,7 +307,7 @@ class CCTVEngineer(models.Model):
     address = models.TextField()
     government_id = models.FileField(upload_to='engineer_ids/')
     certified = models.BooleanField(default=False)
-    date_registered = models.DateTimeField(auto_now_add=True)
+    date_registered = models.DateTimeField(auto_now_add=True, editable=False)
 
     def save(self, *args, **kwargs):
         # compress ONLY if image

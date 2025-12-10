@@ -242,38 +242,29 @@ class ProfileAdmin(admin.ModelAdmin):
 
 
 from django.contrib import admin
-from django.utils.html import format_html
 from .models import CCTVEngineer
 
 @admin.register(CCTVEngineer)
 class CCTVEngineerAdmin(admin.ModelAdmin):
-    list_display = ("full_name", "mobile", "email", "city", "experience", "certified", "date_registered")
-    readonly_fields = ("preview_government_id",)
-    search_fields = ("full_name", "mobile", "email", "city")
-    list_filter = ("city", "certified", "experience")
+    list_display = ('full_name', 'mobile', 'email', 'city', 'experience', 'certified', 'date_registered')
+    readonly_fields = ('date_registered', 'preview_government_id')
 
     fieldsets = (
-        ("Personal Info", {
-            "fields": ("full_name", "mobile", "email", "address", "city")
+        ('Personal Details', {
+            'fields': ('full_name', 'mobile', 'email', 'city', 'address', 'experience', 'certified')
         }),
-        ("Professional Details", {
-            "fields": ("experience", "certified")
+        ('Government ID', {
+            'fields': ('government_id', 'preview_government_id')
         }),
-        ("Government ID", {
-            "fields": ("government_id", "preview_government_id")
-        }),
-        ("System", {
-            "fields": ("date_registered",),
+        ('System Info', {
+            'fields': ('date_registered',),
         }),
     )
 
     def preview_government_id(self, obj):
-        if obj.government_id:
-            url = obj.government_id.url
-            if url.endswith(('.jpg', '.jpeg', '.png')):
-                return format_html('<img src="{}" width="200" style="border-radius:6px;">', url)
-            else:
-                return format_html('<a href="{}" target="_blank">View PDF File</a>', url)
-        return "No file uploaded"
-
-    preview_government_id.short_description = "ID Preview"
+        if obj.government_id and obj.government_id.name.lower().endswith(('.jpg', '.jpeg', '.png')):
+            return f'<img src="{obj.government_id.url}" width="200" />'
+        return "No preview available"
+    
+    preview_government_id.allow_tags = True
+    preview_government_id.short_description = "Preview ID"
