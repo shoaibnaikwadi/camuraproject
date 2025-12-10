@@ -371,7 +371,7 @@ from django.contrib.messages import constants as messages
 MESSAGE_TAGS = {messages.ERROR: 'danger'}
 
 # =========================
-# SMS Settings
+# SMS Settings'
 # =========================
 SMS_API_KEY = config("SMS_API_KEY", default="")
 SMS_SENDER = config("SMS_SENDER", default="")
