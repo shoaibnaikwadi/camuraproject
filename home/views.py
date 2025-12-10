@@ -838,3 +838,26 @@ def book_service(request):
     })
 
 
+
+
+
+from django.shortcuts import render
+from .forms import CCTVEngineerForm
+
+def engineer_register(request):
+    message = None
+
+    if request.method == "POST":
+        form = CCTVEngineerForm(request.POST)
+        if form.is_valid():
+            form.save()
+            message = "Registration successful! Our team will contact you shortly."
+            form = CCTVEngineerForm()  # reset form after success
+    else:
+        form = CCTVEngineerForm()
+
+    return render(request, 'home/engineer_register.html', {
+        'form': form,
+        'message': message
+    })
+

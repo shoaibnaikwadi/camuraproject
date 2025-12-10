@@ -237,3 +237,30 @@ class ProfileAdmin(admin.ModelAdmin):
     list_display = ('full_name', 'mobile', 'email', 'user')
     search_fields = ('full_name', 'mobile', 'email', 'user__username')
     list_filter = ('email',)
+
+
+
+
+
+from django.contrib import admin
+from .models import CCTVEngineer
+
+@admin.register(CCTVEngineer)
+class CCTVEngineerAdmin(admin.ModelAdmin):
+    list_display = ("full_name", "mobile", "email", "city", "experience", "certified", "date_registered")
+    list_filter = ("city", "certified", "experience", "date_registered")
+    search_fields = ("full_name", "mobile", "email", "city")
+    ordering = ("-date_registered",)
+    readonly_fields = ("date_registered",)
+
+    fieldsets = (
+        ("Personal Details", {
+            "fields": ("full_name", "mobile", "email", "address", "city")
+        }),
+        ("Professional Info", {
+            "fields": ("experience", "certified")
+        }),
+        ("System Info", {
+            "fields": ("date_registered",),
+        }),
+    )

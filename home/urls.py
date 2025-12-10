@@ -81,6 +81,8 @@ urlpatterns = [
     path("register/", views.register, name="register"),
 
     path("book_service/", views.book_service, name="book_service"),
+    path("engineer/register/", views.engineer_register, name="engineer_register"),
+
     
 
 ]

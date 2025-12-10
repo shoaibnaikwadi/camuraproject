@@ -112,3 +112,25 @@ class ServiceBookingForm(forms.ModelForm):
 
             Submit("submit", "Submit Booking", css_class="btn btn-primary w-100 mt-3")
         )
+
+
+
+
+from django import forms
+from .models import CCTVEngineer
+
+class CCTVEngineerForm(forms.ModelForm):
+    class Meta:
+        model = CCTVEngineer
+        fields = ['full_name', 'mobile', 'email', 'experience', 'city', 'address', 'certified']
+
+        widgets = {
+            'full_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'John Doe'}),
+            'mobile': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '9876543210'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'email@example.com'}),
+            'experience': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. 3 Years'}),
+            'city': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Mumbai, Delhi'}),
+            'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'certified': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+

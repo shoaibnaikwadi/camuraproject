@@ -272,3 +272,22 @@ class ServiceBooking(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.mobile}"
+
+
+
+
+
+from django.db import models
+
+class CCTVEngineer(models.Model):
+    full_name = models.CharField(max_length=100)
+    mobile = models.CharField(max_length=15)
+    email = models.EmailField(unique=True)
+    experience = models.CharField(max_length=50, help_text="e.g. 2 Years, 5 Years")
+    city = models.CharField(max_length=100)
+    address = models.TextField()
+    certified = models.BooleanField(default=False, help_text="Are you a certified CCTV technician?")
+    date_registered = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.full_name
