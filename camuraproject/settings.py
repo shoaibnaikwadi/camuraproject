@@ -239,7 +239,8 @@ DEBUG = config('DEBUG', cast=bool, default=True)
 # =========================
 # Allowed Hosts
 # =========================
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default="127.0.0.1").split(",")
+# ALLOWED_HOSTS = config('ALLOWED_HOSTS', default="127.0.0.1").split(",")
+ALLOWED_HOSTS = ["camura.in", "www.camura.in", "127.0.0.1"]
 
 # =========================
 # Login URLs
