@@ -16,42 +16,55 @@
                     </div>
                     {% endif %}
 
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        Please correct the errors below.
+                    </div>
+                    {% endif %}
+
                     <form method="POST">
                         {% csrf_token %}
 
                         <div class="mb-3">
                             <label class="form-label">Full Name</label>
                             {{ form.full_name }}
+                            <div class="text-danger small">{{ form.full_name.errors }}</div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Mobile Number</label>
                             {{ form.mobile }}
+                            <div class="text-danger small">{{ form.mobile.errors }}</div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Email</label>
                             {{ form.email }}
+                            <div class="text-danger small">{{ form.email.errors }}</div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Experience</label>
                             {{ form.experience }}
+                            <div class="text-danger small">{{ form.experience.errors }}</div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">City</label>
                             {{ form.city }}
+                            <div class="text-danger small">{{ form.city.errors }}</div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Address</label>
                             {{ form.address }}
+                            <div class="text-danger small">{{ form.address.errors }}</div>
                         </div>
 
                         <div class="form-check mb-3">
                             {{ form.certified }}
                             <label class="form-check-label">Certified CCTV Technician?</label>
+                            <div class="text-danger small">{{ form.certified.errors }}</div>
                         </div>
 
                         <button type="submit" class="btn btn-primary w-100 py-2">
