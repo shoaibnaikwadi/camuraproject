@@ -281,7 +281,7 @@ from django.db import models
 
 class CCTVEngineer(models.Model):
     full_name = models.CharField(max_length=100)
-    mobile = models.CharField(max_length=15)
+    mobile = models.CharField(max_length=15, unique=True)
     email = models.EmailField(unique=True)
     experience = models.CharField(max_length=50, help_text="e.g. 2 Years, 5 Years")
     city = models.CharField(max_length=100)
