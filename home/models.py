@@ -299,6 +299,13 @@ from io import BytesIO
 from django.core.files.base import ContentFile
 
 class CCTVEngineer(models.Model):
+
+    STATUS_CHOICES = (
+        ('pending', 'Pending'),
+        ('verified', 'Verified'),
+        ('hold', 'Hold'),
+    )
+
     full_name = models.CharField(max_length=100)
     mobile = models.CharField(max_length=15, unique=True)
     email = models.EmailField(unique=True)
@@ -307,6 +314,7 @@ class CCTVEngineer(models.Model):
     address = models.TextField()
     government_id = models.FileField(upload_to='engineer_ids/')
     certified = models.BooleanField(default=False)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     date_registered = models.DateTimeField(auto_now_add=True, editable=False)
 
     def save(self, *args, **kwargs):
