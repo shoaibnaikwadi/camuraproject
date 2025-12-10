@@ -214,7 +214,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # =========================
 # Load environment file
 # =========================
-ENVIRONMENT = os.environ.get("DJANGO_ENV", "development")  # set to "production" on server
+ENVIRONMENT = os.environ.get("DJANGO_ENV", "development")
 
 if ENVIRONMENT == "production":
     env_file = BASE_DIR / ".env.production"
@@ -225,6 +225,8 @@ if os.path.exists(env_file):
     config = Config(RepositoryEnv(env_file))
 else:
     raise RuntimeError(f"{env_file} not found. Cannot load configuration.")
+
+
 
 # =========================
 # Secret Key
