@@ -240,18 +240,26 @@ class ProfileAdmin(admin.ModelAdmin):
 
 
 
-
 from django.contrib import admin
+from django.utils.html import format_html
 from .models import CCTVEngineer
 
 @admin.register(CCTVEngineer)
 class CCTVEngineerAdmin(admin.ModelAdmin):
-    list_display = ('full_name', 'mobile', 'email', 'city', 'experience', 'certified', 'date_registered')
+    list_display = (
+        'full_name', 'mobile', 'email', 'city', 'experience',
+        'certified', 'colored_status', 'date_registered'
+    )
+    list_filter = ('status', 'certified', 'city')
+    
     readonly_fields = ('date_registered', 'preview_government_id')
 
     fieldsets = (
         ('Personal Details', {
-            'fields': ('full_name', 'mobile', 'email', 'city', 'address', 'experience', 'certified')
+            'fields': (
+                'full_name', 'mobile', 'email', 'city',
+                'address', 'experience', 'certified', 'status'
+            )
         }),
         ('Government ID', {
             'fields': ('government_id', 'preview_government_id')
@@ -261,10 +269,25 @@ class CCTVEngineerAdmin(admin.ModelAdmin):
         }),
     )
 
+    # STATUS COLOR TAGS
+    def colored_status(self, obj):
+        color = {
+            'pending': 'orange',
+            'verified': 'green',
+            'hold': 'red'
+        }.get(obj.status, 'black')
+
+        return format_html(
+            '<span style="color:{}; font-weight:bold;">{}</span>',
+            color,
+            obj.get_status_display()
+        )
+    colored_status.short_description = "Status"
+
+    # GOVERNMENT ID PREVIEW
     def preview_government_id(self, obj):
         if obj.government_id and obj.government_id.name.lower().endswith(('.jpg', '.jpeg', '.png')):
-            return f'<img src="{obj.government_id.url}" width="200" />'
+            return format_html('<img src="{}" width="200" />', obj.government_id.url)
         return "No preview available"
     
-    preview_government_id.allow_tags = True
     preview_government_id.short_description = "Preview ID"
