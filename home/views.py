@@ -862,16 +862,101 @@ from .forms import CCTVEngineerForm
 #     })
 
 
+# from .forms import CCTVEngineerForm
+
+# def engineer_register(request):
+#     message = None
+
+#     if request.method == "POST":
+#         form = CCTVEngineerForm(request.POST, request.FILES)  # 🆕 request.FILES
+#         if form.is_valid():
+#             form.save()
+#             message = "Registration successful! Our team will contact you shortly."
+#             form = CCTVEngineerForm()
+#     else:
+#         form = CCTVEngineerForm()
+
+#     return render(request, 'home/engineer_register.html', {
+#         'form': form,
+#         'message': message
+#     })
+
+
+
+
+from django.conf import settings
+from django.core.mail import send_mail
 from .forms import CCTVEngineerForm
 
 def engineer_register(request):
     message = None
 
     if request.method == "POST":
-        form = CCTVEngineerForm(request.POST, request.FILES)  # 🆕 request.FILES
+        form = CCTVEngineerForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            message = "Registration successful! Our team will contact you shortly."
+            engineer = form.save()
+
+            # ------------------ EMAIL TO ADMIN ------------------
+            admin_subject = "New CCTV Engineer Registration - Camura.in"
+            admin_body = f"""
+A new CCTV engineer has registered on Camura.in
+
+Name: {engineer.full_name}
+Mobile: {engineer.mobile}
+Email: {engineer.email}
+Experience: {engineer.experience}
+City: {engineer.city}
+Certified: {"Yes" if engineer.certified else "No"}
+
+Address:
+{engineer.address}
+
+Login to admin panel to view full details and identity proof.
+            """
+
+            send_mail(
+                admin_subject,
+                admin_body,
+                settings.DEFAULT_FROM_EMAIL,
+                [settings.ADMIN_NOTIFICATION_EMAIL],
+                fail_silently=False,
+            )
+            # -----------------------------------------------------
+
+
+            # ---------------- EMAIL TO ENGINEER ------------------
+            engineer_subject = "Registration Successful - Camura.in"
+            engineer_body = f"""
+Hello {engineer.full_name},
+
+Thank you for registering as a CCTV Installation Engineer on Camura.in.
+
+Our team will contact you shortly to verify your details and activate your profile.
+
+Your submitted details:
+----------------------------------
+Name: {engineer.full_name}
+Mobile: {engineer.mobile}
+Email: {engineer.email}
+City: {engineer.city}
+Experience: {engineer.experience}
+Certified: {"Yes" if engineer.certified else "No"}
+----------------------------------
+
+Thank you,
+Team Camura.in
+            """
+
+            send_mail(
+                engineer_subject,
+                engineer_body,
+                settings.DEFAULT_FROM_EMAIL,
+                [engineer.email],     # Email to Engineer
+                fail_silently=False,
+            )
+            # ------------------------------------------------------
+
+            message = "Registration successful! A confirmation email has been sent."
             form = CCTVEngineerForm()
     else:
         form = CCTVEngineerForm()
