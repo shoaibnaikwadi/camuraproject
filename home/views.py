@@ -86,10 +86,11 @@ from .models import (
 )
 
 from .forms import (
-    CustomerProfileForm, ServiceBookingForm, CameraForm, DVRForm,
+    CustomerProfileForm, ServiceBookingForm, CameraForm, 
+    # DVRForm,
     CableForm, PowerSupplyForm, AccessoryForm, InstallationForm, ComboForm
 )
-
+ 
 
 
 # @login_required

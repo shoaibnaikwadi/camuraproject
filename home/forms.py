@@ -1,16 +1,23 @@
 # shop/forms.py
 from django import forms
-from .models import Camera, DVR, Cable, PowerSupply, Accessory, InstallationCharge, ComboProduct, CustomerProfile
+from .models import Camera, CameraBullet, DVR, Cable, PowerSupply, Accessory, InstallationCharge, ComboProduct, CustomerProfile
 
 class CameraForm(forms.ModelForm):
     class Meta:
         model = Camera
         fields = ['camera_type', 'price']
 
+
+class CameraBulletForm(forms.ModelForm):
+    class Meta:
+        model = CameraBullet
+        fields = ['bullet_camera_type', 'bullet_model_number', 'price']
+
+
 class DVRForm(forms.ModelForm):
     class Meta:
         model = DVR
-        fields = ['channels', 'resolution', 'price']
+        fields = ['dvr_name', 'model_number', 'price']
 
 class CableForm(forms.ModelForm):
     class Meta:

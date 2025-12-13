@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.utils.html import format_html  # <-- ADD THIS
 from .models import (
     Camera,
+    CameraBullet,
     DVR,
     Cable,
     PowerSupply,
@@ -11,6 +12,8 @@ from .models import (
     ComboProduct,
     CartItem, Order, CustomerProfile, HardDisk
 )
+from django.db import models
+from django.forms import TextInput
 
 @admin.register(Camera)
 class CameraAdmin(admin.ModelAdmin):
@@ -18,12 +21,19 @@ class CameraAdmin(admin.ModelAdmin):
     list_filter = ('camera_type',)
     search_fields = ('camera_type',)
 
+    
+@admin.register(CameraBullet)
+class CameraBulletAdmin(admin.ModelAdmin):
+    list_display = ('bullet_camera_type', 'bullet_model_number', 'price')
+    list_filter = ('bullet_camera_type',)
+    search_fields = ('bullet_camera_type',)
+
 
 @admin.register(DVR)
 class DVRAdmin(admin.ModelAdmin):
-    list_display = ('resolution', 'channels', 'price')
-    list_filter = ('resolution', 'channels')
-    search_fields = ('resolution', 'channels')
+    list_display = ('dvr_name', 'model_number', 'price')
+    list_filter = ('dvr_name', 'model_number', 'price')
+    search_fields = ('dvr_name', 'model_number', 'price')
 
 
 @admin.register(HardDisk)
@@ -68,6 +78,7 @@ class ComboProductAdmin(admin.ModelAdmin):
         'thumbnail',
         'name',
         'camera', 'camera_qty',
+        'cameraBullet', 'camerabullet_qty',
         'dvr',
         'hard_disk', 'hard_disk_qty',
         'cable', 'cable_qty',
@@ -82,6 +93,7 @@ class ComboProductAdmin(admin.ModelAdmin):
     fields = (
         'name',
         'camera', 'camera_qty',
+        'cameraBullet', 'camerabullet_qty',
         'dvr',
         'hard_disk', 'hard_disk_qty',
         'cable', 'cable_qty',

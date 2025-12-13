@@ -23,34 +23,42 @@ from django.contrib.auth.models import User
 
 
 class Camera(models.Model):
-    camera_type = models.CharField(max_length=30)
+    camera_type = models.CharField(max_length=100)
     model_number = models.CharField(max_length=100, null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
         return f"{self.camera_type} (₹{self.price})"
     
-
-
-
-# DVR MASTER
-class DVR(models.Model):
-    CHANNEL_CHOICES = [
-        ('4ch', '4 CH'),
-        ('8ch', '8 CH'),
-        ('16ch', '16 CH'),
-        ('32ch', '32 CH'),
-    ]
-    RES_CHOICES = [
-        ('2mp', '2MP'),
-        ('5mp', '5MP'),
-    ]
-    channels = models.CharField(max_length=10, choices=CHANNEL_CHOICES)
-    resolution = models.CharField(max_length=10, choices=RES_CHOICES)
+class CameraBullet(models.Model):
+    bullet_camera_type = models.CharField(max_length=100)
+    bullet_model_number = models.CharField(max_length=100, null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return f"{self.get_resolution_display()} {self.get_channels_display()} DVR (₹{self.price})"
+        return f"{self.bullet_camera_type} (₹{self.price})"
+
+
+# DVR MASTER
+
+class DVR(models.Model):
+    dvr_name = models.CharField(
+        max_length=100,
+        help_text="Enter DVR name (e.g., CP Plus 8 Channel DVR)"
+    )
+    model_number = models.CharField(
+        max_length=100,
+        null=True,
+        blank=True
+    )
+    price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2
+    )
+
+    def __str__(self):
+        return f"{self.dvr_name} - ₹{self.price}"
+
 
 
 
@@ -64,27 +72,21 @@ class HardDisk(models.Model):
 
 # CABLE MASTER
 class Cable(models.Model):
-    LENGTH_CHOICES = [('90m', '90 Meter'), ('180m', '180 Meter')]
-    length = models.CharField(max_length=10, choices=LENGTH_CHOICES)
+    length = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return f"{self.get_length_display()} (₹{self.price})"
+        return f"{self.length} (₹{self.price})"
 
 
 # POWER SUPPLY MASTER
 class PowerSupply(models.Model):
-    RANGE_CHOICES = [
-        ('1-4', '1–4 Cameras'),
-        ('4-8', '4–8 Cameras'),
-        ('8-16', '8–16 Cameras'),
-        ('16-32', '16–32 Cameras'),
-    ]
-    range_slug = models.CharField(max_length=10, choices=RANGE_CHOICES)
+   
+    range_slug = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return f"{self.get_range_slug_display()} (₹{self.price})"
+        return f"{self.range_slug} (₹{self.price})"
 
 
 # ACCESSORY MASTER (BNC, DC, etc.)
@@ -115,6 +117,9 @@ class ComboProduct(models.Model):
 
     camera = models.ForeignKey(Camera, on_delete=models.CASCADE)
     camera_qty = models.PositiveIntegerField(default=2)
+    
+    cameraBullet = models.ForeignKey(CameraBullet, on_delete=models.SET_NULL, null=True, blank=True)   
+    camerabullet_qty = models.PositiveIntegerField(default=1)
 
     dvr = models.ForeignKey(DVR, on_delete=models.CASCADE)
 
