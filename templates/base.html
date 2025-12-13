@@ -160,6 +160,10 @@
 
                 <!-- Right side -->
                 <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'blog_list' %}">Blog</a>
+                    </li>
+
                     {% if user.is_authenticated %}
                     <li class="nav-item me-3 position-relative">
                         <a class="nav-link" href="{% url 'cart' %}">

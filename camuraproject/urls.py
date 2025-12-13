@@ -19,17 +19,22 @@ from django.urls import path, include
 from home.sitemaps import StaticViewSitemap, ProductSitemap
 from django.contrib.sitemaps.views import sitemap
 from django.views.generic import TemplateView
+from blog.sitemaps import BlogSitemap
+
 
 
 sitemaps = {
     'static': StaticViewSitemap,
     'products': ProductSitemap,
+    'blog': BlogSitemap,
+
 }
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('home.urls')),
+    path("blog/", include("blog.urls")),
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django_sitemap'),
     path("robots.txt", TemplateView.as_view(
         template_name="robots.txt",

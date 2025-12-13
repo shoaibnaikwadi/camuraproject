@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block meta %}
+<!-- Primary Meta Tags -->
+<title>{{ post.meta_title|default:post.title }}</title>
+<meta name="description" content="{{ post.meta_description|default:post.short_description }}">
+<meta name="keywords" content="{{ post.keywords|default:'' }}">
+
+<!-- Open Graph (Facebook, WhatsApp) -->
+<meta property="og:title" content="{{ post.meta_title|default:post.title }}">
+<meta property="og:description" content="{{ post.meta_description|default:post.short_description }}">
+<meta property="og:image" content="{{ post.featured_image.url if post.featured_image else '' }}">
+<meta property="og:url" content="{{ request.build_absolute_uri }}">
+<meta property="og:type" content="article">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ post.meta_title|default:post.title }}">
+<meta name="twitter:description" content="{{ post.meta_description|default:post.short_description }}">
+<meta name="twitter:image" content="{{ post.featured_image.url if post.featured_image else '' }}">
+
+<!-- JSON-LD Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "{{ post.title }}",
+  "description": "{{ post.meta_description|default:post.short_description }}",
+  "image": "{{ post.featured_image.url if post.featured_image else '' }}",
+  "author": {
+    "@type": "Person",
+    "name": "Camura Team"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Camura",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "/static/img/logo.png"
+    }
+  },
+  "datePublished": "{{ post.created_at|date:'Y-m-d' }}",
+  "dateModified": "{{ post.updated_at|date:'Y-m-d' }}"
+}
+</script>
+{% endblock meta %}
+
+{% block content %}
+<div class="container py-4">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="/blog/">Blog</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ post.title }}</li>
+        </ol>
+    </nav>
+
+    <!-- Blog Title -->
+    <h1 class="mb-3">{{ post.title }}</h1>
+
+    <!-- Featured Image -->
+    {% if post.featured_image %}
+    <img src="{{ post.featured_image.url }}" class="img-fluid rounded mb-4" alt="{{ post.title }}">
+    {% endif %}
+
+    <!-- Blog Content -->
+    <div class="content">
+        {{ post.content|safe }}
+    </div>
+
+    <!-- Tags -->
+    <div class="mt-4">
+        {% if post.tags %}
+        <strong>Tags:</strong>
+        {% for tag in post.tags.split(',') %}
+        <span class="badge bg-secondary">{{ tag }}</span>
+        {% endfor %}
+        {% endif %}
+    </div>
+
+</div>
+{% endblock content %}
