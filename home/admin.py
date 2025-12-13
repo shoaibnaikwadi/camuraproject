@@ -14,7 +14,7 @@ from .models import (
 
 @admin.register(Camera)
 class CameraAdmin(admin.ModelAdmin):
-    list_display = ('camera_type', 'price')
+    list_display = ('camera_type', 'model_number', 'price')
     list_filter = ('camera_type',)
     search_fields = ('camera_type',)
 

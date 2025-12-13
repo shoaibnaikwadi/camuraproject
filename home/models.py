@@ -6,18 +6,31 @@ from django.contrib.auth.models import User
 
 
 # CAMERA MASTER
+# class Camera(models.Model):
+#     CAMERA_TYPES = [
+#         ('2mp', '2MP'),
+#         ('2mp_color', '2MP Color'),
+#         ('5mp', '5MP'),
+#         ('5mp_color', '5MP Color'),
+#     ]
+#     camera_type = models.CharField(max_length=30, choices=CAMERA_TYPES)
+#     price = models.DecimalField(max_digits=10, decimal_places=2)
+
+#     def __str__(self):
+#         return f"{self.get_camera_type_display()} (₹{self.price})"
+
+
+
+
 class Camera(models.Model):
-    CAMERA_TYPES = [
-        ('2mp', '2MP'),
-        ('2mp_color', '2MP Color'),
-        ('5mp', '5MP'),
-        ('5mp_color', '5MP Color'),
-    ]
-    camera_type = models.CharField(max_length=30, choices=CAMERA_TYPES)
+    camera_type = models.CharField(max_length=30)
+    model_number = models.CharField(max_length=100, null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return f"{self.get_camera_type_display()} (₹{self.price})"
+        return f"{self.camera_type} (₹{self.price})"
+    
+
 
 
 # DVR MASTER
