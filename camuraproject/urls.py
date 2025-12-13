@@ -20,7 +20,8 @@ from home.sitemaps import StaticViewSitemap, ProductSitemap
 from django.contrib.sitemaps.views import sitemap
 from django.views.generic import TemplateView
 from blog.sitemaps import BlogSitemap
-
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 sitemaps = {
@@ -41,3 +42,4 @@ urlpatterns = [
         content_type="text/plain"
     )),
 ]
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

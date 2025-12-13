@@ -279,8 +279,9 @@ INSTALLED_APPS = [
     'django.contrib.sitemaps',
     'home.apps.HomeConfig',  # profile after signup
     'blog',
-    'ckeditor',
-    'ckeditor_uploader', 
+    'django_ckeditor_5',
+ 
+    
 ]
 
 # =========================
@@ -372,17 +373,33 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 
-# blog related
-CKEDITOR_UPLOAD_PATH = "ckeditor/uploads/"
+# # blog related
+# CKEDITOR_UPLOAD_PATH = "ckeditor/uploads/"
 
 
-CKEDITOR_CONFIGS = {
-    'default': {
-        'toolbar': 'full',
-        'height': 300,
-        'width': '100%',
+# CKEDITOR_CONFIGS = {
+#     'default': {
+#         'toolbar': 'full',
+#         'height': 300,
+#         'width': '100%',
+#     }
+# }
+
+CKEDITOR5_UPLOAD_PATH = "uploads/ckeditor/"
+
+CKEDITOR5_CONFIGS = {
+    "default": {
+        "toolbar": [
+            "heading", "|",
+            "bold", "italic", "link",
+            "bulletedList", "numberedList",
+            "imageUpload", "blockQuote",
+            "undo", "redo"
+        ],
     }
 }
+
+
 
 # =========================
 # Messages

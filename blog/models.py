@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.text import slugify
-from ckeditor.fields import RichTextField
+# from ckeditor.fields import RichTextField
+from django_ckeditor_5.fields import CKEditor5Field
 
 from django.db import models
 from django.utils.text import slugify
@@ -36,7 +37,8 @@ class Category(models.Model):
 from django.db import models
 from django.utils.text import slugify
 from django.urls import reverse
-from ckeditor.fields import RichTextField
+# from ckeditor.fields import RichTextField
+from django_ckeditor_5.fields import CKEditor5Field
 
 class BlogPost(models.Model):
     title = models.CharField(max_length=200)
@@ -47,7 +49,9 @@ class BlogPost(models.Model):
     meta_title = models.CharField(max_length=160, blank=True)
     meta_description = models.CharField(max_length=255, blank=True)
 
-    content = RichTextField()
+    # content = RichTextField()
+    # content = CKEditor5Field('Content', config_name='default')
+    content = CKEditor5Field(config_name='default')
     featured_image = models.ImageField(upload_to="blog/images/")
     category = models.ForeignKey("Category", on_delete=models.SET_NULL, null=True)
     tags = models.CharField(max_length=200, help_text="Comma-separated tags")
