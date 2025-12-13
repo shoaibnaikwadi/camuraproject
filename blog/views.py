@@ -13,17 +13,34 @@ def blog_list(request):
 
 
 
+# def blog_detail(request, slug):
+#     post = get_object_or_404(BlogPost, slug=slug)
+
+#     related_posts = BlogPost.objects.filter(
+#         category=post.category
+#     ).exclude(id=post.id)[:3]
+
+#     return render(request, "blog/blog_detail.html", {
+#         "post": post,
+#         "related_posts": related_posts,
+#     })
+
+
+
 def blog_detail(request, slug):
     post = get_object_or_404(BlogPost, slug=slug)
 
-    related_posts = BlogPost.objects.filter(
-        category=post.category
-    ).exclude(id=post.id)[:3]
+    tags = []
+    if post.tags:
+        tags = [t.strip() for t in post.tags.split(",")]
 
     return render(request, "blog/blog_detail.html", {
         "post": post,
-        "related_posts": related_posts,
+        "tags": tags,
     })
+
+
+
 
 
 
