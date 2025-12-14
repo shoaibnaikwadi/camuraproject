@@ -133,9 +133,27 @@ def product_list(request):
 
 
 
+# def product_detail(request, pk):
+#     combo = get_object_or_404(ComboProduct, pk=pk)
+#     return render(request, 'home/product_detail.html', {'combo': combo})
+
+
+
 def product_detail(request, pk):
     combo = get_object_or_404(ComboProduct, pk=pk)
-    return render(request, 'home/product_detail.html', {'combo': combo})
+
+    # Calculate discount percentage
+    discount = None
+    if combo.mrp and combo.mrp > combo.total_price():
+        discount = round((combo.mrp - combo.total_price()) / combo.mrp * 100)
+
+    context = {
+        'combo': combo,
+        'discount': discount,
+    }
+    return render(request, 'home/product_detail.html', context)
+
+
 
 def clear_cart(request):
     request.session['cart'] = {}

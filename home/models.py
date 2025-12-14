@@ -109,12 +109,124 @@ class InstallationCharge(models.Model):
 
 
 
+
+
 from decimal import Decimal
 
 
-# COMBO / PRODUCT (built from masters)
+# # COMBO / PRODUCT (built from masters)
+# class ComboProduct(models.Model):
+#     name = models.CharField(max_length=150)
+#     mrp = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+
+
+#     camera = models.ForeignKey(Camera, on_delete=models.CASCADE)
+#     camera_qty = models.PositiveIntegerField(default=2)
+    
+#     cameraBullet = models.ForeignKey(CameraBullet, on_delete=models.SET_NULL, null=True, blank=True)   
+#     camerabullet_qty = models.PositiveIntegerField(default=1)
+
+#     dvr = models.ForeignKey(DVR, on_delete=models.CASCADE)
+
+#     # hard_disk = models.ForeignKey(HardDisk, on_delete=models.SET_NULL, null=True, blank=True)
+#     # hard_disk_qty = models.PositiveIntegerField(default=1)
+
+#     hard_disk = models.ForeignKey(HardDisk, on_delete=models.CASCADE, null=True, blank=True)
+#     hard_disk_qty = models.PositiveIntegerField(default=1)
+
+#     cable = models.ForeignKey(Cable, on_delete=models.CASCADE)
+#     cable_qty = models.PositiveIntegerField(default=1)   # NEW
+
+#     power = models.ForeignKey(PowerSupply, on_delete=models.CASCADE)
+#     power_qty = models.PositiveIntegerField(default=1)   # NEW
+
+#     bnc_connector = models.ForeignKey(Accessory, on_delete=models.CASCADE, related_name='bnc_in_combo')
+#     bnc_qty = models.PositiveIntegerField(default=2)     # NEW
+
+#     dc_connector = models.ForeignKey(Accessory, on_delete=models.CASCADE, related_name='dc_in_combo')
+#     dc_qty = models.PositiveIntegerField(default=2)      # NEW
+
+#     installation = models.ForeignKey(InstallationCharge, on_delete=models.CASCADE)
+#     installation_qty = models.PositiveIntegerField(default=1)  # NEW
+
+#     description = models.TextField(blank=True)
+#     image = models.ImageField(upload_to='product_images/', null=True, blank=True)
+#     created_at = models.DateTimeField(auto_now_add=True)
+
+#     # def total_price(self):
+#     #     total = Decimal('0.00')
+
+#     #     total += (self.camera.price * Decimal(self.camera_qty))
+#     #     total += self.dvr.price
+#     #     total += (self.cable.price * Decimal(self.cable_qty))
+#     #     total += (self.power.price * Decimal(self.power_qty))
+#     #     total += (self.bnc_connector.price * Decimal(self.bnc_qty))
+#     #     total += (self.dc_connector.price * Decimal(self.dc_qty))
+#     #     total += (self.installation.price * Decimal(self.installation_qty))
+
+#     #     return total
+
+
+
+#     def total_price(self):
+#         total = Decimal('0.00')
+
+#         # Camera
+#         total += Decimal(self.camera.price) * self.camera_qty
+
+#         # Camera Bullet (optional)
+#         if self.cameraBullet:
+#             total += Decimal(self.cameraBullet.price) * self.camerabullet_qty
+
+#         # DVR
+#         total += Decimal(self.dvr.price)
+
+#         # Hard Disk (optional)
+#         if self.hard_disk:
+#             total += Decimal(self.hard_disk.price) * self.hard_disk_qty
+
+#         #   Cable
+#         total += Decimal(self.cable.price) * self.cable_qty
+
+#         # Power Supply
+#         total += Decimal(self.power.price) * self.power_qty
+
+#         # BNC Connector
+#         total += Decimal(self.bnc_connector.price) * self.bnc_qty
+
+#         # DC Connector
+#         total += Decimal(self.dc_connector.price) * self.dc_qty
+
+#         # Installation
+#         total += Decimal(self.installation.price) * self.installation_qty
+
+#         return total
+
+
+#         @property
+#         def total_price(self):
+#             return self._calculate_total_price()
+
+#         def __str__(self):
+#             return f"{self.name} (₹{self.total_price})"
+
+#         @property
+#         def discount_percentage(self):
+#             if self.mrp and self.total_price():
+#                 return int((self.mrp - self.total_price()) / self.mrp * 100)
+#         return 0
+
+
+
+
+
+
+from decimal import Decimal
+from django.db import models
+
 class ComboProduct(models.Model):
     name = models.CharField(max_length=150)
+    mrp = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     camera = models.ForeignKey(Camera, on_delete=models.CASCADE)
     camera_qty = models.PositiveIntegerField(default=2)
@@ -124,91 +236,61 @@ class ComboProduct(models.Model):
 
     dvr = models.ForeignKey(DVR, on_delete=models.CASCADE)
 
-    # hard_disk = models.ForeignKey(HardDisk, on_delete=models.SET_NULL, null=True, blank=True)
-    # hard_disk_qty = models.PositiveIntegerField(default=1)
-
     hard_disk = models.ForeignKey(HardDisk, on_delete=models.CASCADE, null=True, blank=True)
     hard_disk_qty = models.PositiveIntegerField(default=1)
 
     cable = models.ForeignKey(Cable, on_delete=models.CASCADE)
-    cable_qty = models.PositiveIntegerField(default=1)   # NEW
+    cable_qty = models.PositiveIntegerField(default=1)
 
     power = models.ForeignKey(PowerSupply, on_delete=models.CASCADE)
-    power_qty = models.PositiveIntegerField(default=1)   # NEW
+    power_qty = models.PositiveIntegerField(default=1)
 
     bnc_connector = models.ForeignKey(Accessory, on_delete=models.CASCADE, related_name='bnc_in_combo')
-    bnc_qty = models.PositiveIntegerField(default=2)     # NEW
+    bnc_qty = models.PositiveIntegerField(default=2)
 
     dc_connector = models.ForeignKey(Accessory, on_delete=models.CASCADE, related_name='dc_in_combo')
-    dc_qty = models.PositiveIntegerField(default=2)      # NEW
+    dc_qty = models.PositiveIntegerField(default=2)
 
     installation = models.ForeignKey(InstallationCharge, on_delete=models.CASCADE)
-    installation_qty = models.PositiveIntegerField(default=1)  # NEW
+    installation_qty = models.PositiveIntegerField(default=1)
 
     description = models.TextField(blank=True)
     image = models.ImageField(upload_to='product_images/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    # def total_price(self):
-    #     total = Decimal('0.00')
-
-    #     total += (self.camera.price * Decimal(self.camera_qty))
-    #     total += self.dvr.price
-    #     total += (self.cable.price * Decimal(self.cable_qty))
-    #     total += (self.power.price * Decimal(self.power_qty))
-    #     total += (self.bnc_connector.price * Decimal(self.bnc_qty))
-    #     total += (self.dc_connector.price * Decimal(self.dc_qty))
-    #     total += (self.installation.price * Decimal(self.installation_qty))
-
-    #     return total
-
-
-
     def total_price(self):
         total = Decimal('0.00')
-
-        # Camera
         total += Decimal(self.camera.price) * self.camera_qty
-
-        # Camera Bullet (optional)
         if self.cameraBullet:
             total += Decimal(self.cameraBullet.price) * self.camerabullet_qty
-
-        # DVR
         total += Decimal(self.dvr.price)
-
-        # Hard Disk (optional)
         if self.hard_disk:
             total += Decimal(self.hard_disk.price) * self.hard_disk_qty
-
-        #   Cable
         total += Decimal(self.cable.price) * self.cable_qty
-
-        # Power Supply
         total += Decimal(self.power.price) * self.power_qty
-
-        # BNC Connector
         total += Decimal(self.bnc_connector.price) * self.bnc_qty
-
-        # DC Connector
         total += Decimal(self.dc_connector.price) * self.dc_qty
-
-        # Installation
         total += Decimal(self.installation.price) * self.installation_qty
-
         return total
 
+    def __str__(self):
+        return f"{self.name} (₹{self.total_price()})"
 
-        @property
-        def total_price(self):
-            return self._calculate_total_price()
-
-        def __str__(self):
-            return f"{self.name} (₹{self.total_price})"
-
+    @property
+    def discount_percentage(self):
+        if self.mrp and self.total_price():
+            return int((self.mrp - self.total_price()) / self.mrp * 100)
+        return 0
 
 
 
+
+class ProductReview(models.Model):
+    product = models.ForeignKey(ComboProduct, on_delete=models.CASCADE, related_name="reviews")
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    rating = models.PositiveSmallIntegerField(choices=[(i,i) for i in range(1,6)])
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 

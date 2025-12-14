@@ -1,88 +1,229 @@
 {% extends 'base.html' %}
-{% block content %}
+{% load static %}
 
+{% block title %}{{ combo.name }} - Camura.in{% endblock %}
+
+{% block meta %}
+<meta name="description" content="{{ combo.description|truncatechars:160 }}">
+<meta name="keywords" content="CCTV, Security, {{ combo.name }}">
+{% endblock %}
+
+{% block content %}
 <div class="container mt-5">
 
   <div class="row">
-
     <!-- PRODUCT IMAGE -->
-    <div class="col-lg-5 text-center">
+    <div class="col-lg-5">
       <div class="product-image-box shadow-sm p-3 rounded">
         {% if combo.image %}
-        <img src="{{ combo.image.url }}" class="main-product-image" alt="{{ combo.name }}">
+        <img src="{{ combo.image.url }}" class="main-product-image" alt="{{ combo.name }}" loading="lazy">
         {% else %}
-        <img src="/static/img/no-image.png" class="main-product-image" alt="No Image">
+        <img src="{% static 'img/no-image.png' %}" class="main-product-image" alt="No Image" loading="lazy">
         {% endif %}
       </div>
     </div>
 
     <!-- PRODUCT DETAILS -->
-    <div class="col-lg-4 mt-4 mt-lg-0">
-      <h3 class="fw-bold">{{ combo.name }}</h3>
+    <div class="col-lg-7">
+      <h1 class="fw-bold">{{ combo.name }}</h1>
 
-      <p class="text-muted" style="white-space:pre-line;">{{ combo.description }}</p>
+      {% if combo.is_best_seller %}
+      <span class="badge bg-danger mb-2">Best Seller</span>
+      {% endif %}
+
+      <!-- PRICE & MRP -->
+      <div class="d-flex align-items-center gap-2 my-2">
+        {% if combo.mrp %}
+        <span class="text-muted text-decoration-line-through">₹{{ combo.mrp }}</span>
+        <span class="text-success h4">₹{{ combo.total_price }}</span>
+        {% if discount %}
+        <span class="text-danger">{{ discount }}% OFF</span>
+        {% endif %}
+        {% else %}
+        <span class="text-success h4">₹{{ combo.total_price }}</span>
+        {% endif %}
+      </div>
+
+      <!-- QUANTITY SELECTOR & ACTION BUTTONS -->
+      <form action="{% url 'add_to_cart' combo.id %}" method="post" class="mb-2 d-flex gap-2 align-items-center">
+        {% csrf_token %}
+        <label class="mb-0 me-2">Quantity:</label>
+        <div class="input-group" style="max-width:120px;">
+          <button type="button" class="btn btn-outline-secondary qty-btn" data-action="minus">-</button>
+          <input type="number" name="qty" value="1" min="1" class="form-control text-center">
+          <button type="button" class="btn btn-outline-secondary qty-btn" data-action="plus">+</button>
+        </div>
+        <button class="btn btn-primary action-btn" type="submit">Add to Cart</button>
+      </form>
+      
+      <form action="{% url 'buy_now' combo.id %}" method="post" class="mb-4">
+        {% csrf_token %}
+        <input type="hidden" name="qty" value="1" class="buy-now-qty">
+        <button class="btn btn-warning action-btn" type="submit">Buy Now</button>
+      </form>
+
+
+      <!-- WHAT'S INCLUDED -->
+      
+
 
       <hr>
-
       <h5 class="fw-bold mb-3">📦 What's Included</h5>
       <ul class="spec-list">
-        <li><b>Camera:</b> {{ combo.camera_qty }} × {{ combo.camera.get_camera_type_display }}
-          (₹{{ combo.camera.price }} each)</li>
-
-        <li><b>DVR:</b> {{ combo.dvr.get_resolution_display }} {{ combo.dvr.get_channels_display }}
-          — ₹{{ combo.dvr.price }}</li>
-
-        <li><b>Cable:</b> {{ combo.cable.get_length_display }} — ₹{{ combo.cable.price }}</li>
-
-        <li><b>Power Supply:</b> {{ combo.power.get_range_slug_display }} — ₹{{ combo.power.price }}</li>
-
-        <li><b>BNC Connector:</b> ₹{{ combo.bnc_connector.price }},
+        <li>
+          <b>Camera:</b> {{ combo.camera_qty }} × {{ combo.camera.get_camera_type_display }}
+          (₹{{ combo.camera.price }} each)
+        </li>
+      
+        {% if combo.cameraBullet %}
+        <li>
+          <b>Camera Bullet:</b> {{ combo.camerabullet_qty }} × {{ combo.cameraBullet.get_camera_type_display }}
+          (₹{{ combo.cameraBullet.price }} each)
+        </li>
+        {% endif %}
+      
+        <li>
+          <b>DVR:</b> {{ combo.dvr.get_resolution_display }} {{ combo.dvr.get_channels_display }}
+          — ₹{{ combo.dvr.price }}
+        </li>
+      
+        {% if combo.hard_disk %}
+        <li>
+          <b>Hard Disk:</b> {{ combo.hard_disk_qty }} × {{ combo.hard_disk.brand }} {{ combo.hard_disk.size }} HDD
+          (₹{{ combo.hard_disk.price }} each)
+        </li>
+        {% endif %}
+      
+        <li>
+          <b>Cable:</b> {{ combo.cable_qty }} × {{ combo.cable.get_length_display }}
+          (₹{{ combo.cable.price }} each)
+        </li>
+      
+        <li>
+          <b>Power Supply:</b> {{ combo.power_qty }} × {{ combo.power.get_range_slug_display }}
+          (₹{{ combo.power.price }} each)
+        </li>
+      
+        <li>
+          <b>BNC Connector:</b> ₹{{ combo.bnc_connector.price }},
           <b>DC Connector:</b> ₹{{ combo.dc_connector.price }}
         </li>
-
-        <li><b>Installation Charges:</b> ₹{{ combo.installation.price }}</li>
+      
+        <li>
+          <b>Installation Charges:</b> ₹{{ combo.installation.price }}
+        </li>
       </ul>
 
+
+
+      <!-- BADGES -->
       <hr>
-
-      <h4 class="text-success fw-bold">Total: ₹{{ combo.total_price }}</h4>
-    </div>
-
-    <!-- BUY BOX -->
-    <div class="col-lg-3 mt-4 mt-lg-0">
-      <div class="card shadow buy-box p-3">
-        <h4 class="text-success fw-bold mb-3">₹{{ combo.total_price }}</h4>
-
-        <form action="{% url 'add_to_cart' combo.id %}" method="post" class="mb-2">
-          {% csrf_token %}
-          <label class="fw-semibold">Quantity</label>
-          <div class="input-group mb-3" style="max-width:140px;">
-            <input type="number" name="qty" value="1" min="1" class="form-control form-control-sm">
-          </div>
-          <button class="btn btn-success w-100 mb-2">Add to Cart</button>
-        </form>
-
-        <form action="{% url 'buy_now' combo.id %}" method="post">
-          {% csrf_token %}
-          <input type="hidden" name="qty" value="1">
-          <button class="btn btn-warning w-100">Buy Now</button>
-        </form>
+      <div class="d-flex gap-3 mb-3">
+        <span class="badge-icon"><i class="fas fa-truck"></i> Free Delivery</span>
+        <span class="badge-icon"><i class="fas fa-money-bill-wave"></i> Pay on Delivery</span>
+        <span class="badge-icon"><i class="fas fa-sync-alt"></i> 10 Day Replacement</span>
+        <span class="badge-icon"><i class="fas fa-shield-alt"></i> 1 Year Warranty</span>
       </div>
     </div>
-
   </div>
-</div>
 
+  <!-- REVIEWS ROW -->
+  <div class="row mt-4">
+    <div class="col-12">
+      <hr>
+      <h5>Customer Reviews ({{ combo.reviews.count }})</h5>
+      {% for review in combo.reviews.all %}
+      <div class="border p-2 mb-2 rounded">
+        <div>
+          {% for i in "12345" %}
+          {% if forloop.counter <= review.rating %} <span class="text-warning">★</span>
+            {% else %}
+            <span class="text-secondary">★</span>
+            {% endif %}
+            {% endfor %}
+        </div>
+        <p>{{ review.comment }}</p>
+        <small class="text-muted">{{ review.user.username }} | {{ review.created_at|date:"d M Y" }}</small>
+      </div>
+      {% empty %}
+      <p>No reviews yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- RELATED PRODUCTS ROW -->
+  <div class="row mt-4">
+    <div class="col-12">
+      <hr>
+      <h5>Related Products</h5>
+      <div class="row row-cols-1 row-cols-md-2 g-3">
+        {% for related in combo.related_products.all %}
+        <div class="col">
+          <a href="{% url 'product_detail' related.id %}" class="text-decoration-none text-dark">
+            {% if related.image %}
+            <img src="{{ related.image.url }}" class="img-fluid mb-1" loading="lazy">
+            {% else %}
+            <img src="{% static 'img/no-image.png' %}" class="img-fluid mb-1" loading="lazy">
+            {% endif %}
+            <p>{{ related.name }}</p>
+            <p class="text-success">₹{{ related.total_price }}</p>
+          </a>
+        </div>
+        {% empty %}
+        <p>No related products.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUCT INFORMATION SECTION -->
+  <hr>
+  <h5>Product Information</h5>
+  <hr>
+  <div class="row">
+    <div class="col-md-6">
+      
+      <p><b>Product Name:</b> {{ combo.name }}</p>
+      <hr>
+      <p><b>MRP:</b> ₹{{ combo.mrp }}</p>
+      <hr>
+      <p><b>Total Price:</b> ₹{{ combo.total_price }}</p>
+      <hr>
+      <p><b>Camera Quantity:</b> {{ combo.camera_qty }}</p>
+      {% if combo.cameraBullet %}
+      <hr>
+      <p><b>Camera Bullet Quantity:</b> {{ combo.camerabullet_qty }}</p>
+      {% endif %}
+      <hr>
+      <p><b>DVR:</b> {{ combo.dvr.get_resolution_display }} {{ combo.dvr.get_channels_display }}</p>
+      {% if combo.hard_disk %}
+      <hr>
+      <p><b>Hard Disk:</b> {{ combo.hard_disk.brand }} {{ combo.hard_disk.size }}</p>
+      {% endif %}
+    </div>
+    <div class="col-md-6">
+      <p><b>Cable Quantity:</b> {{ combo.cable_qty }}</p>
+      <hr>
+      <p><b>Power Supply Quantity:</b> {{ combo.power_qty }}</p>
+      <hr>
+      <p><b>BNC Connector:</b> ₹{{ combo.bnc_connector.price }}</p>
+      <hr>
+      <p><b>DC Connector:</b> ₹{{ combo.dc_connector.price }}</p>
+      <hr>
+      <p><b>Installation Charges:</b> ₹{{ combo.installation.price }}</p>
+      <hr>
+      <p><b>Description:</b> {{ combo.description|default:"-" }}</p>
+      <hr>
+    </div>
+  </div>
+
+</div>
 
 <style>
   .main-product-image {
     width: 100%;
-    height: 350px;
+    height: 400px;
     object-fit: contain;
-  }
-
-  .product-image-box {
-    background: #fff;
     border-radius: 12px;
   }
 
@@ -91,13 +232,43 @@
     font-size: 15px;
   }
 
-  .buy-box {
-    border-radius: 12px;
+  .qty-btn {
+    width: 35px;
   }
 
-  .buy-box button {
-    border-radius: 20px;
+  .badge-icon {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: #f8f9fa;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+  }
+
+  .badge-icon i {
+    color: #FF6F00;
+  }
+
+  .action-btn {
+    padding: 15px;
+    font-size: 1.1rem;
+    font-weight: bold;
   }
 </style>
+
+<script>
+  document.querySelectorAll('.qty-btn').forEach(btn => {
+    btn.addEventListener('click', function () {
+      const input = this.parentElement.querySelector('input[name="qty"]');
+      let value = parseInt(input.value);
+      if (this.dataset.action === 'plus') value++;
+      if (this.dataset.action === 'minus' && value > 1) value--;
+      input.value = value;
+      const buyNowInput = document.querySelector('.buy-now-qty');
+      if (buyNowInput) buyNowInput.value = value;
+    });
+  });
+</script>
 
 {% endblock %}

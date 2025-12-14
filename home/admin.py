@@ -114,11 +114,7 @@ class InstallationChargeAdmin(admin.ModelAdmin):
 #         return "-"
 #     thumbnail.short_description = "Image"
 
-
-
-
-
-@admin.register(ComboProduct)
+@admin.register(ComboProduct) 
 class ComboProductAdmin(admin.ModelAdmin):
     list_display = (
         'thumbnail',
@@ -132,6 +128,7 @@ class ComboProductAdmin(admin.ModelAdmin):
         'bnc_connector', 'bnc_qty',
         'dc_connector', 'dc_qty',
         'installation', 'installation_qty',
+        'mrp',                # ✅ Added MRP here
         'get_total_price',
         'created_at',
     )
@@ -147,6 +144,7 @@ class ComboProductAdmin(admin.ModelAdmin):
         'bnc_connector', 'bnc_qty',
         'dc_connector', 'dc_qty',
         'installation', 'installation_qty',
+        'mrp',                # ✅ Added MRP here
         'description',
         'image',
     )
@@ -168,6 +166,60 @@ class ComboProductAdmin(admin.ModelAdmin):
         return obj.total_price()
 
     get_total_price.short_description = "Total Price"
+
+
+
+
+# @admin.register(ComboProduct)
+# class ComboProductAdmin(admin.ModelAdmin):
+#     list_display = (
+#         'thumbnail',
+#         'name',
+#         'camera', 'camera_qty',
+#         'cameraBullet', 'camerabullet_qty',
+#         'dvr',
+#         'hard_disk', 'hard_disk_qty',
+#         'cable', 'cable_qty',
+#         'power', 'power_qty',
+#         'bnc_connector', 'bnc_qty',
+#         'dc_connector', 'dc_qty',
+#         'installation', 'installation_qty',
+#         'get_total_price',
+#         'created_at',
+#     )
+
+#     fields = (
+#         'name',
+#         'camera', 'camera_qty',
+#         'cameraBullet', 'camerabullet_qty',
+#         'dvr',
+#         'hard_disk', 'hard_disk_qty',
+#         'cable', 'cable_qty',
+#         'power', 'power_qty',
+#         'bnc_connector', 'bnc_qty',
+#         'dc_connector', 'dc_qty',
+#         'installation', 'installation_qty',
+#         'description',
+#         'image',
+#     )
+
+#     search_fields = ('name', 'description')
+#     list_filter = ('camera', 'dvr', 'power', 'installation')
+
+#     def thumbnail(self, obj):
+#         if obj.image:
+#             return format_html(
+#                 '<img src="{}" width="50" height="50" style="object-fit:cover; border-radius:4px;" />',
+#                 obj.image.url
+#             )
+#         return "-"
+#     thumbnail.short_description = "Image"
+
+#     # ✅ ADMIN-SAFE TOTAL PRICE
+#     def get_total_price(self, obj):
+#         return obj.total_price()
+
+#     get_total_price.short_description = "Total Price"
 
 
 
