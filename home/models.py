@@ -109,6 +109,7 @@ class InstallationCharge(models.Model):
 
 
 
+from decimal import Decimal
 
 
 # COMBO / PRODUCT (built from masters)
@@ -148,21 +149,63 @@ class ComboProduct(models.Model):
     image = models.ImageField(upload_to='product_images/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    # def total_price(self):
+    #     total = Decimal('0.00')
+
+    #     total += (self.camera.price * Decimal(self.camera_qty))
+    #     total += self.dvr.price
+    #     total += (self.cable.price * Decimal(self.cable_qty))
+    #     total += (self.power.price * Decimal(self.power_qty))
+    #     total += (self.bnc_connector.price * Decimal(self.bnc_qty))
+    #     total += (self.dc_connector.price * Decimal(self.dc_qty))
+    #     total += (self.installation.price * Decimal(self.installation_qty))
+
+    #     return total
+
+
+
     def total_price(self):
         total = Decimal('0.00')
 
-        total += (self.camera.price * Decimal(self.camera_qty))
-        total += self.dvr.price
-        total += (self.cable.price * Decimal(self.cable_qty))
-        total += (self.power.price * Decimal(self.power_qty))
-        total += (self.bnc_connector.price * Decimal(self.bnc_qty))
-        total += (self.dc_connector.price * Decimal(self.dc_qty))
-        total += (self.installation.price * Decimal(self.installation_qty))
+        # Camera
+        total += Decimal(self.camera.price) * self.camera_qty
+
+        # Camera Bullet (optional)
+        if self.cameraBullet:
+            total += Decimal(self.cameraBullet.price) * self.camerabullet_qty
+
+        # DVR
+        total += Decimal(self.dvr.price)
+
+        # Hard Disk (optional)
+        if self.hard_disk:
+            total += Decimal(self.hard_disk.price) * self.hard_disk_qty
+
+        #   Cable
+        total += Decimal(self.cable.price) * self.cable_qty
+
+        # Power Supply
+        total += Decimal(self.power.price) * self.power_qty
+
+        # BNC Connector
+        total += Decimal(self.bnc_connector.price) * self.bnc_qty
+
+        # DC Connector
+        total += Decimal(self.dc_connector.price) * self.dc_qty
+
+        # Installation
+        total += Decimal(self.installation.price) * self.installation_qty
 
         return total
 
-    def __str__(self):
-        return f"{self.name} (₹{self.total_price()})"
+
+        @property
+        def total_price(self):
+            return self._calculate_total_price()
+
+        def __str__(self):
+            return f"{self.name} (₹{self.total_price})"
+
 
 
 
