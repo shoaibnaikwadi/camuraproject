@@ -246,15 +246,38 @@ def delete_combo(request, pk):
 #####################################################################################
 
 
+# @login_required
+# def add_to_cart(request, combo_id):
+#     combo = get_object_or_404(ComboProduct, id=combo_id)
+#     cart_item, created = CartItem.objects.get_or_create(user=request.user, combo=combo)
+#     if not created:
+#         cart_item.quantity += 1
+#     cart_item.save()
+#     messages.success(request, f"{combo.name} added to cart.")
+#     return redirect('cart')
+
+
+
 @login_required
 def add_to_cart(request, combo_id):
     combo = get_object_or_404(ComboProduct, id=combo_id)
+
+    # Get the quantity from the form, default to 1 if not provided
+    qty = int(request.POST.get('qty', 1))
+
+    # Get or create cart item
     cart_item, created = CartItem.objects.get_or_create(user=request.user, combo=combo)
+
     if not created:
-        cart_item.quantity += 1
+        cart_item.quantity += qty  # ✅ increment by selected qty
+    else:
+        cart_item.quantity = qty  # ✅ set initial qty
+
     cart_item.save()
+
     messages.success(request, f"{combo.name} added to cart.")
     return redirect('cart')
+
 
 @login_required
 def cart(request):

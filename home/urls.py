@@ -15,15 +15,6 @@ urlpatterns = [
     path('productlist/', views.product_list, name='product_list'),
     path('product/<int:pk>/', views.product_detail, name='product_detail'),
 
-
-    # path('add-to-cart/<int:pk>/', views.add_to_cart, name='add_to_cart'),
-    # path('buy-now/<int:pk>/', views.buy_now, name='buy_now'),
-    # Cart checkout
-    # path('checkout/', views.checkout, name='checkout'),
-
-    # Buy Now checkout (single product)
-    # path('buy-now/<int:combo_id>/', views.checkout, name='buy_now'),
-
     # Cart checkout
     path('checkout/', views.cart_checkout, name='cart_checkout'),
 
@@ -41,15 +32,15 @@ urlpatterns = [
     path('cod-payment/', views.cod_payment, name='cod_payment'),
     
 
-    # Camera CRUD (example)
-    path('staff/camera/add/', views.add_camera, name='add_camera'),
-    path('staff/camera/<int:pk>/edit/', views.edit_camera, name='edit_camera'),
-    path('staff/camera/<int:pk>/delete/', views.delete_camera, name='delete_camera'),
+    # # Camera CRUD (example)
+    # path('staff/camera/add/', views.add_camera, name='add_camera'),
+    # path('staff/camera/<int:pk>/edit/', views.edit_camera, name='edit_camera'),
+    # path('staff/camera/<int:pk>/delete/', views.delete_camera, name='delete_camera'),
 
-    # Combo CRUD
-    path('staff/combo/add/', views.add_combo, name='add_combo'),
-    path('staff/combo/<int:pk>/edit/', views.edit_combo, name='edit_combo'),
-    path('staff/combo/<int:pk>/delete/', views.delete_combo, name='delete_combo'),
+    # # Combo CRUD
+    # path('staff/combo/add/', views.add_combo, name='add_combo'),
+    # path('staff/combo/<int:pk>/edit/', views.edit_combo, name='edit_combo'),
+    # path('staff/combo/<int:pk>/delete/', views.delete_combo, name='delete_combo'),
 
     # (Add other CRUD routes for DVR, Cable, Power, Accessory, Install similarly)
 
