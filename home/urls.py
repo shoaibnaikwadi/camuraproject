@@ -21,6 +21,7 @@ urlpatterns = [
     # Buy Now checkout
     path('buy-now/<int:combo_id>/', views.buy_now, name='buy_now'),
     path('process-buy-now/<int:combo_id>/', views.process_buy_now, name='process_buy_now'),
+    path('cod-payment/', views.cod_payment, name='cod_payment'),
 
 
     # path('cart/', views.view_cart, name='view_cart'),
@@ -29,7 +30,6 @@ urlpatterns = [
     # Staff manage dashboard
     path('staff/dashboard/', views.staff_dashboard, name='staff_dashboard'),
     # cash on delivery url
-    path('cod-payment/', views.cod_payment, name='cod_payment'),
     
 
     # # Camera CRUD (example)
