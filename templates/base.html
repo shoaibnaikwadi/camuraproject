@@ -5,8 +5,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Camura.in — CCTV Store Dharashiv{% endblock %}</title>
-    {% block meta %}{% endblock %}
+    <title>{% block title %}CCTV Cameras & CCTV Packages in Dharashiv | Camura.in{% endblock %}</title>
+    {% block meta %}
+    <meta name="description" content="Buy CCTV cameras, CCTV combo packages, installation and security solutions in Dharashiv. Best prices at Camura.in">
+    <meta property="og:site_name" content="Camura.in">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{% block og_title %}CCTV Cameras & Packages | Camura.in{% endblock %}">
+    <meta property="og:description"
+        content="{% block og_description %}Best CCTV cameras, combo packages & installation services in Dharashiv.{% endblock %}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:image" content="{% static 'img/camura_logo.png' %}">
+
+    {% endblock %}
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
 
     <!-- ✅ Bootstrap CSS -->
     <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
