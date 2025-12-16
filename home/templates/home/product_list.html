@@ -19,10 +19,13 @@
 
         <!-- IMAGE → PRODUCT DETAIL -->
         <a href="{% url 'product_detail' combo.id %}">
-          <img
-            src="{% if combo.image %}{{ combo.image.url }}{% else %}{% static 'img/default-product.jpg' %}{% endif %}"
-            class="card-img-top product-img" alt="{{ combo.name }}">
+          <div class="product-img-wrap">
+            <img src="{% if combo.image %}{{ combo.image.url }}{% else %}{% static 'img/default-product.jpg' %}{% endif %}"
+              alt="{{ combo.name }}">
+          </div>
         </a>
+
+
 
         <div class="card-body d-flex flex-column">
 
@@ -84,19 +87,40 @@
 </div>
 
 <style>
-  .product-card {
-    transition: transform .3s ease, box-shadow .3s ease;
-  }
+.product-card {
+  transition: transform .3s ease, box-shadow .3s ease;
+}
 
-  .product-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 12px 25px rgba(0, 0, 0, .15);
-  }
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, .15);
+}
 
-  .product-img {
-    height: 180px;
-    object-fit: cover;
-  }
+/* IMAGE CONTAINER */
+.product-img-wrap {
+  height: 180px;
+  width: 100%;
+  background: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; /* safety */
+}
+
+/* IMAGE ITSELF */
+.product-img-wrap img {
+  max-height: 100%;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  transition: transform .3s ease;
+}
+
+.product-card:hover .product-img-wrap img {
+  transform: scale(1.05);
+}
+
 </style>
 
 {% endblock %}
