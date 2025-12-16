@@ -114,7 +114,68 @@ class InstallationChargeAdmin(admin.ModelAdmin):
 #         return "-"
 #     thumbnail.short_description = "Image"
 
-@admin.register(ComboProduct) 
+# @admin.register(ComboProduct) 
+# class ComboProductAdmin(admin.ModelAdmin):
+#     list_display = (
+#         'thumbnail',
+#         'name',
+#         'camera', 'camera_qty',
+#         'cameraBullet', 'camerabullet_qty',
+#         'dvr',
+#         'hard_disk', 'hard_disk_qty',
+#         'cable', 'cable_qty',
+#         'power', 'power_qty',
+#         'bnc_connector', 'bnc_qty',
+#         'dc_connector', 'dc_qty',
+#         'installation', 'installation_qty',
+#         'mrp',                # ✅ Added MRP here
+#         'get_total_price',
+#         'created_at',
+#     )
+
+#     fields = (
+#         'name',
+#         'camera', 'camera_qty',
+#         'cameraBullet', 'camerabullet_qty',
+#         'dvr',
+#         'hard_disk', 'hard_disk_qty',
+#         'cable', 'cable_qty',
+#         'power', 'power_qty',
+#         'bnc_connector', 'bnc_qty',
+#         'dc_connector', 'dc_qty',
+#         'installation', 'installation_qty',
+#         'mrp',                # ✅ Added MRP here
+#         'description',
+#         'image',
+#     )
+
+#     search_fields = ('name', 'description')
+#     list_filter = ('camera', 'dvr', 'power', 'installation')
+
+#     def thumbnail(self, obj):
+#         if obj.image:
+#             return format_html(
+#                 '<img src="{}" width="50" height="50" style="object-fit:cover; border-radius:4px;" />',
+#                 obj.image.url
+#             )
+#         return "-"
+#     thumbnail.short_description = "Image"
+
+#     # ✅ ADMIN-SAFE TOTAL PRICE
+#     def get_total_price(self, obj):
+#         return obj.total_price()
+
+#     get_total_price.short_description = "Total Price"
+
+
+
+
+from django.contrib import admin
+from django.utils.html import format_html
+from .models import ComboProduct
+
+
+@admin.register(ComboProduct)
 class ComboProductAdmin(admin.ModelAdmin):
     list_display = (
         'thumbnail',
@@ -128,7 +189,7 @@ class ComboProductAdmin(admin.ModelAdmin):
         'bnc_connector', 'bnc_qty',
         'dc_connector', 'dc_qty',
         'installation', 'installation_qty',
-        'mrp',                # ✅ Added MRP here
+        'mrp',
         'get_total_price',
         'created_at',
     )
@@ -144,13 +205,15 @@ class ComboProductAdmin(admin.ModelAdmin):
         'bnc_connector', 'bnc_qty',
         'dc_connector', 'dc_qty',
         'installation', 'installation_qty',
-        'mrp',                # ✅ Added MRP here
+        'mrp',
         'description',
         'image',
     )
 
     search_fields = ('name', 'description')
     list_filter = ('camera', 'dvr', 'power', 'installation')
+
+    actions = ['duplicate_combo_product']  # ✅ ADD ACTION
 
     def thumbnail(self, obj):
         if obj.image:
@@ -161,12 +224,20 @@ class ComboProductAdmin(admin.ModelAdmin):
         return "-"
     thumbnail.short_description = "Image"
 
-    # ✅ ADMIN-SAFE TOTAL PRICE
     def get_total_price(self, obj):
         return obj.total_price()
-
     get_total_price.short_description = "Total Price"
 
+    # ✅ COPY / DUPLICATE ACTION
+    def duplicate_combo_product(self, request, queryset):
+        for obj in queryset:
+            obj.pk = None  # IMPORTANT: creates a new object
+            obj.name = f"{obj.name} (Copy)"
+            obj.save()
+
+        self.message_user(request, "Selected combo products were copied successfully.")
+
+    duplicate_combo_product.short_description = "📋 Copy selected combo products"
 
 
 
