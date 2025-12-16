@@ -34,9 +34,31 @@
           </h6>
 
           <!-- PRICE -->
-          <h5 class="text-success mt-auto mb-2">
+          <!-- <h5 class="text-success mt-auto mb-2">
             ₹{{ combo.total_price|floatformat:2 }}
-          </h5>
+          </h5> -->
+          {% if combo.mrp %}
+          <div class="mt-auto mb-2">
+            <span class="text-muted text-decoration-line-through small">
+              ₹{{ combo.mrp }}
+            </span><br>
+          
+            <span class="text-success fw-bold fs-5">
+              ₹{{ combo.total_price }}
+            </span>
+          
+            {% if combo.discount_percentage %}
+            <span class="text-danger small ms-1">
+              {{ combo.discount_percentage }}% OFF
+            </span>
+            {% endif %}
+          </div>
+          {% else %}
+          <span class="text-success fw-bold fs-5">
+            ₹{{ combo.total_price }}
+          </span>
+          {% endif %}
+
 
           <!-- ACTION BUTTONS -->
           <div class="d-flex gap-2 mt-2">
