@@ -4,8 +4,10 @@ Disallow: /cart/
 Disallow: /checkout/
 Disallow: /accounts/
 Disallow: /media/private/
-Disallow: /staticfiles/
 
-Allow: /
+Allow: /staticfiles/
+Allow: /media/
+Allow: /google-feed/
 
 Sitemap: https://www.camura.in/sitemap.xml
+
