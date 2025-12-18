@@ -1,23 +1,125 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}CCTV Cameras & CCTV Packages in Dharashiv | Camura.in{% endblock %}</title>
+
+    <title>{% block title %}Camura.in | CCTV Cameras & Security Solutions Dharashiv{% endblock %}</title>
+
     {% block meta %}
-    <meta name="description" content="Buy CCTV cameras, CCTV combo packages, installation and security solutions in Dharashiv. Best prices at Camura.in">
+    <meta name="description"
+        content="Buy CCTV cameras, CCTV combo packages, installation and security solutions in Dharashiv. Best prices at Camura.in">
     <meta property="og:site_name" content="Camura.in">
     <meta property="og:type" content="website">
     <meta property="og:title" content="{% block og_title %}CCTV Cameras & Packages | Camura.in{% endblock %}">
     <meta property="og:description"
         content="{% block og_description %}Best CCTV cameras, combo packages & installation services in Dharashiv.{% endblock %}">
-    <meta property="og:url" content="{{ request.build_absolute_uri }}">
-    <meta property="og:image" content="{% static 'img/camura_logo.png' %}">
-
+    <meta property="og:url" content="{{ request.build_absolute_uri|cut:'?' }}">
+    <meta property="og:image" content="https://www.camura.in{% static 'img/camura_logo.png' %}">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="CCTV Cameras & Packages | Camura.in">
+    <meta name="twitter:description" content="Best CCTV cameras, combo packages & installation services in Dharashiv.">
+    <meta name="twitter:image" content="https://www.camura.in{% static 'img/camura_logo.png' %}">
+    
     {% endblock %}
-    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+    
+    <!-- Organization Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Camura",
+      "url": "https://www.camura.in/",
+      "logo": "https://www.camura.in/static/img/camura_logo.png",
+      "sameAs": [
+        "https://www.facebook.com/camura",
+        "https://www.instagram.com/camura",
+        "https://twitter.com/camura"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+91-9850504728",
+        "contactType": "customer support",
+        "areaServed": "IN"
+      }
+    }
+    </script>
+    
+    <!-- Breadcrumb Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.camura.in/"},
+        {"@type": "ListItem", "position": 2, "name": "Shop", "item": "https://www.camura.in/productlist/"}
+      ]
+    }
+    </script>
+    
+    <!-- Product Schema Example (CCTV Combo Kit) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "name": "4 Camera CCTV Combo Kit",
+      "image": ["https://www.camura.in/static/img/product_cctv4.jpg"],
+      "description": "High-quality 4-camera CCTV combo kit with installation services in Dharashiv.",
+      "brand": {"@type": "Brand", "name": "Camura"},
+      "offers": {
+        "@type": "Offer",
+        "url": "https://www.camura.in/productlist/",
+        "priceCurrency": "INR",
+        "price": "7499",
+        "availability": "https://schema.org/InStock"
+      }
+    }
+    </script>
+    
+    <!-- Blog Schema Example -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Blog",
+      "name": "Camura Blog",
+      "url": "https://www.camura.in/blog/",
+      "blogPost": [
+        {
+          "@type": "BlogPosting",
+          "headline": "Top 5 CCTV Cameras for Home Security",
+          "image": "https://www.camura.in/static/img/blog1.jpg",
+          "author": {"@type": "Person", "name": "Camura Team"},
+          "datePublished": "2025-01-15",
+          "dateModified": "2025-01-15",
+          "description": "Discover the best CCTV cameras for home security in Dharashiv."
+        }
+      ]
+    }
+    </script>
+    
+    <!-- Service Schema Example -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "name": "CCTV Installation Service",
+      "provider": {
+        "@type": "Organization",
+        "name": "Camura",
+        "url": "https://www.camura.in/"
+      },
+      "areaServed": "IN",
+      "serviceType": "CCTV Installation",
+      "url": "https://www.camura.in/book-service/"
+    }
+    </script>
+
+
+
 
     <!-- ✅ Bootstrap CSS -->
     <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
@@ -156,7 +258,7 @@
                         <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" data-bs-toggle="dropdown"
                             aria-expanded="false">Categories</a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/productlist/">CCTV COMBO</a></li>
+                            <li><a class="dropdown-item" href="/productlist/">CCTV Combo Kits</a></li>
                             <!-- <li><a class="dropdown-item" href="#">Cameras</a></li>
                             <li><a class="dropdown-item" href="#">Power Supply</a></li>
                             <li><a class="dropdown-item" href="#">CCTV Cable</a></li>
@@ -242,7 +344,7 @@
                 </div>
                 <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mt-3">
                     <h5 class="text-uppercase mb-4 fw-bold text-warning">Other</h5>
-                    <p><a href="/productlist" class="text-white text-decoration-none">CCTV COMBO</a></p>
+                    <p><a href="/productlist" class="text-white text-decoration-none">CCTV Combo Kits</a></p>
                     <p><a href="/engineer/register/" class="text-white text-decoration-none">Register as Engineer</a></p>
                     <!-- <p><a href="#" class="text-white text-decoration-none">DVR</a></p>
                     <p><a href="#" class="text-white text-decoration-none">Hard Disk's</a></p>
@@ -255,7 +357,7 @@
                     <p><a href="{% url 'privacy_policy' %}" class="text-white text-decoration-none">Privacy Policy</a></p>
                     <p><a href="{% url 'shipping_policy' %}" class="text-white text-decoration-none">Shipping Policy</a></p>
                     <p><a href="{% url 'warranty' %}" class="text-white text-decoration-none">Warranty</a></p>
-                    <p><a href="{% url 'refund_cancellation_policy' %}" class="text-white text-decoration-none">Refund Return & Cancelation Policy</a></p>
+                    <p><a href="{% url 'refund_cancellation_policy' %}" class="text-white text-decoration-none">Refund, Return & Cancellation Policy</a></p>
                     <p><a href="{% url 'terms_and_conditions' %}" class="text-white text-decoration-none">Terms &
                             Conditions</a></p>
                 </div>
@@ -306,10 +408,10 @@
 
     <!-- ✅ Sticky WhatsApp Button -->
     <a href="https://wa.me/919850504728?text=Hi%20I%20have%20visited%20Camura.in%20and%20I%20need%20some%20help."
-        class="whatsapp-float" target="_blank" title="Chat with us on WhatsApp">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp"
-            class="whatsapp-icon">
+        class="whatsapp-float" target="_blank" title="Chat with us on WhatsApp" aria-label="Chat with Camura on WhatsApp">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="whatsapp-icon">
     </a>
+
 
     {% block extra_js %}{% endblock %}
 </body>
