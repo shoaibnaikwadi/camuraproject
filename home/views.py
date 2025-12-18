@@ -307,64 +307,87 @@ def cart(request):
 
 
 
-
+import csv
+from django.http import HttpResponse
+from django.utils.html import strip_tags
 
 def google_feed(request):
     response = HttpResponse(content_type="text/csv")
     response["Content-Disposition"] = "inline; filename=google_feed.csv"
 
-    # Header
-    response.write(
-        "id,title,description,link,image_link,price,availability,condition,brand,google_product_category,mpn,item_group_id,product_type,included_items\n"
-    )
+    writer = csv.writer(response)
+
+    writer.writerow([
+        "id",
+        "title",
+        "description",
+        "link",
+        "image_link",
+        "price",
+        "availability",
+        "condition",
+        "brand",
+        "google_product_category",
+        "mpn",
+        "product_type",
+        "included_items",
+        "identifier_exists",
+    ])
 
     for combo in ComboProduct.objects.all():
 
-        # Generate component list (Google likes this)
-        components = (
-            f"Camera: {combo.camera.camera_type} x {combo.camera_qty}, "
-            f"DVR: {combo.dvr.channels}, "
-            f"Hard Disk: {combo.hard_disk.size if combo.hard_disk else 'No HDD'}, "
-            f"Cable: {combo.cable.length} x {combo.cable_qty}, "
-            f"Power Supply: {combo.power.range_slug} x {combo.power_qty}, "
-            f"BNC Connector: {combo.bnc_connector.name} x {combo.bnc_qty}, "
-            f"DC Connector: {combo.dc_connector.name} x {combo.dc_qty}, "
-            f"Installation Included"
-        )
+        # INCLUDED ITEMS (STRICTLY FROM MODEL)
+        components = [
+            f"Camera: {combo.camera} x {combo.camera_qty}",
+            f"DVR: {combo.dvr}",
+        ]
 
-        # Description (clean HTML)
-        desc = strip_tags(combo.description) if combo.description else ""
-        desc = f"{desc}\n\nIncluded in Combo: {components}"
+        if combo.cameraBullet:
+            components.append(
+                f"Bullet Camera: {combo.cameraBullet} x {combo.camerabullet_qty}"
+            )
 
-        # Link to product page
+        if combo.hard_disk:
+            components.append(
+                f"Hard Disk: {combo.hard_disk} x {combo.hard_disk_qty}"
+            )
+
+        components.extend([
+            f"Cable: {combo.cable} x {combo.cable_qty}",
+            f"Power Supply: {combo.power} x {combo.power_qty}",
+            f"BNC Connector: {combo.bnc_connector} x {combo.bnc_qty}",
+            f"DC Connector: {combo.dc_connector} x {combo.dc_qty}",
+            f"Installation: {combo.installation} x {combo.installation_qty}",
+        ])
+
+        included_items = ", ".join(components)
+
+        # DESCRIPTION
+        desc = strip_tags(combo.description or "")
+        desc = f"{desc}\n\nIncluded in Combo:\n{included_items}"
+
+        # LINKS
         link = request.build_absolute_uri(f"/product/{combo.id}/")
-
-        # Image absolute URL
-        if combo.image:
-            image = request.build_absolute_uri(combo.image.url)
-        else:
-            image = request.build_absolute_uri("/static/no-image.jpg")
-
-        # Google Product Category → CCTV
-        gmc_category = "Electronics > Video Surveillance > Security Cameras"
-
-        # Write row
-        response.write(
-            f"{combo.id},"
-            f"\"{combo.name}\","
-            f"\"{desc}\","
-            f"{link},"
-            f"{image},"
-            f"{combo.total_price()} INR,"
-            f"in stock,"
-            f"new,"
-            f"Servisco,"
-            f"6720,"
-            f"{combo.id},"
-            f"combo_{combo.id},"
-            f"\"CCTV Combo Kit\","
-            f"\"{components}\"\n"
+        image = request.build_absolute_uri(
+            combo.image.url if combo.image else "/static/no-image.jpg"
         )
+
+        writer.writerow([
+            combo.id,
+            combo.name,
+            desc,
+            link,
+            image,
+            f"{combo.total_price():.2f} INR",
+            "in_stock",
+            "new",
+            "Servisco",
+            "6720",  # CCTV category
+            f"SV-COMBO-{combo.id}",
+            "CCTV Combo Kit",
+            included_items,
+            "no",  # no GTIN
+        ])
 
     return response
 
