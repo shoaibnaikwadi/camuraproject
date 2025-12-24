@@ -395,7 +395,7 @@ def google_feed(request):
             availability,                 # ✅ REQUIRED
             inventory_qty,                # ✅ REQUIRED
             "new",
-            "camura",
+            combo.brand,
             "6720",
             f"SV-COMBO-{combo.id}",
             "CCTV Combo Kit",
