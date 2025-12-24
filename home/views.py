@@ -311,6 +311,14 @@ import csv
 from django.http import HttpResponse
 from django.utils.html import strip_tags
 
+
+
+
+import csv
+from django.http import HttpResponse
+from django.utils.html import strip_tags
+from .models import ComboProduct
+
 def google_feed(request):
     response = HttpResponse(content_type="text/csv")
     response["Content-Disposition"] = "inline; filename=google_feed.csv"
@@ -325,6 +333,7 @@ def google_feed(request):
         "image_link",
         "price",
         "availability",
+        "inventory_quantity",
         "condition",
         "brand",
         "google_product_category",
@@ -336,7 +345,11 @@ def google_feed(request):
 
     for combo in ComboProduct.objects.all():
 
-        # INCLUDED ITEMS (STRICTLY FROM MODEL)
+        # ✅ INVENTORY (THIS FIXES THE ERROR)
+        availability = "in_stock" if combo.stock > 0 else "out_of_stock"
+        inventory_qty = combo.stock
+
+        # INCLUDED ITEMS
         components = [
             f"Camera: {combo.camera} x {combo.camera_qty}",
             f"DVR: {combo.dvr}",
@@ -373,23 +386,104 @@ def google_feed(request):
         )
 
         writer.writerow([
-            combo.id,
+            f"combo-{combo.id}",          # ✅ UNIQUE ID
             combo.name,
-            desc,
+            desc[:5000],                  # Google limit safety
             link,
             image,
             f"{combo.total_price():.2f} INR",
-            "in_stock",
+            availability,                 # ✅ REQUIRED
+            inventory_qty,                # ✅ REQUIRED
             "new",
-            "Servisco",
-            "6720",  # CCTV category
+            "camura",
+            "6720",
             f"SV-COMBO-{combo.id}",
             "CCTV Combo Kit",
             included_items,
-            "no",  # no GTIN
+            "no",
         ])
 
     return response
+
+# def google_feed(request):
+#     response = HttpResponse(content_type="text/csv")
+#     response["Content-Disposition"] = "inline; filename=google_feed.csv"
+
+#     writer = csv.writer(response)
+
+#     writer.writerow([
+#         "id",
+#         "title",
+#         "description",
+#         "link",
+#         "image_link",
+#         "price",
+#         "availability",
+#         "condition",
+#         "brand",
+#         "google_product_category",
+#         "mpn",
+#         "product_type",
+#         "included_items",
+#         "identifier_exists",
+#     ])
+
+#     for combo in ComboProduct.objects.all():
+
+#         # INCLUDED ITEMS (STRICTLY FROM MODEL)
+#         components = [
+#             f"Camera: {combo.camera} x {combo.camera_qty}",
+#             f"DVR: {combo.dvr}",
+#         ]
+
+#         if combo.cameraBullet:
+#             components.append(
+#                 f"Bullet Camera: {combo.cameraBullet} x {combo.camerabullet_qty}"
+#             )
+
+#         if combo.hard_disk:
+#             components.append(
+#                 f"Hard Disk: {combo.hard_disk} x {combo.hard_disk_qty}"
+#             )
+
+#         components.extend([
+#             f"Cable: {combo.cable} x {combo.cable_qty}",
+#             f"Power Supply: {combo.power} x {combo.power_qty}",
+#             f"BNC Connector: {combo.bnc_connector} x {combo.bnc_qty}",
+#             f"DC Connector: {combo.dc_connector} x {combo.dc_qty}",
+#             f"Installation: {combo.installation} x {combo.installation_qty}",
+#         ])
+
+#         included_items = ", ".join(components)
+
+#         # DESCRIPTION
+#         desc = strip_tags(combo.description or "")
+#         desc = f"{desc}\n\nIncluded in Combo:\n{included_items}"
+
+#         # LINKS
+#         link = request.build_absolute_uri(f"/product/{combo.id}/")
+#         image = request.build_absolute_uri(
+#             combo.image.url if combo.image else "/static/no-image.jpg"
+#         )
+
+#         writer.writerow([
+#             combo.id,
+#             combo.name,
+#             desc,
+#             link,
+#             image,
+#             f"{combo.total_price():.2f} INR",
+#             "in_stock",
+#             "new",
+#             "Servisco",
+#             "6720",  # CCTV category
+#             f"SV-COMBO-{combo.id}",
+#             "CCTV Combo Kit",
+#             included_items,
+#             "no",  # no GTIN
+#         ])
+
+#     return response
 
 
 

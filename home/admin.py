@@ -175,11 +175,15 @@ from django.utils.html import format_html
 from .models import ComboProduct
 
 
+
+
 @admin.register(ComboProduct)
 class ComboProductAdmin(admin.ModelAdmin):
     list_display = (
         'thumbnail',
         'name',
+        'stock',
+        'availability_status',
         'camera', 'camera_qty',
         'cameraBullet', 'camerabullet_qty',
         'dvr',
@@ -194,8 +198,14 @@ class ComboProductAdmin(admin.ModelAdmin):
         'created_at',
     )
 
+    list_editable = ('stock',)
+    list_filter = ('is_active', 'camera', 'dvr', 'power', 'installation')
+    search_fields = ('name', 'description')
+
     fields = (
         'name',
+        'stock',
+        'is_active',
         'camera', 'camera_qty',
         'cameraBullet', 'camerabullet_qty',
         'dvr',
@@ -210,11 +220,9 @@ class ComboProductAdmin(admin.ModelAdmin):
         'image',
     )
 
-    search_fields = ('name', 'description')
-    list_filter = ('camera', 'dvr', 'power', 'installation')
+    actions = ['duplicate_combo_product']
 
-    actions = ['duplicate_combo_product']  # ✅ ADD ACTION
-
+    # 🖼️ Thumbnail
     def thumbnail(self, obj):
         if obj.image:
             return format_html(
@@ -224,20 +232,95 @@ class ComboProductAdmin(admin.ModelAdmin):
         return "-"
     thumbnail.short_description = "Image"
 
+    # 💰 Total Price
     def get_total_price(self, obj):
         return obj.total_price()
     get_total_price.short_description = "Total Price"
 
-    # ✅ COPY / DUPLICATE ACTION
+    # 📦 Availability (IMPORTANT FOR GOOGLE)
+    def availability_status(self, obj):
+        if not obj.is_active:
+            return format_html('<span style="color:red;">Inactive</span>')
+        if obj.stock > 0:
+            return format_html('<span style="color:green;">In Stock</span>')
+        return format_html('<span style="color:orange;">Out of Stock</span>')
+
+    availability_status.short_description = "Availability"
+
+    # 📋 Duplicate Action
     def duplicate_combo_product(self, request, queryset):
         for obj in queryset:
-            obj.pk = None  # IMPORTANT: creates a new object
+            obj.pk = None
             obj.name = f"{obj.name} (Copy)"
             obj.save()
-
         self.message_user(request, "Selected combo products were copied successfully.")
 
     duplicate_combo_product.short_description = "📋 Copy selected combo products"
+
+
+# @admin.register(ComboProduct)
+# class ComboProductAdmin(admin.ModelAdmin):
+#     list_display = (
+#         'thumbnail',
+#         'name',
+#         'camera', 'camera_qty',
+#         'cameraBullet', 'camerabullet_qty',
+#         'dvr',
+#         'hard_disk', 'hard_disk_qty',
+#         'cable', 'cable_qty',
+#         'power', 'power_qty',
+#         'bnc_connector', 'bnc_qty',
+#         'dc_connector', 'dc_qty',
+#         'installation', 'installation_qty',
+#         'mrp',
+#         'get_total_price',
+#         'created_at',
+#     )
+
+#     fields = (
+#         'name',
+#         'camera', 'camera_qty',
+#         'cameraBullet', 'camerabullet_qty',
+#         'dvr',
+#         'hard_disk', 'hard_disk_qty',
+#         'cable', 'cable_qty',
+#         'power', 'power_qty',
+#         'bnc_connector', 'bnc_qty',
+#         'dc_connector', 'dc_qty',
+#         'installation', 'installation_qty',
+#         'mrp',
+#         'description',
+#         'image',
+#     )
+
+#     search_fields = ('name', 'description')
+#     list_filter = ('camera', 'dvr', 'power', 'installation')
+
+#     actions = ['duplicate_combo_product']  # ✅ ADD ACTION
+
+#     def thumbnail(self, obj):
+#         if obj.image:
+#             return format_html(
+#                 '<img src="{}" width="50" height="50" style="object-fit:cover; border-radius:4px;" />',
+#                 obj.image.url
+#             )
+#         return "-"
+#     thumbnail.short_description = "Image"
+
+#     def get_total_price(self, obj):
+#         return obj.total_price()
+#     get_total_price.short_description = "Total Price"
+
+#     # ✅ COPY / DUPLICATE ACTION
+#     def duplicate_combo_product(self, request, queryset):
+#         for obj in queryset:
+#             obj.pk = None  # IMPORTANT: creates a new object
+#             obj.name = f"{obj.name} (Copy)"
+#             obj.save()
+
+#         self.message_user(request, "Selected combo products were copied successfully.")
+
+#     duplicate_combo_product.short_description = "📋 Copy selected combo products"
 
 
 
