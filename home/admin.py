@@ -181,6 +181,7 @@ class ComboProductAdmin(admin.ModelAdmin):
     list_display = (
         'thumbnail',
         'name',
+        'brand',
         'stock',
         'availability_status',
         'camera', 'camera_qty',
@@ -197,12 +198,13 @@ class ComboProductAdmin(admin.ModelAdmin):
         'created_at',
     )
 
-    list_editable = ('stock',)
-    search_fields = ('name', 'description')
-    list_filter = ('camera', 'dvr', 'power', 'installation')
+    list_editable = ('stock', 'brand',)
+    search_fields = ('name', 'description', 'brand',)
+    list_filter = ('camera', 'dvr', 'power', 'installation', 'brand')
 
     fields = (
         'name',
+        'brand',
         'stock',
         'camera', 'camera_qty',
         'cameraBullet', 'camerabullet_qty',
