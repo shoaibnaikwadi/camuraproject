@@ -176,7 +176,6 @@ from .models import ComboProduct
 
 
 
-
 @admin.register(ComboProduct)
 class ComboProductAdmin(admin.ModelAdmin):
     list_display = (
@@ -199,13 +198,12 @@ class ComboProductAdmin(admin.ModelAdmin):
     )
 
     list_editable = ('stock',)
-    list_filter = ('is_active', 'camera', 'dvr', 'power', 'installation')
     search_fields = ('name', 'description')
+    list_filter = ('camera', 'dvr', 'power', 'installation')
 
     fields = (
         'name',
         'stock',
-        'is_active',
         'camera', 'camera_qty',
         'cameraBullet', 'camerabullet_qty',
         'dvr',
@@ -222,7 +220,6 @@ class ComboProductAdmin(admin.ModelAdmin):
 
     actions = ['duplicate_combo_product']
 
-    # 🖼️ Thumbnail
     def thumbnail(self, obj):
         if obj.image:
             return format_html(
@@ -230,24 +227,16 @@ class ComboProductAdmin(admin.ModelAdmin):
                 obj.image.url
             )
         return "-"
-    thumbnail.short_description = "Image"
 
-    # 💰 Total Price
     def get_total_price(self, obj):
         return obj.total_price()
-    get_total_price.short_description = "Total Price"
 
-    # 📦 Availability (IMPORTANT FOR GOOGLE)
     def availability_status(self, obj):
-        if not obj.is_active:
-            return format_html('<span style="color:red;">Inactive</span>')
         if obj.stock > 0:
             return format_html('<span style="color:green;">In Stock</span>')
-        return format_html('<span style="color:orange;">Out of Stock</span>')
-
+        return format_html('<span style="color:red;">Out of Stock</span>')
     availability_status.short_description = "Availability"
 
-    # 📋 Duplicate Action
     def duplicate_combo_product(self, request, queryset):
         for obj in queryset:
             obj.pk = None
@@ -256,7 +245,6 @@ class ComboProductAdmin(admin.ModelAdmin):
         self.message_user(request, "Selected combo products were copied successfully.")
 
     duplicate_combo_product.short_description = "📋 Copy selected combo products"
-
 
 # @admin.register(ComboProduct)
 # class ComboProductAdmin(admin.ModelAdmin):
