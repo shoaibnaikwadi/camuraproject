@@ -475,20 +475,23 @@ def google_feed(request):
         image = request.build_absolute_uri(combo.image.url if combo.image else "/static/no-image.jpg")
 
         writer.writerow([
-            f"combo-{combo.id}",
-            combo.name,
-            desc[:5000],
-            link,
-            image,
-            f"{combo.total_price():.2f} INR",
-            availability,
-            "new",
-            combo.brand or "Generic",
-            f"SV-COMBO-{combo.id}",
-            "CCTV Combo Kit",
-            included_items,
-            "FALSE",
+            f"combo-{combo.id}",          # id
+            combo.name,                   # title
+            desc[:5000],                  # description
+            link,                         # link
+            image,                        # image_link
+            f"{combo.total_price():.2f} INR",  # price
+            availability,                 # availability
+            "new",                        # condition
+            combo.brand or "Generic",     # brand
+            "6720",                        # google_product_category
+            f"SV-COMBO-{combo.id}",       # mpn
+            "CCTV Combo Kit",             # product_type
+            included_items,               # included_items
+            "FALSE",                      # identifier_exists
         ])
+
+        
 
     return response
 
