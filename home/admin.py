@@ -15,55 +15,117 @@ from .models import (
 from django.db import models
 from django.forms import TextInput
 
+# @admin.register(Camera)
+# class CameraAdmin(admin.ModelAdmin):
+#     list_display = ('camera_type', 'model_number', 'price')
+#     list_filter = ('camera_type',)
+#     search_fields = ('camera_type',)
+
 @admin.register(Camera)
 class CameraAdmin(admin.ModelAdmin):
-    list_display = ('camera_type', 'model_number', 'price')
+    list_display = ('camera_type', 'model_number', 'price', 'stock')
+    list_editable = ('price', 'stock')
     list_filter = ('camera_type',)
-    search_fields = ('camera_type',)
+    search_fields = ('camera_type', 'model_number')
 
-    
+
+
+# @admin.register(CameraBullet)
+# class CameraBulletAdmin(admin.ModelAdmin):
+#     list_display = ('bullet_camera_type', 'bullet_model_number', 'price')
+#     list_filter = ('bullet_camera_type',)
+#     search_fields = ('bullet_camera_type',)
+
+
 @admin.register(CameraBullet)
 class CameraBulletAdmin(admin.ModelAdmin):
-    list_display = ('bullet_camera_type', 'bullet_model_number', 'price')
+    list_display = ('bullet_camera_type', 'bullet_model_number', 'price', 'stock')
+    list_editable = ('price', 'stock')
     list_filter = ('bullet_camera_type',)
-    search_fields = ('bullet_camera_type',)
+    search_fields = ('bullet_camera_type', 'bullet_model_number')
+
+
+# @admin.register(DVR)
+# class DVRAdmin(admin.ModelAdmin):
+#     list_display = ('dvr_name', 'model_number', 'price')
+#     list_filter = ('dvr_name', 'model_number', 'price')
+#     search_fields = ('dvr_name', 'model_number', 'price')
+
+
 
 
 @admin.register(DVR)
 class DVRAdmin(admin.ModelAdmin):
-    list_display = ('dvr_name', 'model_number', 'price')
-    list_filter = ('dvr_name', 'model_number', 'price')
-    search_fields = ('dvr_name', 'model_number', 'price')
+    list_display = ('dvr_name', 'model_number', 'price', 'stock')
+    list_editable = ('price', 'stock')
+    list_filter = ('dvr_name',)
+    search_fields = ('dvr_name', 'model_number')
+
+
+
+# @admin.register(HardDisk)
+# class HardDiskAdmin(admin.ModelAdmin):
+#     list_display = ("size", "price")
+
 
 
 @admin.register(HardDisk)
 class HardDiskAdmin(admin.ModelAdmin):
-    list_display = ("size", "price")
+    list_display = ('size', 'price', 'stock')
+    list_editable = ('price', 'stock')
+    search_fields = ('size',)
+
+
+
+# @admin.register(Cable)
+# class CableAdmin(admin.ModelAdmin):
+#     list_display = ('length', 'price')
+#     list_filter = ('length',)
+#     search_fields = ('length',)
+
 
 
 @admin.register(Cable)
 class CableAdmin(admin.ModelAdmin):
-    list_display = ('length', 'price')
+    list_display = ('length', 'price', 'stock')
+    list_editable = ('price', 'stock')
     list_filter = ('length',)
     search_fields = ('length',)
 
 
+
+# @admin.register(PowerSupply)
+# class PowerSupplyAdmin(admin.ModelAdmin):
+#     list_display = ('range_slug', 'price')
+#     list_filter = ('range_slug',)
+#     search_fields = ('range_slug',)
+
+
+
 @admin.register(PowerSupply)
 class PowerSupplyAdmin(admin.ModelAdmin):
-    list_display = ('range_slug', 'price')
+    list_display = ('range_slug', 'price', 'stock')
+    list_editable = ('price', 'stock')
     list_filter = ('range_slug',)
     search_fields = ('range_slug',)
+
+# @admin.register(Accessory)
+# class AccessoryAdmin(admin.ModelAdmin):
+#     list_display = ('name', 'price')
+#     search_fields = ('name',)
 
 
 @admin.register(Accessory)
 class AccessoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'price')
+    list_display = ('name', 'price', 'stock')
+    list_editable = ('price', 'stock')
     search_fields = ('name',)
 
 
 @admin.register(InstallationCharge)
 class InstallationChargeAdmin(admin.ModelAdmin):
     list_display = ('description', 'price')
+    list_editable = ('price',)
     search_fields = ('description',)
 
 
@@ -176,13 +238,14 @@ from .models import ComboProduct
 
 
 
+
 @admin.register(ComboProduct)
 class ComboProductAdmin(admin.ModelAdmin):
     list_display = (
         'thumbnail',
         'name',
         'brand',
-        'stock',
+        'available_stock_display',
         'availability_status',
         'camera', 'camera_qty',
         'cameraBullet', 'camerabullet_qty',
@@ -198,14 +261,14 @@ class ComboProductAdmin(admin.ModelAdmin):
         'created_at',
     )
 
-    list_editable = ('stock', 'brand',)
+    list_editable = ('brand',)
+
     search_fields = ('name', 'description', 'brand',)
     list_filter = ('camera', 'dvr', 'power', 'installation', 'brand')
 
     fields = (
         'name',
         'brand',
-        'stock',
         'camera', 'camera_qty',
         'cameraBullet', 'camerabullet_qty',
         'dvr',
@@ -222,31 +285,128 @@ class ComboProductAdmin(admin.ModelAdmin):
 
     actions = ['duplicate_combo_product']
 
+    # ---------- CUSTOM DISPLAY METHODS ----------
+
     def thumbnail(self, obj):
         if obj.image:
             return format_html(
-                '<img src="{}" width="50" height="50" style="object-fit:cover; border-radius:4px;" />',
+                '<img src="{}" width="50" height="50" '
+                'style="object-fit:cover; border-radius:4px;" />',
                 obj.image.url
             )
         return "-"
+    thumbnail.short_description = "Image"
 
     def get_total_price(self, obj):
         return obj.total_price()
+    get_total_price.short_description = "Total Price (₹)"
+
+    def available_stock_display(self, obj):
+        return obj.available_stock
+    available_stock_display.short_description = "Available Stock"
 
     def availability_status(self, obj):
-        if obj.stock > 0:
-            return format_html('<span style="color:green;">In Stock</span>')
-        return format_html('<span style="color:red;">Out of Stock</span>')
+        if obj.in_stock:
+            return format_html(
+                '<span style="color:green; font-weight:bold;">In Stock</span>'
+            )
+        return format_html(
+            '<span style="color:red; font-weight:bold;">Out of Stock</span>'
+        )
     availability_status.short_description = "Availability"
+
+    # ---------- ACTIONS ----------
 
     def duplicate_combo_product(self, request, queryset):
         for obj in queryset:
             obj.pk = None
             obj.name = f"{obj.name} (Copy)"
             obj.save()
-        self.message_user(request, "Selected combo products were copied successfully.")
+        self.message_user(
+            request,
+            "Selected combo products were copied successfully."
+        )
 
     duplicate_combo_product.short_description = "📋 Copy selected combo products"
+
+
+
+
+
+
+
+
+# @admin.register(ComboProduct)
+# class ComboProductAdmin(admin.ModelAdmin):
+#     list_display = (
+#         'thumbnail',
+#         'name',
+#         'brand',
+#         # 'stock',
+#         'availability_status',
+#         'camera', 'camera_qty',
+#         'cameraBullet', 'camerabullet_qty',
+#         'dvr',
+#         'hard_disk', 'hard_disk_qty',
+#         'cable', 'cable_qty',
+#         'power', 'power_qty',
+#         'bnc_connector', 'bnc_qty',
+#         'dc_connector', 'dc_qty',
+#         'installation', 'installation_qty',
+#         'mrp',
+#         'get_total_price',
+#         'created_at',
+#     )
+
+#     list_editable = ( 'brand',)
+#     search_fields = ('name', 'description', 'brand',)
+#     list_filter = ('camera', 'dvr', 'power', 'installation', 'brand')
+
+#     fields = (
+#         'name',
+#         'brand',
+#         # 'stock',
+#         'camera', 'camera_qty',
+#         'cameraBullet', 'camerabullet_qty',
+#         'dvr',
+#         'hard_disk', 'hard_disk_qty',
+#         'cable', 'cable_qty',
+#         'power', 'power_qty',
+#         'bnc_connector', 'bnc_qty',
+#         'dc_connector', 'dc_qty',
+#         'installation', 'installation_qty',
+#         'mrp',
+#         'description',
+#         'image',
+#     )
+
+#     actions = ['duplicate_combo_product']
+
+#     def thumbnail(self, obj):
+#         if obj.image:
+#             return format_html(
+#                 '<img src="{}" width="50" height="50" style="object-fit:cover; border-radius:4px;" />',
+#                 obj.image.url
+#             )
+#         return "-"
+
+#     def get_total_price(self, obj):
+#         return obj.total_price()
+
+#     def availability_status(self, obj):
+#         if obj.stock > 0:
+#             return format_html('<span style="color:green;">In Stock</span>')
+#         return format_html('<span style="color:red;">Out of Stock</span>')
+#     availability_status.short_description = "Availability"
+
+#     def duplicate_combo_product(self, request, queryset):
+#         for obj in queryset:
+#             obj.pk = None
+#             obj.name = f"{obj.name} (Copy)"
+#             obj.save()
+#         self.message_user(request, "Selected combo products were copied successfully.")
+
+#     duplicate_combo_product.short_description = "📋 Copy selected combo products"
 
 # @admin.register(ComboProduct)
 # class ComboProductAdmin(admin.ModelAdmin):

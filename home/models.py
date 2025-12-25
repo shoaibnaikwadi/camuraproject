@@ -26,6 +26,8 @@ class Camera(models.Model):
     camera_type = models.CharField(max_length=100)
     model_number = models.CharField(max_length=100, null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    stock = models.PositiveIntegerField(default=5)
+
 
     def __str__(self):
         return f"{self.camera_type} (₹{self.price})"
@@ -34,6 +36,8 @@ class CameraBullet(models.Model):
     bullet_camera_type = models.CharField(max_length=100)
     bullet_model_number = models.CharField(max_length=100, null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    stock = models.PositiveIntegerField(default=5)
+
 
     def __str__(self):
         return f"{self.bullet_camera_type} (₹{self.price})"
@@ -55,6 +59,7 @@ class DVR(models.Model):
         max_digits=10,
         decimal_places=2
     )
+    stock = models.PositiveIntegerField(default=5)
 
     def __str__(self):
         return f"{self.dvr_name} - ₹{self.price}"
@@ -66,6 +71,7 @@ class DVR(models.Model):
 class HardDisk(models.Model):
     size = models.CharField(max_length=50)   # e.g., 1TB, 2TB
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    stock = models.PositiveIntegerField(default=5)
 
     def __str__(self):
         return f"{self.size} HDD (₹{self.price})"
@@ -74,6 +80,7 @@ class HardDisk(models.Model):
 class Cable(models.Model):
     length = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    stock = models.PositiveIntegerField(default=5)
 
     def __str__(self):
         return f"{self.length} (₹{self.price})"
@@ -84,6 +91,7 @@ class PowerSupply(models.Model):
    
     range_slug = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    stock = models.PositiveIntegerField(default=5)
 
     def __str__(self):
         return f"{self.range_slug} (₹{self.price})"
@@ -93,6 +101,7 @@ class PowerSupply(models.Model):
 class Accessory(models.Model):
     name = models.CharField(max_length=100)  # e.g., "BNC Connector", "DC Connector"
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    stock = models.PositiveIntegerField(default=5)
 
     def __str__(self):
         return f"{self.name} (₹{self.price})"
@@ -224,64 +233,230 @@ from decimal import Decimal
 from decimal import Decimal
 from django.db import models
 
+# class ComboProduct(models.Model):
+#     name = models.CharField(max_length=150)
+#     mrp = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+#     stock = models.PositiveIntegerField(default=0)
+
+#     brand = models.CharField(max_length=100, default="Unknown")
+
+
+#     camera = models.ForeignKey(Camera, on_delete=models.CASCADE)
+#     camera_qty = models.PositiveIntegerField(default=2)
+    
+#     cameraBullet = models.ForeignKey(CameraBullet, on_delete=models.SET_NULL, null=True, blank=True)   
+#     camerabullet_qty = models.PositiveIntegerField(default=1)
+
+#     dvr = models.ForeignKey(DVR, on_delete=models.CASCADE)
+
+#     hard_disk = models.ForeignKey(HardDisk, on_delete=models.CASCADE, null=True, blank=True)
+#     hard_disk_qty = models.PositiveIntegerField(default=1)
+
+#     cable = models.ForeignKey(Cable, on_delete=models.CASCADE)
+#     cable_qty = models.PositiveIntegerField(default=1)
+
+#     power = models.ForeignKey(PowerSupply, on_delete=models.CASCADE)
+#     power_qty = models.PositiveIntegerField(default=1)
+
+#     bnc_connector = models.ForeignKey(Accessory, on_delete=models.CASCADE, related_name='bnc_in_combo')
+#     bnc_qty = models.PositiveIntegerField(default=2)
+
+#     dc_connector = models.ForeignKey(Accessory, on_delete=models.CASCADE, related_name='dc_in_combo')
+#     dc_qty = models.PositiveIntegerField(default=2)
+
+#     installation = models.ForeignKey(InstallationCharge, on_delete=models.CASCADE)
+#     installation_qty = models.PositiveIntegerField(default=1)
+
+#     description = models.TextField(blank=True)
+#     image = models.ImageField(upload_to='product_images/', null=True, blank=True)
+#     created_at = models.DateTimeField(auto_now_add=True)
+
+#     def total_price(self):
+#         total = Decimal('0.00')
+#         total += Decimal(self.camera.price) * self.camera_qty
+#         if self.cameraBullet:
+#             total += Decimal(self.cameraBullet.price) * self.camerabullet_qty
+#         total += Decimal(self.dvr.price)
+#         if self.hard_disk:
+#             total += Decimal(self.hard_disk.price) * self.hard_disk_qty
+#         total += Decimal(self.cable.price) * self.cable_qty
+#         total += Decimal(self.power.price) * self.power_qty
+#         total += Decimal(self.bnc_connector.price) * self.bnc_qty
+#         total += Decimal(self.dc_connector.price) * self.dc_qty
+#         total += Decimal(self.installation.price) * self.installation_qty
+#         return total
+
+#     def __str__(self):
+#         return f"{self.name} (₹{self.total_price()})"
+
+#     @property
+#     def discount_percentage(self):
+#         if self.mrp and self.total_price():
+#             return int((self.mrp - self.total_price()) / self.mrp * 100)
+#         return 0
+
+
+
+
+
+
+
+
+
+
+
+from django.db import models
+from decimal import Decimal
+
+
 class ComboProduct(models.Model):
     name = models.CharField(max_length=150)
-    mrp = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    stock = models.PositiveIntegerField(default=0)
     brand = models.CharField(max_length=100, default="Unknown")
-    camera = models.ForeignKey(Camera, on_delete=models.CASCADE)
+
+    mrp = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True
+    )
+
+    # ---- COMPONENTS ----
+
+    camera = models.ForeignKey(
+        'Camera',
+        on_delete=models.CASCADE
+    )
     camera_qty = models.PositiveIntegerField(default=2)
-    
-    cameraBullet = models.ForeignKey(CameraBullet, on_delete=models.SET_NULL, null=True, blank=True)   
+
+    cameraBullet = models.ForeignKey(
+        'CameraBullet',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
     camerabullet_qty = models.PositiveIntegerField(default=1)
 
-    dvr = models.ForeignKey(DVR, on_delete=models.CASCADE)
+    dvr = models.ForeignKey(
+        'DVR',
+        on_delete=models.CASCADE
+    )
 
-    hard_disk = models.ForeignKey(HardDisk, on_delete=models.CASCADE, null=True, blank=True)
+    hard_disk = models.ForeignKey(
+        'HardDisk',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
     hard_disk_qty = models.PositiveIntegerField(default=1)
 
-    cable = models.ForeignKey(Cable, on_delete=models.CASCADE)
+    cable = models.ForeignKey(
+        'Cable',
+        on_delete=models.CASCADE
+    )
     cable_qty = models.PositiveIntegerField(default=1)
 
-    power = models.ForeignKey(PowerSupply, on_delete=models.CASCADE)
+    power = models.ForeignKey(
+        'PowerSupply',
+        on_delete=models.CASCADE
+    )
     power_qty = models.PositiveIntegerField(default=1)
 
-    bnc_connector = models.ForeignKey(Accessory, on_delete=models.CASCADE, related_name='bnc_in_combo')
+    bnc_connector = models.ForeignKey(
+        'Accessory',
+        on_delete=models.CASCADE,
+        related_name='bnc_combo_products'
+    )
     bnc_qty = models.PositiveIntegerField(default=2)
 
-    dc_connector = models.ForeignKey(Accessory, on_delete=models.CASCADE, related_name='dc_in_combo')
+    dc_connector = models.ForeignKey(
+        'Accessory',
+        on_delete=models.CASCADE,
+        related_name='dc_combo_products'
+    )
     dc_qty = models.PositiveIntegerField(default=2)
 
-    installation = models.ForeignKey(InstallationCharge, on_delete=models.CASCADE)
+    installation = models.ForeignKey(
+        'InstallationCharge',
+        on_delete=models.CASCADE
+    )
     installation_qty = models.PositiveIntegerField(default=1)
 
+    # ---- DISPLAY ----
+
     description = models.TextField(blank=True)
-    image = models.ImageField(upload_to='product_images/', null=True, blank=True)
+    image = models.ImageField(
+        upload_to='product_images/',
+        null=True,
+        blank=True
+    )
     created_at = models.DateTimeField(auto_now_add=True)
+
+    # ---- PRICE LOGIC ----
 
     def total_price(self):
         total = Decimal('0.00')
-        total += Decimal(self.camera.price) * self.camera_qty
+
+        total += self.camera.price * self.camera_qty
+
         if self.cameraBullet:
-            total += Decimal(self.cameraBullet.price) * self.camerabullet_qty
-        total += Decimal(self.dvr.price)
+            total += self.cameraBullet.price * self.camerabullet_qty
+
+        total += self.dvr.price
+
         if self.hard_disk:
-            total += Decimal(self.hard_disk.price) * self.hard_disk_qty
-        total += Decimal(self.cable.price) * self.cable_qty
-        total += Decimal(self.power.price) * self.power_qty
-        total += Decimal(self.bnc_connector.price) * self.bnc_qty
-        total += Decimal(self.dc_connector.price) * self.dc_qty
-        total += Decimal(self.installation.price) * self.installation_qty
+            total += self.hard_disk.price * self.hard_disk_qty
+
+        total += self.cable.price * self.cable_qty
+        total += self.power.price * self.power_qty
+        total += self.bnc_connector.price * self.bnc_qty
+        total += self.dc_connector.price * self.dc_qty
+        total += self.installation.price * self.installation_qty
+
         return total
+
+    # ---- STOCK LOGIC (DERIVED) ----
+
+    @property
+    def available_stock(self):
+        stocks = [
+            self.camera.stock // self.camera_qty,
+            self.dvr.stock,
+            self.cable.stock // self.cable_qty,
+            self.power.stock // self.power_qty,
+            self.bnc_connector.stock // self.bnc_qty,
+            self.dc_connector.stock // self.dc_qty,
+        ]
+
+        if self.cameraBullet:
+            stocks.append(
+                self.cameraBullet.stock // self.camerabullet_qty
+            )
+
+        if self.hard_disk:
+            stocks.append(
+                self.hard_disk.stock // self.hard_disk_qty
+            )
+
+        return min(stocks)
+
+    # ---- HELPERS ----
+
+    @property
+    def in_stock(self):
+        return self.available_stock > 0
+
+    @property
+    def discount_percentage(self):
+        if self.mrp:
+            return int((self.mrp - self.total_price()) / self.mrp * 100)
+        return 0
 
     def __str__(self):
         return f"{self.name} (₹{self.total_price()})"
 
-    @property
-    def discount_percentage(self):
-        if self.mrp and self.total_price():
-            return int((self.mrp - self.total_price()) / self.mrp * 100)
-        return 0
+
+
+
 
 
 
@@ -299,15 +474,49 @@ class ProductReview(models.Model):
 
 
 # ===== Cart and Order =====
+# class CartItem(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     combo = models.ForeignKey(ComboProduct, on_delete=models.CASCADE)
+#     quantity = models.PositiveIntegerField(default=1)
+
+#     def subtotal(self):
+#         return self.combo.total_price() * self.quantity
+
+from django.core.exceptions import ValidationError
+
 class CartItem(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     combo = models.ForeignKey(ComboProduct, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
 
+    def clean(self):
+        if self.quantity > self.combo.available_stock:
+            raise ValidationError(
+                f"Only {self.combo.available_stock} items available"
+            )
+
     def subtotal(self):
         return self.combo.total_price() * self.quantity
 
+    def __str__(self):
+        return f"{self.combo.name} x {self.quantity}"
+
  
+
+
+
+
+# class Order(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     profile = models.ForeignKey('CustomerProfile', on_delete=models.SET_NULL, null=True)
+#     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+#     razorpay_order_id = models.CharField(max_length=100, blank=True, null=True)
+#     payment_id = models.CharField(max_length=100, blank=True, null=True)
+#     payment_status = models.CharField(max_length=50, default='Pending')
+#     created_at = models.DateTimeField(auto_now_add=True)
+
+#     def __str__(self):
+#         return f"Order #{self.id} - {self.user.username}"
 
 
 
@@ -318,17 +527,41 @@ class Order(models.Model):
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     razorpay_order_id = models.CharField(max_length=100, blank=True, null=True)
     payment_id = models.CharField(max_length=100, blank=True, null=True)
-    payment_status = models.CharField(max_length=50, default='Pending')
+    payment_status = models.CharField(max_length=50, default="Pending")
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def calculate_total(self):
+        return sum(item.subtotal() for item in self.items.all())
 
     def __str__(self):
         return f"Order #{self.id} - {self.user.username}"
 
+
+
+# class OrderItem(models.Model):
+#     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
+#     combo = models.ForeignKey('ComboProduct', on_delete=models.SET_NULL, null=True)
+#     quantity = models.PositiveIntegerField(default=1)
+#     price = models.DecimalField(max_digits=10, decimal_places=2)
+
+#     def subtotal(self):
+#         return self.quantity * self.price
+
+#     def __str__(self):
+#         if self.combo:
+#             return f"{self.combo.name} x {self.quantity}"
+#         else:
+#             return f"Deleted Product x {self.quantity}"
+  
+
+
+
+
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
-    combo = models.ForeignKey('ComboProduct', on_delete=models.SET_NULL, null=True)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="items")
+    combo = models.ForeignKey(ComboProduct, on_delete=models.SET_NULL, null=True)
     quantity = models.PositiveIntegerField(default=1)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.DecimalField(max_digits=10, decimal_places=2)  # snapshot
 
     def subtotal(self):
         return self.quantity * self.price
@@ -336,9 +569,11 @@ class OrderItem(models.Model):
     def __str__(self):
         if self.combo:
             return f"{self.combo.name} x {self.quantity}"
-        else:
-            return f"Deleted Product x {self.quantity}"
-  
+        return f"Deleted Product x {self.quantity}"
+
+
+
+
 
 
 
