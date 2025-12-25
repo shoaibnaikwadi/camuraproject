@@ -439,6 +439,8 @@ def google_feed(request):
         "product_type",
         "included_items",
         "identifier_exists",
+        "inventory_quantity",
+
     ])
 
     for combo in ComboProduct.objects.all():
@@ -474,6 +476,8 @@ def google_feed(request):
         link = request.build_absolute_uri(f"/product/{combo.id}/")
         image = request.build_absolute_uri(combo.image.url if combo.image else "/static/no-image.jpg")
 
+        inventory_qty = combo.available_stock
+
         writer.writerow([
             f"combo-{combo.id}",          # id
             combo.name,                   # title
@@ -489,6 +493,8 @@ def google_feed(request):
             "CCTV Combo Kit",             # product_type
             included_items,               # included_items
             "FALSE",                      # identifier_exists
+            inventory_qty,  # NEW COLUMN
+
         ])
 
         
