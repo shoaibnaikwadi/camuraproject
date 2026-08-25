@@ -1,85 +1,140 @@
 {% extends "base.html" %}
 
 {% block meta %}
-<!-- Primary Meta Tags -->
+<!-- =========================
+ Primary SEO Meta Tags
+========================= -->
 <title>{{ post.meta_title|default:post.title }}</title>
-<meta name="description" content="{{ post.meta_description|default:post.short_description }}">
-<meta name="keywords" content="{{ post.keywords|default:'' }}">
 
-<!-- Open Graph (Facebook, WhatsApp) -->
+<meta name="description" content="{{ post.meta_description|default:post.short_description }}">
+
+{% if post.keywords %}
+<meta name="keywords" content="{{ post.keywords }}">
+{% endif %}
+
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="{{ request.build_absolute_uri }}">
+
+<!-- =========================
+ Open Graph (Facebook / WhatsApp)
+========================= -->
+<meta property="og:type" content="article">
 <meta property="og:title" content="{{ post.meta_title|default:post.title }}">
 <meta property="og:description" content="{{ post.meta_description|default:post.short_description }}">
+<meta property="og:url" content="{{ request.build_absolute_uri }}">
+
 {% if post.featured_image %}
 <meta property="og:image" content="{{ post.featured_image.url }}">
 {% endif %}
 
-<meta property="og:url" content="{{ request.build_absolute_uri }}">
-<meta property="og:type" content="article">
+<meta property="article:published_time" content="{{ post.created_at|date:'c' }}">
+<meta property="article:modified_time" content="{{ post.updated_at|date:'c' }}">
 
-<!-- Twitter Card -->
+<!-- =========================
+ Twitter Card
+========================= -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{{ post.meta_title|default:post.title }}">
 <meta name="twitter:description" content="{{ post.meta_description|default:post.short_description }}">
+
 {% if post.featured_image %}
 <meta name="twitter:image" content="{{ post.featured_image.url }}">
 {% endif %}
 
-<!-- JSON-LD Schema --><!-- JSON-LD Schema -->
+<!-- =========================
+ Structured Data (JSON-LD)
+========================= -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "{{ request.build_absolute_uri }}"
+  },
   "headline": "{{ post.title|escapejs }}",
   "description": "{{ post.meta_description|default:post.short_description|escapejs }}",
   {% if post.featured_image %}
   "image": "{{ post.featured_image.url }}",
   {% endif %}
   "author": {
-    "@type": "Organization",
+    "@type": "Person",
     "name": "Camura Team"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Camura",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "/static/images/logo.png"
+    }
   },
   "datePublished": "{{ post.created_at|date:'Y-m-d' }}",
   "dateModified": "{{ post.updated_at|date:'Y-m-d' }}"
 }
 </script>
-
 {% endblock meta %}
 
 {% block content %}
-<div class="container py-4">
+<main class="container py-4">
 
-    <!-- Breadcrumb -->
+    <!-- =========================
+ Breadcrumb (SEO + UX)
+    ========================= -->
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="/">Home</a></li>
             <li class="breadcrumb-item"><a href="/blog/">Blog</a></li>
-            <li class="breadcrumb-item active" aria-current="page">{{ post.title }}</li>
+            <li class="breadcrumb-item active" aria-current="page">
+                {{ post.title }}
+            </li>
         </ol>
     </nav>
 
-    <!-- Blog Title -->
-    <h1 class="mb-3">{{ post.title }}</h1>
+    <!-- =========================
+ Blog Article
+    ========================= -->
+    <article>
 
-    <!-- Featured Image -->
-    {% if post.featured_image %}
-    <img src="{{ post.featured_image.url }}" class="img-fluid rounded mb-4" alt="{{ post.title }}">
-    {% endif %}
+        <!-- Blog Title -->
+        <h1 class="mb-3">{{ post.title }}</h1>
 
-    <!-- Blog Content -->
-    <div class="content">
-        {{ post.content|safe }}
-    </div>
+        <!-- Post Meta -->
+        <p class="text-muted small">
+            Published on {{ post.created_at|date:"F d, Y" }}
+            {% if post.updated_at %}
+            • Updated on {{ post.updated_at|date:"F d, Y" }}
+            {% endif %}
+        </p>
 
-    <!-- Tags -->
-    {% if tags %}
-    <div class="mt-4">
-        <strong>Tags:</strong>
-        {% for tag in tags %}
-        <span class="badge bg-secondary">{{ tag }}</span>
-        {% endfor %}
-    </div>
-    {% endif %}
+        <!-- Featured Image -->
+        {% if post.featured_image %}
+        <figure class="mb-4">
+            <img src="{{ post.featured_image.url }}" class="img-fluid rounded" loading="lazy" alt="{{ post.title }}">
+        </figure>
+        {% endif %}
 
+        <!-- Blog Content -->
+        <div class="content">
+            {{ post.content|safe }}
+        </div>
 
-</div>
+        <!-- =========================
+ Tags (Internal Linking)
+        ========================= -->
+        {% if tags %}
+        <div class="mt-4">
+            <strong>Tags:</strong>
+            {% for tag in tags %}
+            <a href="{% url 'category_posts' tag.slug %}" class="badge bg-secondary text-decoration-none">
+                {{ tag.name }}
+            </a>
+
+            {% endfor %}
+        </div>
+        {% endif %}
+
+    </article>
+
+</main>
 {% endblock content %}
