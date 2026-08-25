@@ -226,9 +226,9 @@ if os.path.exists(env_file):
 else:
     raise RuntimeError(f"{env_file} not found. Cannot load configuration.")
 
-CSRF_TRUSTED_ORIGIN = [
-    "https://camura.in"
-    "https://www.camura.in"
+CSRF_TRUSTED_ORIGINs = [
+    "https://camura.in",
+    "https://www.camura.in",
 ]
 
 #cloudflate https setting tunnel
