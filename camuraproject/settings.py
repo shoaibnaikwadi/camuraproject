@@ -228,7 +228,7 @@ else:
 
 CSRF_TRUSTED_ORIGINs = [
     "https://camura.in",
-    "https://www.camura.in",
+    "https://www.camura.in"
 ]
 
 #cloudflate https setting tunnel
