@@ -1172,8 +1172,78 @@ def send_otp(mobile):
 
 
 
+# def register(request):
+#     stage = "mobile"   # default stage
+
+#     if request.method == "POST":
+
+#         # ---------------------------------------
+#         # STAGE 1 → SEND OTP
+#         # ---------------------------------------
+#         if "send_otp" in request.POST:
+#             mobile = request.POST.get("mobile")
+
+#             otp = send_otp(mobile)
+
+#             request.session["reg_mobile"] = mobile
+#             request.session["reg_otp"] = otp
+
+#             # Check if user exists
+#             request.session["user_exists"] = User.objects.filter(username=mobile).exists()
+
+#             stage = "otp"   # show OTP form
+#             messages.success(request, "OTP Sent Successfully!")
+
+#         # ---------------------------------------
+#         # STAGE 2 → VERIFY OTP
+#         # ---------------------------------------
+#         elif "verify_otp" in request.POST:
+#             entered = request.POST.get("otp")
+#             real = str(request.session["reg_otp"])
+#             mobile = request.session["reg_mobile"]
+
+#             if entered == real:
+#                 # If user exists → login
+#                 if request.session.get("user_exists"):
+#                     user = User.objects.get(username=mobile)
+#                 # Else → create new user
+#                 else:
+#                     user = User.objects.create_user(username=mobile, password=mobile)
+
+#                 # Login user
+#                 login(request, user)
+
+#                 # Ensure profile exists
+#                 profile, created = Profile.objects.get_or_create(user=user)
+#                 profile.mobile = mobile
+#                 profile.save()
+
+#                 # Clean session
+#                 request.session.pop("reg_mobile", None)
+#                 request.session.pop("reg_otp", None)
+#                 request.session.pop("user_exists", None)
+
+
+#                 # ------------------------------
+#                 # Conditional redirect
+#                 # ------------------------------
+#                 if profile.full_name and profile.email:
+#                     return redirect("product_list")  # already completed profile
+#                 else:
+#                     return redirect("profile")      # complete profile
+
+#             else:
+#                 messages.error(request, "Invalid OTP")
+#                 stage = "otp"
+
+#     return render(request, "home/register.html", {"stage": stage})
+
+
 def register(request):
-    stage = "mobile"   # default stage
+    stage = "mobile"
+
+    # Get the page user originally wanted to visit
+    next_url = request.GET.get("next") or request.POST.get("next")
 
     if request.method == "POST":
 
@@ -1188,10 +1258,14 @@ def register(request):
             request.session["reg_mobile"] = mobile
             request.session["reg_otp"] = otp
 
-            # Check if user exists
-            request.session["user_exists"] = User.objects.filter(username=mobile).exists()
+            request.session["user_exists"] = (
+                User.objects.filter(username=mobile).exists()
+            )
 
-            stage = "otp"   # show OTP form
+            # Keep next URL in session
+            request.session["login_next"] = next_url
+
+            stage = "otp"
             messages.success(request, "OTP Sent Successfully!")
 
         # ---------------------------------------
@@ -1203,43 +1277,69 @@ def register(request):
             mobile = request.session["reg_mobile"]
 
             if entered == real:
+
                 # If user exists → login
                 if request.session.get("user_exists"):
                     user = User.objects.get(username=mobile)
+
                 # Else → create new user
                 else:
-                    user = User.objects.create_user(username=mobile, password=mobile)
+                    user = User.objects.create_user(
+                        username=mobile,
+                        password=mobile
+                    )
 
                 # Login user
                 login(request, user)
 
                 # Ensure profile exists
-                profile, created = Profile.objects.get_or_create(user=user)
+                profile, created = Profile.objects.get_or_create(
+                    user=user
+                )
+
                 profile.mobile = mobile
                 profile.save()
+
+                # Get next URL from session
+                next_url = request.session.get("login_next")
 
                 # Clean session
                 request.session.pop("reg_mobile", None)
                 request.session.pop("reg_otp", None)
                 request.session.pop("user_exists", None)
+                request.session.pop("login_next", None)
 
+                # ---------------------------------------
+                # Redirect to original requested page
+                # ---------------------------------------
+                if next_url:
+                    return redirect(next_url)
 
-                # ------------------------------
-                # Conditional redirect
-                # ------------------------------
+                # ---------------------------------------
+                # Normal login → existing behavior
+                # ---------------------------------------
                 if profile.full_name and profile.email:
-                    return redirect("product_list")  # already completed profile
+                    return redirect("product_list")
                 else:
-                    return redirect("profile")      # complete profile
+                    return redirect("profile")
 
             else:
                 messages.error(request, "Invalid OTP")
                 stage = "otp"
 
-    return render(request, "home/register.html", {"stage": stage})
-
-
-
+    return render(
+        request,
+        "home/register.html",
+        {
+            "stage": stage,
+            "next_url": next_url,
+        }
+    )
+    
+    
+    
+    
+    
 
 
 
@@ -1282,7 +1382,7 @@ def book_service(request):
             # Set amount based on service type
             prices = {
                 "cctvrepair": 2,
-                "other": 3000,
+                "computerrepair": 1000,
             }
 
             booking.amount = prices.get(

@@ -664,8 +664,8 @@ class ServiceBooking(models.Model):
     )
     
     SERVICE_TYPES = [
-        ("cctvrepair", "CCTV Repair"),
-        ("other", "Other"),
+        ("cctvrepair", "CCTV Repair Rs. 2000"),
+        ("computerrepair", "Computer Repair Rs. 1000"),
     ]
 
     STATUS_CHOICES = [
@@ -689,7 +689,7 @@ class ServiceBooking(models.Model):
     service_type = models.CharField(
         max_length=20,
         choices=SERVICE_TYPES,
-        default="other"
+        default="cctvrepair"
     )
 
     preferred_date = models.DateField()
