@@ -226,8 +226,13 @@ if os.path.exists(env_file):
 else:
     raise RuntimeError(f"{env_file} not found. Cannot load configuration.")
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://camura.in",
+    "https://www.camura.in",
+]
 
-
+#cloudflate https setting tunnel
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 # =========================
 # Secret Key
 # =========================
@@ -260,8 +265,8 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 # =========================
 # Razorpay keys
 # =========================
-RAZORPAY_KEY_ID = config('RAZORPAY_KEY_ID', default="rzp_test_RsG0TFtbcZfqaq")
-RAZORPAY_KEY_SECRET = config('RAZORPAY_KEY_SECRET', default="DMEwVJIOi7h4HiOyrqf6ZDBP")
+RAZORPAY_KEY_ID = config('RAZORPAY_KEY_ID', default="rzp_live_Rv0NRXmcULFzjb")
+RAZORPAY_KEY_SECRET = config('RAZORPAY_KEY_SECRET', default="H4xTtbl55gEDTN9MG5x1Q3EP")
 
 # =========================
 # Installed apps

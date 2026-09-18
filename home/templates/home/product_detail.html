@@ -274,4 +274,29 @@
   });
 </script>
 
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "{{ combo.name|escapejs }}",
+  "image": [
+    "{{ request.scheme }}://{{ request.get_host }}{{ combo.image.url }}"
+  ],
+  "description": "{{ combo.description|striptags|truncatechars:300|escapejs }}",
+  "brand": {
+    "@type": "Brand",
+    "name": "{{ combo.brand|default:'Camura'|escapejs }}"
+  },
+  "offers": {
+    "@type": "Offer",
+    "url": "{{ request.build_absolute_uri }}",
+    "priceCurrency": "INR",
+    "price": "{{ combo.total_price }}",
+    "availability": "https://schema.org/{% if combo.stock > 0 %}InStock{% else %}OutOfStock{% endif %}"
+  }
+}
+</script>
+
+
 {% endblock %}

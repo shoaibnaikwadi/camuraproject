@@ -307,66 +307,450 @@ def cart(request):
 
 
 
+import csv
+from django.http import HttpResponse
+from django.utils.html import strip_tags
+
+
+
+
+import csv
+from django.http import HttpResponse
+from django.utils.html import strip_tags
+from .models import ComboProduct
+
+# def google_feed(request):
+#     response = HttpResponse(content_type="text/csv")
+#     response["Content-Disposition"] = "inline; filename=google_feed.csv"
+
+#     writer = csv.writer(response)
+
+#     writer.writerow([
+#         "id",
+#         "title",
+#         "description",
+#         "link",
+#         "image_link",
+#         "price",
+#         "availability",
+#         "inventory_quantity",
+#         "condition",
+#         "brand",
+#         "google_product_category",
+#         "mpn",
+#         "product_type",
+#         "included_items",
+#         "identifier_exists",
+#     ])
+
+#     for combo in ComboProduct.objects.all():
+
+#         # ✅ INVENTORY (THIS FIXES THE ERROR)
+#         availability = "in_stock" if combo.stock > 0 else "out_of_stock"
+#         inventory_qty = combo.stock
+
+#         # INCLUDED ITEMS
+#         components = [
+#             f"Camera: {combo.camera} x {combo.camera_qty}",
+#             f"DVR: {combo.dvr}",
+#         ]
+
+#         if combo.cameraBullet:
+#             components.append(
+#                 f"Bullet Camera: {combo.cameraBullet} x {combo.camerabullet_qty}"
+#             )
+
+#         if combo.hard_disk:
+#             components.append(
+#                 f"Hard Disk: {combo.hard_disk} x {combo.hard_disk_qty}"
+#             )
+
+#         components.extend([
+#             f"Cable: {combo.cable} x {combo.cable_qty}",
+#             f"Power Supply: {combo.power} x {combo.power_qty}",
+#             f"BNC Connector: {combo.bnc_connector} x {combo.bnc_qty}",
+#             f"DC Connector: {combo.dc_connector} x {combo.dc_qty}",
+#             f"Installation: {combo.installation} x {combo.installation_qty}",
+#         ])
+
+#         included_items = ", ".join(components)
+
+#         # DESCRIPTION
+#         desc = strip_tags(combo.description or "")
+#         desc = f"{desc}\n\nIncluded in Combo:\n{included_items}"
+
+#         # LINKS
+#         link = request.build_absolute_uri(f"/product/{combo.id}/")
+#         image = request.build_absolute_uri(
+#             combo.image.url if combo.image else "/static/no-image.jpg"
+#         )
+
+#         writer.writerow([
+#             f"combo-{combo.id}",          # ✅ UNIQUE ID
+#             combo.name,
+#             desc[:5000],                  # Google limit safety
+#             link,
+#             image,
+#             f"{combo.total_price():.2f} INR",
+#             availability,                 # ✅ REQUIRED
+#             inventory_qty,                # ✅ REQUIRED
+#             "new",
+#             combo.brand,
+#             "6720",
+#             f"SV-COMBO-{combo.id}",
+#             "CCTV Combo Kit",
+#             included_items,
+#             "no",
+#         ])
+
+#     return response
+
+
+
+
+import csv
+from django.http import HttpResponse
+from django.utils.html import strip_tags
+from .models import ComboProduct
+
+import csv
+from django.http import HttpResponse
+from django.utils.html import strip_tags
+from .models import ComboProduct
+
 
 
 def google_feed(request):
-    response = HttpResponse(content_type="text/csv")
+    response = HttpResponse(content_type="text/csv; charset=utf-8")
     response["Content-Disposition"] = "inline; filename=google_feed.csv"
 
-    # Header
-    response.write(
-        "id,title,description,link,image_link,price,availability,condition,brand,google_product_category,mpn,item_group_id,product_type,included_items\n"
-    )
+    writer = csv.writer(response)
 
+    # -------------------- HEADERS --------------------
+    writer.writerow([
+        "id",
+        "title",
+        "description",
+        "link",
+        "image_link",
+        "price",
+        "availability",
+        "condition",
+        "brand",
+        "google_product_category",
+        "mpn",
+        "product_type",
+        "included_items",
+        "identifier_exists",
+    ])
+
+    # -------------------- DATA ROWS --------------------
     for combo in ComboProduct.objects.all():
 
-        # Generate component list (Google likes this)
-        components = (
-            f"Camera: {combo.camera.camera_type} x {combo.camera_qty}, "
-            f"DVR: {combo.dvr.channels}, "
-            f"Hard Disk: {combo.hard_disk.size if combo.hard_disk else 'No HDD'}, "
-            f"Cable: {combo.cable.length} x {combo.cable_qty}, "
-            f"Power Supply: {combo.power.range_slug} x {combo.power_qty}, "
-            f"BNC Connector: {combo.bnc_connector.name} x {combo.bnc_qty}, "
-            f"DC Connector: {combo.dc_connector.name} x {combo.dc_qty}, "
-            f"Installation Included"
-        )
+        if combo.available_stock <= 0:
+            continue  # Skip out-of-stock combos
 
-        # Description (clean HTML)
-        desc = strip_tags(combo.description) if combo.description else ""
-        desc = f"{desc}\n\nIncluded in Combo: {components}"
+        availability = "in_stock"
 
-        # Link to product page
+        # Build included items
+        components = [
+            f"Camera: {combo.camera} x {combo.camera_qty}",
+            f"DVR: {combo.dvr}",
+        ]
+        if combo.cameraBullet:
+            components.append(f"Bullet Camera: {combo.cameraBullet} x {combo.camerabullet_qty}")
+        if combo.hard_disk:
+            components.append(f"Hard Disk: {combo.hard_disk} x {combo.hard_disk_qty}")
+
+        components.extend([
+            f"Cable: {combo.cable} x {combo.cable_qty}",
+            f"Power Supply: {combo.power} x {combo.power_qty}",
+            f"BNC Connector: {combo.bnc_connector} x {combo.bnc_qty}",
+            f"DC Connector: {combo.dc_connector} x {combo.dc_qty}",
+            f"Installation: {combo.installation} x {combo.installation_qty}",
+        ])
+
+        included_items = ", ".join(components)
+
+        # Description
+        desc = strip_tags(combo.description or "")
+        desc = f"{desc}\n\nIncluded in Combo:\n{included_items}"
+
+        # Links
         link = request.build_absolute_uri(f"/product/{combo.id}/")
+        image = request.build_absolute_uri(combo.image.url if combo.image else "/static/no-image.jpg")
 
-        # Image absolute URL
-        if combo.image:
-            image = request.build_absolute_uri(combo.image.url)
-        else:
-            image = request.build_absolute_uri("/static/no-image.jpg")
-
-        # Google Product Category → CCTV
-        gmc_category = "Electronics > Video Surveillance > Security Cameras"
-
-        # Write row
-        response.write(
-            f"{combo.id},"
-            f"\"{combo.name}\","
-            f"\"{desc}\","
-            f"{link},"
-            f"{image},"
-            f"{combo.total_price()} INR,"
-            f"in stock,"
-            f"new,"
-            f"Servisco,"
-            f"6720,"
-            f"{combo.id},"
-            f"combo_{combo.id},"
-            f"\"CCTV Combo Kit\","
-            f"\"{components}\"\n"
-        )
+        # -------------------- WRITE ROW --------------------
+        writer.writerow([
+            f"combo-{combo.id}",          # id
+            combo.name,                   # title
+            desc[:5000],                  # description
+            link,                         # link
+            image,                        # image_link
+            f"{combo.total_price():.2f} INR",  # price
+            availability,                 # availability
+            "new",                        # condition
+            combo.brand or "Generic",     # brand
+            "6720",                        # google_product_category
+            f"SV-COMBO-{combo.id}",       # mpn
+            "CCTV Combo Kit",             # product_type
+            included_items,               # included_items
+            "FALSE",                      # identifier_exists
+        ])
 
     return response
+
+
+
+
+# def google_feed(request):
+#     response = HttpResponse(content_type="text/csv; charset=utf-8")
+#     response["Content-Disposition"] = "inline; filename=google_feed.csv"
+
+#     writer = csv.writer(response)
+
+#     writer.writerow([
+#         "id",
+#         "title",
+#         "description",
+#         "link",
+#         "image_link",
+#         "price",
+#         "availability",
+#         "condition",
+#         "brand",
+#         "google_product_category",
+#         "mpn",
+#         "product_type",
+#         "included_items",
+#         "identifier_exists",
+#         "inventory_quantity",
+
+#     ])
+
+#     for combo in ComboProduct.objects.all():
+
+#         # ✅ FIX: Use available_stock instead of combo.stock
+#         availability = "in_stock" if combo.available_stock > 0 else "out_of_stock"
+
+#         # INCLUDED ITEMS
+#         components = [
+#             f"Camera: {combo.camera} x {combo.camera_qty}",
+#             f"DVR: {combo.dvr}",
+#         ]
+#         if combo.cameraBullet:
+#             components.append(f"Bullet Camera: {combo.cameraBullet} x {combo.camerabullet_qty}")
+#         if combo.hard_disk:
+#             components.append(f"Hard Disk: {combo.hard_disk} x {combo.hard_disk_qty}")
+
+#         components.extend([
+#             f"Cable: {combo.cable} x {combo.cable_qty}",
+#             f"Power Supply: {combo.power} x {combo.power_qty}",
+#             f"BNC Connector: {combo.bnc_connector} x {combo.bnc_qty}",
+#             f"DC Connector: {combo.dc_connector} x {combo.dc_qty}",
+#             f"Installation: {combo.installation} x {combo.installation_qty}",
+#         ])
+
+#         included_items = ", ".join(components)
+
+#         # DESCRIPTION
+#         desc = strip_tags(combo.description or "")
+#         desc = f"{desc}\n\nIncluded in Combo:\n{included_items}"
+
+#         # LINKS
+#         link = request.build_absolute_uri(f"/product/{combo.id}/")
+#         image = request.build_absolute_uri(combo.image.url if combo.image else "/static/no-image.jpg")
+
+#         inventory_qty = combo.available_stock
+
+#         writer.writerow([
+#             f"combo-{combo.id}",          # id
+#             combo.name,                   # title
+#             desc[:5000],                  # description
+#             link,                         # link
+#             image,                        # image_link
+#             f"{combo.total_price():.2f} INR",  # price
+#             availability,                 # availability
+#             "new",                        # condition
+#             combo.brand or "Generic",     # brand
+#             "6720",                        # google_product_category
+#             f"SV-COMBO-{combo.id}",       # mpn
+#             "CCTV Combo Kit",             # product_type
+#             included_items,               # included_items
+#             "FALSE",                      # identifier_exists
+#             inventory_qty,  # NEW COLUMN
+
+#         ])
+
+        
+
+#     return response
+
+# def google_feed(request):
+#     response = HttpResponse(content_type="text/csv")
+#     response["Content-Disposition"] = "inline; filename=google_feed.csv"
+
+#     writer = csv.writer(response)
+
+#     # ✅ GOOGLE-APPROVED HEADERS
+#     writer.writerow([
+#         "id",
+#         "title",
+#         "description",
+#         "link",
+#         "image_link",
+#         "price",
+#         "availability",
+#         "condition",
+#         "brand",
+#         "google_product_category",
+#         "mpn",
+#         "product_type",
+#         "included_items",
+#         "identifier_exists",
+#     ])
+
+#     for combo in ComboProduct.objects.all():
+
+#         # ✅ AVAILABILITY (REQUIRED)
+#         availability = "in_stock" if combo.stock > 0 else "out_of_stock"
+
+#         # INCLUDED ITEMS
+#         components = [
+#             f"Camera: {combo.camera} x {combo.camera_qty}",
+#             f"DVR: {combo.dvr}",
+#         ]
+
+#         if combo.cameraBullet:
+#             components.append(
+#                 f"Bullet Camera: {combo.cameraBullet} x {combo.camerabullet_qty}"
+#             )
+
+#         if combo.hard_disk:
+#             components.append(
+#                 f"Hard Disk: {combo.hard_disk} x {combo.hard_disk_qty}"
+#             )
+
+#         components.extend([
+#             f"Cable: {combo.cable} x {combo.cable_qty}",
+#             f"Power Supply: {combo.power} x {combo.power_qty}",
+#             f"BNC Connector: {combo.bnc_connector} x {combo.bnc_qty}",
+#             f"DC Connector: {combo.dc_connector} x {combo.dc_qty}",
+#             f"Installation: {combo.installation} x {combo.installation_qty}",
+#         ])
+
+#         included_items = ", ".join(components)
+
+#         # DESCRIPTION
+#         desc = strip_tags(combo.description or "")
+#         desc = f"{desc}\n\nIncluded in Combo:\n{included_items}"
+
+#         # LINKS
+#         link = request.build_absolute_uri(f"/product/{combo.id}/")
+#         image = request.build_absolute_uri(
+#             combo.image.url if combo.image else "/static/no-image.jpg"
+#         )
+
+#         writer.writerow([
+#             f"combo-{combo.id}",                # ✅ UNIQUE ID
+#             combo.name,
+#             desc[:5000],                        # Google limit
+#             link,
+#             image,
+#             f"{combo.total_price():.2f} INR",
+#             availability,                       # ✅ REQUIRED
+#             "new",
+#             combo.brand or "Generic",
+#             "6720",                              # CCTV category
+#             f"SV-COMBO-{combo.id}",              # MPN (optional but consistent)
+#             "CCTV Combo Kit",
+#             included_items,
+#             "FALSE",                             # ✅ IMPORTANT
+#         ])
+
+#     return response
+
+
+
+# def google_feed(request):
+#     response = HttpResponse(content_type="text/csv")
+#     response["Content-Disposition"] = "inline; filename=google_feed.csv"
+
+#     writer = csv.writer(response)
+
+#     writer.writerow([
+#         "id",
+#         "title",
+#         "description",
+#         "link",
+#         "image_link",
+#         "price",
+#         "availability",
+#         "condition",
+#         "brand",
+#         "google_product_category",
+#         "mpn",
+#         "product_type",
+#         "included_items",
+#         "identifier_exists",
+#     ])
+
+#     for combo in ComboProduct.objects.all():
+
+#         # INCLUDED ITEMS (STRICTLY FROM MODEL)
+#         components = [
+#             f"Camera: {combo.camera} x {combo.camera_qty}",
+#             f"DVR: {combo.dvr}",
+#         ]
+
+#         if combo.cameraBullet:
+#             components.append(
+#                 f"Bullet Camera: {combo.cameraBullet} x {combo.camerabullet_qty}"
+#             )
+
+#         if combo.hard_disk:
+#             components.append(
+#                 f"Hard Disk: {combo.hard_disk} x {combo.hard_disk_qty}"
+#             )
+
+#         components.extend([
+#             f"Cable: {combo.cable} x {combo.cable_qty}",
+#             f"Power Supply: {combo.power} x {combo.power_qty}",
+#             f"BNC Connector: {combo.bnc_connector} x {combo.bnc_qty}",
+#             f"DC Connector: {combo.dc_connector} x {combo.dc_qty}",
+#             f"Installation: {combo.installation} x {combo.installation_qty}",
+#         ])
+
+#         included_items = ", ".join(components)
+
+#         # DESCRIPTION
+#         desc = strip_tags(combo.description or "")
+#         desc = f"{desc}\n\nIncluded in Combo:\n{included_items}"
+
+#         # LINKS
+#         link = request.build_absolute_uri(f"/product/{combo.id}/")
+#         image = request.build_absolute_uri(
+#             combo.image.url if combo.image else "/static/no-image.jpg"
+#         )
+
+#         writer.writerow([
+#             combo.id,
+#             combo.name,
+#             desc,
+#             link,
+#             image,
+#             f"{combo.total_price():.2f} INR",
+#             "in_stock",
+#             "new",
+#             "Servisco",
+#             "6720",  # CCTV category
+#             f"SV-COMBO-{combo.id}",
+#             "CCTV Combo Kit",
+#             included_items,
+#             "no",  # no GTIN
+#         ])
+
+#     return response
 
 
 
