@@ -71,8 +71,30 @@ urlpatterns = [
     path("address/delete/<int:id>/", views.delete_address, name="delete_address"),
     path("register/", views.register, name="register"),
 
-    path("book_service/", views.book_service, name="book_service"),
+    # path("book_service/", views.book_service, name="book_service"),
     path("engineer/register/", views.engineer_register, name="engineer_register"),
+    path(
+        "book-service/",
+        views.book_service,
+        name="book_service"
+    ),
+
+    path(
+        "booking-payment/<int:booking_id>/",
+        views.booking_payment,
+        name="booking_payment"
+    ),
+    path(
+    "payment-success/<int:booking_id>/",
+    views.payment_success,
+    name="payment_success"
+    ),
+    
+    path(
+    "my-bookings/",
+    views.my_bookings,
+    name="my_bookings"
+    ),
 
     
 

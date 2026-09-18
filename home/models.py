@@ -612,11 +612,59 @@ class Profile(models.Model):
 
 
 
+# class ServiceBooking(models.Model):
+#     SERVICE_TYPES = [
+#         ("cctvrepair", "CCTV Repair"),
+#         # ("desotherktop", "Other Repair"),
+#         # ("onsite", "On-site Visit"),
+#         ("other", "Other"),
+#     ]
+
+#     STATUS_CHOICES = [
+#         ("new", "New"),
+#         ("scheduled", "Scheduled"),
+#         ("completed", "Completed"),
+#         ("cancelled", "Cancelled"),
+#     ]
+
+#     name = models.CharField(max_length=100)
+#     mobile = models.CharField(max_length=15)
+#     email = models.EmailField(blank=True, null=True)
+#     problem_description = models.TextField()
+
+#     service_type = models.CharField(
+#         max_length=20, choices=SERVICE_TYPES, default="onsite"
+#     )
+
+#     preferred_date = models.DateField()
+#     preferred_time = models.TimeField()
+
+#     address = models.TextField(blank=True, null=True)
+
+#     attachment = models.FileField(upload_to="service_attachments/", blank=True, null=True)
+
+#     status = models.CharField(
+#         max_length=20, choices=STATUS_CHOICES, default="new", blank=True
+#     )
+
+#     created_at = models.DateTimeField(auto_now_add=True)
+
+#     def __str__(self):
+#         return f"{self.name} - {self.mobile}"
+
+
+from django.conf import settings
+
+
 class ServiceBooking(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="service_bookings"
+    )
+    
     SERVICE_TYPES = [
         ("cctvrepair", "CCTV Repair"),
-        # ("desotherktop", "Other Repair"),
-        # ("onsite", "On-site Visit"),
         ("other", "Other"),
     ]
 
@@ -627,13 +675,21 @@ class ServiceBooking(models.Model):
         ("cancelled", "Cancelled"),
     ]
 
+    PAYMENT_STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("paid", "Paid"),
+        ("failed", "Failed"),
+    ]
+
     name = models.CharField(max_length=100)
     mobile = models.CharField(max_length=15)
     email = models.EmailField(blank=True, null=True)
     problem_description = models.TextField()
 
     service_type = models.CharField(
-        max_length=20, choices=SERVICE_TYPES, default="onsite"
+        max_length=20,
+        choices=SERVICE_TYPES,
+        default="other"
     )
 
     preferred_date = models.DateField()
@@ -641,18 +697,48 @@ class ServiceBooking(models.Model):
 
     address = models.TextField(blank=True, null=True)
 
-    attachment = models.FileField(upload_to="service_attachments/", blank=True, null=True)
+    attachment = models.FileField(
+        upload_to="service_attachments/",
+        blank=True,
+        null=True
+    )
 
     status = models.CharField(
-        max_length=20, choices=STATUS_CHOICES, default="new", blank=True
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="new",
+        blank=True
+    )
+
+    # PAYMENT
+    amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0
+    )
+
+    payment_status = models.CharField(
+        max_length=20,
+        choices=PAYMENT_STATUS_CHOICES,
+        default="pending"
+    )
+
+    razorpay_order_id = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True
+    )
+
+    razorpay_payment_id = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.name} - {self.mobile}"
-
-
 
 
 

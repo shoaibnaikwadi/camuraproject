@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <div class="card shadow-lg mx-auto mt-5"
+         style="max-width: 500px;">
+
+        <div class="card-header bg-primary text-white text-center">
+            <h4 class="mb-0">Confirm Service Booking</h4>
+        </div>
+
+        <div class="card-body">
+
+            <h5>Booking Details</h5>
+
+            <hr>
+
+            <p>
+                <strong>Booking ID:</strong>
+                #{{ booking.id }}
+            </p>
+
+            <p>
+                <strong>Name:</strong>
+                {{ booking.name }}
+            </p>
+
+            <p>
+                <strong>Mobile:</strong>
+                {{ booking.mobile }}
+            </p>
+
+            <p>
+                <strong>Service:</strong>
+                {{ booking.get_service_type_display }}
+            </p>
+
+            <hr>
+
+            <div class="text-center">
+
+                <h3>
+                    Amount Payable
+                </h3>
+
+                <h1 class="text-success">
+                    ₹{{ booking.amount }}
+                </h1>
+
+            </div>
+
+            <button
+                id="pay-button"
+                class="btn btn-success btn-lg w-100 mt-3">
+
+                Pay ₹{{ booking.amount }}
+
+            </button>
+
+        </div>
+
+    </div>
+</div>
+
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+
+var options = {
+
+    "key": "{{ razorpay_key_id }}",
+
+    "amount": "{{ booking.amount|floatformat:0 }}00",
+
+    "currency": "INR",
+
+    "name": "Your Company Name",
+
+    "description": "Service Booking #{{ booking.id }}",
+
+    "order_id": "{{ razorpay_order_id }}",
+
+    "handler": function (response) {
+
+        // Send payment details to Django
+        var form = document.createElement("form");
+
+        form.method = "POST";
+        form.action = "{% url 'payment_success' booking.id %}";
+
+        var csrf = document.createElement("input");
+        csrf.type = "hidden";
+        csrf.name = "csrfmiddlewaretoken";
+        csrf.value = "{{ csrf_token }}";
+
+        form.appendChild(csrf);
+
+        var payment_id = document.createElement("input");
+        payment_id.type = "hidden";
+        payment_id.name = "razorpay_payment_id";
+        payment_id.value = response.razorpay_payment_id;
+
+        form.appendChild(payment_id);
+
+        var order_id = document.createElement("input");
+        order_id.type = "hidden";
+        order_id.name = "razorpay_order_id";
+        order_id.value = response.razorpay_order_id;
+
+        form.appendChild(order_id);
+
+        var signature = document.createElement("input");
+        signature.type = "hidden";
+        signature.name = "razorpay_signature";
+        signature.value = response.razorpay_signature;
+
+        form.appendChild(signature);
+
+        document.body.appendChild(form);
+
+        form.submit();
+    },
+
+    "prefill": {
+        "name": "{{ booking.name }}",
+        "email": "{{ booking.email }}",
+        "contact": "{{ booking.mobile }}"
+    },
+
+    "theme": {
+        "color": "#0d6efd"
+    }
+
+};
+
+var rzp = new Razorpay(options);
+
+document.getElementById("pay-button").onclick = function(e) {
+    rzp.open();
+    e.preventDefault();
+};
+
+</script>
+
+{% endblock %}

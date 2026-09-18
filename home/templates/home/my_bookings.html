@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3>My Bookings</h3>
+
+        <a href="{% url 'book_service' %}"
+           class="btn btn-primary">
+            New Booking
+        </a>
+    </div>
+
+
+    {% if bookings %}
+
+        <div class="row">
+
+            {% for booking in bookings %}
+
+            <div class="col-md-6 col-lg-4 mb-4">
+
+                <div class="card shadow-sm h-100">
+
+                    <div class="card-header">
+
+                        <strong>
+                            Booking #{{ booking.id }}
+                        </strong>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <p>
+                            <strong>Service:</strong><br>
+                            {{ booking.get_service_type_display }}
+                        </p>
+
+                        <p>
+                            <strong>Date:</strong><br>
+                            {{ booking.preferred_date }}
+                        </p>
+
+                        <p>
+                            <strong>Time:</strong><br>
+                            {{ booking.preferred_time }}
+                        </p>
+
+                        <p>
+                            <strong>Amount:</strong>
+                            ₹{{ booking.amount }}
+                        </p>
+
+
+                        <p>
+                            <strong>Booking Status:</strong>
+
+                            {% if booking.status == "new" %}
+                                <span class="badge bg-primary">
+                                    New
+                                </span>
+
+                            {% elif booking.status == "scheduled" %}
+                                <span class="badge bg-info">
+                                    Scheduled
+                                </span>
+
+                            {% elif booking.status == "completed" %}
+                                <span class="badge bg-success">
+                                    Completed
+                                </span>
+
+                            {% elif booking.status == "cancelled" %}
+                                <span class="badge bg-danger">
+                                    Cancelled
+                                </span>
+                            {% endif %}
+
+                        </p>
+
+
+                        <p>
+                            <strong>Payment:</strong>
+
+                            {% if booking.payment_status == "paid" %}
+
+                                <span class="badge bg-success">
+                                    Paid
+                                </span>
+
+                            {% elif booking.payment_status == "pending" %}
+
+                                <span class="badge bg-warning text-dark">
+                                    Payment Pending
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-danger">
+                                    Failed
+                                </span>
+
+                            {% endif %}
+
+                        </p>
+
+
+                        {% if booking.payment_status == "pending" %}
+
+                            <a href="{% url 'booking_payment' booking.id %}"
+                               class="btn btn-success w-100">
+
+                                Pay ₹{{ booking.amount }}
+
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="card shadow-sm">
+
+            <div class="card-body text-center py-5">
+
+                <h5>No bookings yet</h5>
+
+                <p class="text-muted">
+                    You haven't made any service bookings.
+                </p>
+
+                <a href="{% url 'book_service' %}"
+                   class="btn btn-primary">
+
+                    Book a Service
+
+                </a>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

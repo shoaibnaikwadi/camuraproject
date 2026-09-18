@@ -904,6 +904,8 @@ def select_address(request):
         )
         messages.success(request, "New address added successfully!")
         return redirect(request.path)
+    
+    
 
     context = {
         'addresses': addresses,
@@ -1243,6 +1245,27 @@ def register(request):
 
 
 
+# def book_service(request):
+#     booking_id = None
+
+#     if request.method == "POST":
+#         form = ServiceBookingForm(request.POST, request.FILES)
+
+#         if form.is_valid():
+#             booking = form.save()
+#             booking_id = booking.id
+#         else:
+#             print("FORM ERRORS:", form.errors)   # <-- ADD THIS LINE
+
+#     else:
+#         form = ServiceBookingForm()
+
+#     return render(request, "home/servicebooking.html", {
+#         "form": form,
+#         "booking_id": booking_id,
+#     }) 
+
+@login_required
 def book_service(request):
     booking_id = None
 
@@ -1250,23 +1273,182 @@ def book_service(request):
         form = ServiceBookingForm(request.POST, request.FILES)
 
         if form.is_valid():
-            booking = form.save()
+            # Don't save to database yet
+            booking = form.save(commit=False)
+
+            # Attach logged-in user BEFORE saving
+            booking.user = request.user
+
+            # Set amount based on service type
+            prices = {
+                "cctvrepair": 2,
+                "other": 3000,
+            }
+
+            booking.amount = prices.get(
+                booking.service_type,
+                0
+            )
+
+            # Now save everything to database
+            booking.save()
+
             booking_id = booking.id
+
+            return redirect(
+                "booking_payment",
+                booking_id=booking.id
+            )
+
         else:
-            print("FORM ERRORS:", form.errors)   # <-- ADD THIS LINE
+            print("FORM ERRORS:", form.errors)
 
     else:
         form = ServiceBookingForm()
 
-    return render(request, "home/servicebooking.html", {
-        "form": form,
-        "booking_id": booking_id,
+    return render(
+        request,
+        "home/servicebooking.html",
+        {
+            "form": form,
+            "booking_id": booking_id,
+        }
+    )
+
+
+
+
+
+import razorpay
+
+from django.conf import settings
+from django.shortcuts import get_object_or_404, render, redirect
+from django.views.decorators.csrf import csrf_exempt
+
+from .models import ServiceBooking
+
+
+def booking_payment(request, booking_id):
+
+    booking = get_object_or_404(
+        ServiceBooking,
+        id=booking_id,
+        user = request.user
+    )
+
+    client = razorpay.Client(
+        auth=(
+            settings.RAZORPAY_KEY_ID,
+            settings.RAZORPAY_KEY_SECRET
+        )
+    )
+
+    payment = client.order.create({
+        "amount": int(booking.amount * 100),
+        "currency": "INR",
+        "payment_capture": 1
     })
 
+    booking.razorpay_order_id = payment["id"]
+    booking.save(update_fields=["razorpay_order_id"])
 
+    return render(
+        request,
+        "home/booking_payment.html",
+        {
+            "booking": booking,
+            "razorpay_order_id": payment["id"],
+            "razorpay_key_id": settings.RAZORPAY_KEY_ID,
+        }
+    )
+    
+    
+    
+    
+def payment_success(request, booking_id):
 
+    booking = get_object_or_404(
+        ServiceBooking,
+        id=booking_id
+    )
 
+    if request.method == "POST":
 
+        payment_id = request.POST.get(
+            "razorpay_payment_id"
+        )
+
+        order_id = request.POST.get(
+            "razorpay_order_id"
+        )
+
+        signature = request.POST.get(
+            "razorpay_signature"
+        )
+
+        client = razorpay.Client(
+            auth=(
+                settings.RAZORPAY_KEY_ID,
+                settings.RAZORPAY_KEY_SECRET
+            )
+        )
+
+        try:
+
+            client.utility.verify_payment_signature({
+                "razorpay_order_id": order_id,
+                "razorpay_payment_id": payment_id,
+                "razorpay_signature": signature
+            })
+
+            booking.payment_status = "paid"
+            booking.razorpay_payment_id = payment_id
+            booking.razorpay_order_id = order_id
+
+            booking.save()
+
+            return render(
+                request,
+                "home/payment_success.html",
+                {
+                    "booking": booking
+                }
+            )
+
+        except razorpay.errors.SignatureVerificationError:
+
+            return render(
+                request,
+                "home/payment_failed.html",
+                {
+                    "booking": booking,
+                    "error": "Payment verification failed."
+                }
+            )
+
+    return redirect(
+        "booking_payment",
+        booking_id=booking.id
+    )
+    
+    
+    
+@login_required
+def my_bookings(request):
+
+    bookings = ServiceBooking.objects.filter(
+        user=request.user
+    ).order_by("-created_at")
+
+    return render(
+        request,
+        "home/my_bookings.html",
+        {
+            "bookings": bookings
+        }
+    )
+    
+    
 # from django.shortcuts import render
 from .forms import CCTVEngineerForm
 

@@ -70,6 +70,59 @@ class CustomerProfileForm(forms.ModelForm):
 
 
 
+# from django import forms
+# from .models import ServiceBooking
+# from crispy_forms.helper import FormHelper
+# from crispy_forms.layout import Layout, Row, Column, Submit
+
+
+# class ServiceBookingForm(forms.ModelForm):
+#     class Meta:
+#         model = ServiceBooking
+#         fields = "__all__"
+
+#         widgets = {
+#             "preferred_date": forms.DateInput(
+#                 attrs={"type": "date", "class": "form-control"}
+#             ),
+#             "preferred_time": forms.TimeInput(
+#                 attrs={"type": "time", "class": "form-control"}
+#             ),
+#             "problem_description": forms.Textarea(
+#                 attrs={"rows": 3, "class": "form-control"}
+#             ),
+#             "address": forms.Textarea(
+#                 attrs={"rows": 2, "class": "form-control"}
+#             ),
+#         }
+
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+
+#         self.helper = FormHelper()
+#         self.helper.form_method = "POST"
+
+#         self.helper.layout = Layout(
+#             "name",
+#             "mobile",
+#             "email",
+#             "problem_description",
+#             "service_type",
+
+#             Row(
+#                 Column("preferred_date", css_class="col-md-6"),
+#                 Column("preferred_time", css_class="col-md-6"),
+#             ),
+
+#             "address",
+#             "attachment",
+
+#             Submit("submit", "Submit Booking", css_class="btn btn-primary w-100 mt-3")
+#         )
+
+
+
+
 from django import forms
 from .models import ServiceBooking
 from crispy_forms.helper import FormHelper
@@ -77,22 +130,49 @@ from crispy_forms.layout import Layout, Row, Column, Submit
 
 
 class ServiceBookingForm(forms.ModelForm):
+
     class Meta:
         model = ServiceBooking
-        fields = "__all__"
+
+        fields = [
+            "name",
+            "mobile",
+            "email",
+            "problem_description",
+            "service_type",
+            "preferred_date",
+            "preferred_time",
+            "address",
+            "attachment",
+        ]
 
         widgets = {
             "preferred_date": forms.DateInput(
-                attrs={"type": "date", "class": "form-control"}
+                attrs={
+                    "type": "date",
+                    "class": "form-control"
+                }
             ),
+
             "preferred_time": forms.TimeInput(
-                attrs={"type": "time", "class": "form-control"}
+                attrs={
+                    "type": "time",
+                    "class": "form-control"
+                }
             ),
+
             "problem_description": forms.Textarea(
-                attrs={"rows": 3, "class": "form-control"}
+                attrs={
+                    "rows": 3,
+                    "class": "form-control"
+                }
             ),
+
             "address": forms.Textarea(
-                attrs={"rows": 2, "class": "form-control"}
+                attrs={
+                    "rows": 2,
+                    "class": "form-control"
+                }
             ),
         }
 
@@ -110,18 +190,31 @@ class ServiceBookingForm(forms.ModelForm):
             "service_type",
 
             Row(
-                Column("preferred_date", css_class="col-md-6"),
-                Column("preferred_time", css_class="col-md-6"),
+                Column(
+                    "preferred_date",
+                    css_class="col-md-6"
+                ),
+                Column(
+                    "preferred_time",
+                    css_class="col-md-6"
+                ),
             ),
 
             "address",
             "attachment",
 
-            Submit("submit", "Submit Booking", css_class="btn btn-primary w-100 mt-3")
+            Submit(
+                "submit",
+                "Confirm Booking",
+                css_class="btn btn-primary w-100 mt-3"
+            )
         )
-
-
-
+        
+        
+        
+        
+        
+        
 
 # from django import forms
 # from .models import CCTVEngineer
