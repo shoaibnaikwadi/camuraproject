@@ -668,6 +668,10 @@ class ServiceBookingAdmin(admin.ModelAdmin):
         "preferred_time",
         "created_at",
     )
+    
+    list_editable = (
+        "status",
+    )
 
     list_filter = (
         "service_type",
