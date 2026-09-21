@@ -1320,7 +1320,7 @@
 
     <a href="{% url 'product_list' %}"
         class="mobile-bottom-item
-        {% if request.resolver_match.url_name == 'home' %}
+        {% if request.resolver_match.url_name == 'product_list' %}
             active
         {% endif %}">
 
@@ -1382,7 +1382,7 @@
 
     <a href="{% url 'my_bookings' %}"
        class="mobile-bottom-item
-       {% if request.resolver_match.url_name == 'profile' %}
+       {% if request.resolver_match.url_name == 'my_bookings' %}
            active
        {% endif %}">
 
@@ -1755,7 +1755,7 @@ if ("serviceWorker" in navigator) {
 
             <div class="modal-body text-center p-4">
 
-                <img src="{% static 'images/camura-icon-192.png' %}"
+                <img src="{% static 'img/camura-icon-192.png' %}"
                      width="80"
                      height="80"
                      class="rounded-4 mb-3"
@@ -1766,7 +1766,7 @@ if ("serviceWorker" in navigator) {
                 </h4>
 
                 <p class="text-muted mb-3">
-                    Install Camura on your phone for quick access
+                    Install Camura app on your phone for quick access
                     to CCTV products, service booking, orders and your account.
                 </p>
 
