@@ -63,6 +63,20 @@
 
     {% endblock %}
 
+    <!--===========================================================
+    for mobile app
+    ================================================================-->
+
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <meta name="theme-color" content="#0d6efd">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Camura">
+
+    <link rel="apple-touch-icon" href="{% static 'images/camura-icon-192.png' %}">
+
+    
 
 
     <!-- =====================================================
@@ -1708,6 +1722,246 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 {% block extra_js %}{% endblock %}
+
+
+
+<!-- belwo is for mobile app  -->
+<script>
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+        navigator.serviceWorker.register(
+            "{% static 'js/service-worker.js' %}"
+        )
+        .then(function (registration) {
+            console.log("Camura Service Worker registered:", registration.scope);
+        })
+        .catch(function (error) {
+            console.log("Service Worker registration failed:", error);
+        });
+    });
+}
+</script>
+
+
+
+<!-- PWA INSTALL POPUP -->
+<div id="installAppModal"
+     class="modal fade"
+     tabindex="-1"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+
+            <div class="modal-body text-center p-4">
+
+                <img src="{% static 'images/camura-icon-192.png' %}"
+                     width="80"
+                     height="80"
+                     class="rounded-4 mb-3"
+                     alt="Camura">
+
+                <h4 class="fw-bold">
+                    Install Camura App
+                </h4>
+
+                <p class="text-muted mb-3">
+                    Install Camura on your phone for quick access
+                    to CCTV products, service booking, orders and your account.
+                </p>
+
+                <div class="text-start small mb-4">
+
+                    <div class="mb-2">
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                        Book CCTV service
+                    </div>
+
+                    <div class="mb-2">
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                        Shop CCTV products
+                    </div>
+
+                    <div class="mb-2">
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                        View your orders
+                    </div>
+
+                    <div>
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                        Manage your account
+                    </div>
+
+                </div>
+
+                <button id="installAppButton"
+                        class="btn btn-primary w-100 mb-2">
+                    <i class="bi bi-download"></i>
+                    Install App
+                </button>
+
+                <button id="notNowButton"
+                        class="btn btn-light w-100">
+                    Not Now
+                </button>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+
+let deferredPrompt = null;
+
+const installModalElement =
+    document.getElementById("installAppModal");
+
+const installButton =
+    document.getElementById("installAppButton");
+
+const notNowButton =
+    document.getElementById("notNowButton");
+
+let installModal = null;
+
+
+/*
+|--------------------------------------------------------------------------
+| Detect Android / Chrome install availability
+|--------------------------------------------------------------------------
+*/
+
+window.addEventListener("beforeinstallprompt", function (event) {
+
+    event.preventDefault();
+
+    deferredPrompt = event;
+
+    installModal =
+        new bootstrap.Modal(installModalElement);
+
+    /*
+     * Don't show immediately on every visit.
+     * Show after a small delay.
+     */
+
+    const dismissedUntil =
+        localStorage.getItem("camuraInstallDismissedUntil");
+
+    if (
+        !dismissedUntil ||
+        Date.now() > parseInt(dismissedUntil)
+    ) {
+
+        setTimeout(function () {
+
+            /*
+             * Don't show if already installed
+             */
+
+            if (!isCamuraInstalled()) {
+                installModal.show();
+            }
+
+        }, 3000);
+    }
+
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| Install button
+|--------------------------------------------------------------------------
+*/
+
+installButton.addEventListener("click", async function () {
+
+    if (!deferredPrompt) {
+        return;
+    }
+
+    deferredPrompt.prompt();
+
+    const result =
+        await deferredPrompt.userChoice;
+
+    console.log(
+        "Camura install result:",
+        result.outcome
+    );
+
+    deferredPrompt = null;
+
+    if (installModal) {
+        installModal.hide();
+    }
+
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| Not Now
+|--------------------------------------------------------------------------
+*/
+
+notNowButton.addEventListener("click", function () {
+
+    /*
+     * Don't show again for 7 days
+     */
+
+    const sevenDays =
+        7 * 24 * 60 * 60 * 1000;
+
+    localStorage.setItem(
+        "camuraInstallDismissedUntil",
+        Date.now() + sevenDays
+    );
+
+    if (installModal) {
+        installModal.hide();
+    }
+
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| Check if already installed
+|--------------------------------------------------------------------------
+*/
+
+function isCamuraInstalled() {
+
+    return (
+        window.matchMedia(
+            "(display-mode: standalone)"
+        ).matches
+        ||
+        window.navigator.standalone === true
+    );
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| App installed
+|--------------------------------------------------------------------------
+*/
+
+window.addEventListener("appinstalled", function () {
+
+    console.log("Camura App installed successfully.");
+
+    deferredPrompt = null;
+
+});
+
+</script>
 
 
 </body>
