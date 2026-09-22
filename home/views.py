@@ -1381,7 +1381,7 @@ def book_service(request):
 
             # Set amount based on service type
             prices = {
-                "cctvrepair": 2,
+                "cctvrepair": 2000,
                 "computerrepair": 1000,
             }
 
