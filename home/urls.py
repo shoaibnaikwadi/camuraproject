@@ -99,6 +99,8 @@ urlpatterns = [
     # urls.py
 
     path("booking/<int:booking_id>/cancel/", views.cancel_booking, name="cancel_booking"),
+    path("bookings/", views.booking_list, name="booking_list")
+    
 
 
     

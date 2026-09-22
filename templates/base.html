@@ -1092,6 +1092,17 @@
 
                 </li>
 
+                {% if request.user.is_authenticated and request.user.is_superuser %}
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'booking_list' %}">
+                            Bookings
+                        </a>
+                    </li>
+
+                {% endif %}
+
+
 
                 <!-- BLOG -->
 

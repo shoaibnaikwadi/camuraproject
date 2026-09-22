@@ -1562,6 +1562,31 @@ def cancel_booking(request, booking_id):
 
     return redirect("home")
     
+
+
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.shortcuts import render
+
+from .models import ServiceBooking
+
+
+def superuser_required(user):
+    return user.is_authenticated and user.is_superuser
+
+
+@login_required
+@user_passes_test(superuser_required)
+def booking_list(request):
+    bookings = ServiceBooking.objects.select_related("user").order_by("-created_at")
+
+    return render(
+        request,
+        "home/bookings_page.html",
+        {
+            "bookings": bookings,
+        }
+    )
+
     
 # from django.shortcuts import render
 from .forms import CCTVEngineerForm
