@@ -1547,6 +1547,20 @@ def my_bookings(request):
             "bookings": bookings
         }
     )
+
+# views.py
+
+from django.shortcuts import get_object_or_404, redirect
+from .models import ServiceBooking
+
+def cancel_booking(request, booking_id):
+    booking = get_object_or_404(ServiceBooking, id=booking_id)
+
+    if request.method == "GET":
+        booking.status = "Cancelled"
+        booking.save()
+
+    return redirect("home")
     
     
 # from django.shortcuts import render

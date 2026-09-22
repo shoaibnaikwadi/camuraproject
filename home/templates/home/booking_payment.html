@@ -57,6 +57,14 @@
                 Pay ₹{{ booking.amount }}
 
             </button>
+            <a
+                href="{% url 'cancel_booking' booking.id %}"
+                class="btn btn-outline-danger btn-lg w-100 mt-3"
+                onclick="return confirm('Are you sure you want to cancel this booking?');">
+
+                Cancel Booking
+
+            </a>
 
         </div>
 
