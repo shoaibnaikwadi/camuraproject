@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
@@ -99,7 +99,9 @@ urlpatterns = [
     # urls.py
 
     path("booking/<int:booking_id>/cancel/", views.cancel_booking, name="cancel_booking"),
-    path("bookings/", views.booking_list, name="booking_list")
+    path("bookings/", views.booking_list, name="booking_list"),
+    path("ckeditor5/", include("django_ckeditor_5.urls")),
+
     
 
 

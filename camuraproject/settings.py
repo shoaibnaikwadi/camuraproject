@@ -390,20 +390,43 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #     }
 # }
 
-CKEDITOR5_UPLOAD_PATH = "uploads/ckeditor/"
+CKEDITOR_5_UPLOAD_PATH = "uploads/ckeditor/"
 
-CKEDITOR5_CONFIGS = {
+# CKEDITOR5_CONFIGS = {
+#     "default": {
+#         "toolbar": [
+#             "heading", "|",
+#             "bold", "italic", "link",
+#             "bulletedList", "numberedList",
+#             "imageUpload", "blockQuote",
+#             "undo", "redo"
+#         ],
+#     }
+# }
+
+CKEDITOR_5_CONFIGS = {
     "default": {
         "toolbar": [
-            "heading", "|",
-            "bold", "italic", "link",
-            "bulletedList", "numberedList",
-            "imageUpload", "blockQuote",
-            "undo", "redo"
+            "heading",
+            "|",
+            "bold",
+            "italic",
+            "underline",
+            "strikethrough",
+            "|",
+            "link",
+            "bulletedList",
+            "numberedList",
+            "|",
+            "blockQuote",
+            "insertImage",
+            "mediaEmbed",
+            "|",
+            "undo",
+            "redo",
         ],
-    }
+    },
 }
-
 
 
 # =========================
