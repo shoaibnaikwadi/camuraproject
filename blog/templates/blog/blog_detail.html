@@ -126,9 +126,9 @@
         <div class="mt-4">
             <strong>Tags:</strong>
             {% for tag in tags %}
-            <a href="{% url 'category_posts' tag.slug %}" class="badge bg-secondary text-decoration-none">
-                {{ tag.name }}
-            </a>
+            <span class="badge bg-secondary me-1 mb-1">
+                {{tag}}
+            </span>
 
             {% endfor %}
         </div>
