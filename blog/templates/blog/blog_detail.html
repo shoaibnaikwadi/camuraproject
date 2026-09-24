@@ -1,140 +1,189 @@
+
 {% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ post.meta_title|default:post.title }} | Camura{% endblock %}
 
 {% block meta %}
-<!-- =========================
- Primary SEO Meta Tags
-========================= -->
-<title>{{ post.meta_title|default:post.title }}</title>
 
-<meta name="description" content="{{ post.meta_description|default:post.short_description }}">
-
-{% if post.keywords %}
-<meta name="keywords" content="{{ post.keywords }}">
-{% endif %}
+<meta name="description"
+      content="{{ post.meta_description|default:post.short_description|striptags|truncatechars:160 }}">
 
 <meta name="robots" content="index, follow">
-<link rel="canonical" href="{{ request.build_absolute_uri }}">
 
-<!-- =========================
- Open Graph (Facebook / WhatsApp)
-========================= -->
+<link rel="canonical"
+      href="https://camura.in{{ request.path }}">
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="Camura">
 <meta property="og:type" content="article">
-<meta property="og:title" content="{{ post.meta_title|default:post.title }}">
-<meta property="og:description" content="{{ post.meta_description|default:post.short_description }}">
-<meta property="og:url" content="{{ request.build_absolute_uri }}">
+<meta property="og:title"
+      content="{{ post.meta_title|default:post.title }}">
+<meta property="og:description"
+      content="{{ post.meta_description|default:post.short_description|striptags|truncatechars:160 }}">
+<meta property="og:url"
+      content="https://camura.in{{ request.path }}">
 
 {% if post.featured_image %}
-<meta property="og:image" content="{{ post.featured_image.url }}">
+<meta property="og:image"
+      content="https://camura.in{{ post.featured_image.url }}">
+{% else %}
+<meta property="og:image"
+      content="https://camura.in{% static 'img/camura_logo.png' %}">
 {% endif %}
 
-<meta property="article:published_time" content="{{ post.created_at|date:'c' }}">
-<meta property="article:modified_time" content="{{ post.updated_at|date:'c' }}">
+<meta property="article:published_time"
+      content="{{ post.created_at|date:'c' }}">
+<meta property="article:modified_time"
+      content="{{ post.updated_at|default:post.created_at|date:'c' }}">
 
-<!-- =========================
- Twitter Card
-========================= -->
+<!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="{{ post.meta_title|default:post.title }}">
-<meta name="twitter:description" content="{{ post.meta_description|default:post.short_description }}">
+<meta name="twitter:title"
+      content="{{ post.meta_title|default:post.title }}">
+<meta name="twitter:description"
+      content="{{ post.meta_description|default:post.short_description|striptags|truncatechars:160 }}">
 
 {% if post.featured_image %}
-<meta name="twitter:image" content="{{ post.featured_image.url }}">
+<meta name="twitter:image"
+      content="https://camura.in{{ post.featured_image.url }}">
+{% else %}
+<meta name="twitter:image"
+      content="https://camura.in{% static 'img/camura_logo.png' %}">
 {% endif %}
 
-<!-- =========================
- Structured Data (JSON-LD)
-========================= -->
+<!-- BlogPosting structured data -->
 <script type="application/ld+json">
 {
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "{{ request.build_absolute_uri }}"
-  },
-  "headline": "{{ post.title|escapejs }}",
-  "description": "{{ post.meta_description|default:post.short_description|escapejs }}",
-  {% if post.featured_image %}
-  "image": "{{ post.featured_image.url }}",
-  {% endif %}
-  "author": {
-    "@type": "Person",
-    "name": "Camura Team"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "Camura",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "/static/images/logo.png"
-    }
-  },
-  "datePublished": "{{ post.created_at|date:'Y-m-d' }}",
-  "dateModified": "{{ post.updated_at|date:'Y-m-d' }}"
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "@id": "https://camura.in{{ request.path }}#article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://camura.in{{ request.path }}"
+    },
+    "headline": "{{ post.title|escapejs }}",
+    "description": "{{ post.meta_description|default:post.short_description|striptags|escapejs }}",
+
+    {% if post.featured_image %}
+    "image": "https://camura.in{{ post.featured_image.url }}",
+    {% endif %}
+
+    "author": {
+        "@type": "Organization",
+        "name": "Camura",
+        "url": "https://camura.in/"
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "Camura",
+        "legalName": "N S Corporation",
+        "url": "https://camura.in/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://camura.in{% static 'img/camura_logo.png' %}"
+        }
+    },
+    "datePublished": "{{ post.created_at|date:'c' }}",
+    "dateModified": "{{ post.updated_at|default:post.created_at|date:'c' }}"
 }
 </script>
-{% endblock meta %}
+
+<!-- Breadcrumb structured data -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://camura.in/"
+        },
+        {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Blog",
+            "item": "https://camura.in{% url 'blog_list' %}"
+        },
+        {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "{{ post.title|escapejs }}",
+            "item": "https://camura.in{{ request.path }}"
+        }
+    ]
+}
+</script>
+
+{% endblock %}
+
 
 {% block content %}
-<main class="container py-4">
 
-    <!-- =========================
- Breadcrumb (SEO + UX)
-    ========================= -->
+<div class="container py-4">
+
+    <!-- Breadcrumb -->
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="/">Home</a></li>
-            <li class="breadcrumb-item"><a href="/blog/">Blog</a></li>
-            <li class="breadcrumb-item active" aria-current="page">
+            <li class="breadcrumb-item">
+                <a href="{% url 'home' %}">Home</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'blog_list' %}">Blog</a>
+            </li>
+            <li class="breadcrumb-item active"
+                aria-current="page">
                 {{ post.title }}
             </li>
         </ol>
     </nav>
 
-    <!-- =========================
- Blog Article
-    ========================= -->
     <article>
 
-        <!-- Blog Title -->
         <h1 class="mb-3">{{ post.title }}</h1>
 
-        <!-- Post Meta -->
         <p class="text-muted small">
             Published on {{ post.created_at|date:"F d, Y" }}
+
             {% if post.updated_at %}
-            • Updated on {{ post.updated_at|date:"F d, Y" }}
+                {% if post.updated_at|date:"Y-m-d" != post.created_at|date:"Y-m-d" %}
+                    · Updated on
+                    {{ post.updated_at|date:"F d, Y" }}
+                {% endif %}
             {% endif %}
         </p>
 
-        <!-- Featured Image -->
         {% if post.featured_image %}
         <figure class="mb-4">
-            <img src="{{ post.featured_image.url }}" class="img-fluid rounded" loading="lazy" alt="{{ post.title }}">
+            <img src="{{ post.featured_image.url }}"
+                 class="img-fluid rounded"
+                 alt="{{ post.title }}"
+                 width="1200"
+                 loading="eager">
         </figure>
         {% endif %}
 
-        <!-- Blog Content -->
+        <!-- Content entered through your editor -->
         <div class="content">
             {{ post.content|safe }}
         </div>
 
-        <!-- =========================
- Tags (Internal Linking)
-        ========================= -->
         {% if tags %}
         <div class="mt-4">
             <strong>Tags:</strong>
+
             {% for tag in tags %}
             <span class="badge bg-secondary me-1 mb-1">
-                {{tag}}
+                {{ tag }}
             </span>
-
             {% endfor %}
         </div>
         {% endif %}
 
     </article>
 
-</main>
-{% endblock content %}
+</div>
+
+{% endblock %}

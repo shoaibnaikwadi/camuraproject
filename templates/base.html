@@ -21,47 +21,49 @@
     <!-- =====================================================
          META
     ====================================================== -->
-
+    
     {% block meta %}
 
     <meta name="description"
-          content="Buy CCTV cameras, CCTV combo packages, installation and security solutions in Dharashiv. Best prices at Camura.in">
+          content="Shop CCTV cameras and accessories at Camura. CCTV installation, inspection and repair services are available in Dharashiv city.">
 
-    <meta property="og:site_name" content="Camura.in">
-
-    <meta property="og:type" content="website">
-
-    <meta property="og:title"
-          content="{% block og_title %}CCTV Cameras & Packages | Camura.in{% endblock %}">
-
-    <meta property="og:description"
-          content="{% block og_description %}Best CCTV cameras, combo packages & installation services in Dharashiv.{% endblock %}">
-
-    <meta property="og:url"
-          content="{{ request.build_absolute_uri|cut:'?' }}">
-
-    <meta property="og:image"
-          content="https://www.camura.in{% static 'img/camura_logo.png' %}">
+    <link rel="canonical"
+          href="https://camura.in{{ request.path }}">
 
     <meta name="robots" content="index, follow">
 
+<!-- Open Graph -->
+    <meta property="og:site_name" content="Camura.in">
+    <meta property="og:type" content="website">
+
+    <meta property="og:title"
+          content="Camura | CCTV Cameras & Security Solutions">
+
+    <meta property="og:description"
+          content="Shop CCTV cameras and accessories at Camura. On-site CCTV installation and repair in Dharashiv city.">
+
+    <meta property="og:url"
+          content="https://camura.in{{ request.path }}">
+
+    <meta property="og:image"
+          content="https://camura.in{% static 'img/camura_logo.png' %}">
 
     <!-- Twitter -->
-
-    <meta name="twitter:card"
-          content="summary_large_image">
+    <meta name="twitter:card" content="summary">
 
     <meta name="twitter:title"
-          content="CCTV Cameras & Packages | Camura.in">
+          content="Camura | CCTV Cameras & Security Solutions">
 
     <meta name="twitter:description"
-          content="Best CCTV cameras, combo packages & installation services in Dharashiv.">
+          content="Shop CCTV cameras and accessories. Book CCTV inspection and repair in Dharashiv city.">
 
     <meta name="twitter:image"
-          content="https://www.camura.in{% static 'img/camura_logo.png' %}">
+          content="https://camura.in{% static 'img/camura_logo.png' %}">
 
     {% endblock %}
 
+    
+    
     <!--===========================================================
     for mobile app
     ================================================================-->
@@ -102,148 +104,8 @@
 
 
 
-    <!-- =====================================================
-         ORGANIZATION SCHEMA
-    ====================================================== -->
-
-    <script type="application/ld+json">
-
-    {
-        "@context": "https://schema.org",
-
-        "@type": "Organization",
-
-        "name": "Camura",
-
-        "url": "https://www.camura.in/",
-
-        "logo": "https://www.camura.in/static/img/camura_logo.png",
-
-        "sameAs": [
-            "https://www.facebook.com/camura",
-            "https://www.instagram.com/camura",
-            "https://twitter.com/camura"
-        ],
-
-        "contactPoint": {
-            "@type": "ContactPoint",
-            "telephone": "+91-9850504728",
-            "contactType": "customer support",
-            "areaServed": "IN"
-        }
-    }
-
-    </script>
 
 
-
-    <!-- =====================================================
-         BREADCRUMB SCHEMA
-    ====================================================== -->
-
-    <script type="application/ld+json">
-
-    {
-        "@context": "https://schema.org",
-
-        "@type": "BreadcrumbList",
-
-        "itemListElement": [
-
-            {
-                "@type": "ListItem",
-                "position": 1,
-                "name": "Home",
-                "item": "https://www.camura.in/"
-            },
-
-            {
-                "@type": "ListItem",
-                "position": 2,
-                "name": "Shop",
-                "item": "https://www.camura.in/productlist/"
-            }
-
-        ]
-    }
-
-    </script>
-
-
-
-    <!-- =====================================================
-         BLOG SCHEMA
-    ====================================================== -->
-
-    <script type="application/ld+json">
-
-    {
-        "@context": "https://schema.org",
-
-        "@type": "Blog",
-
-        "name": "Camura Blog",
-
-        "url": "https://www.camura.in/blog/",
-
-        "blogPost": [
-
-            {
-                "@type": "BlogPosting",
-
-                "headline": "Top 5 CCTV Cameras for Home Security",
-
-                "image": "https://www.camura.in/static/img/blog1.jpg",
-
-                "author": {
-                    "@type": "Person",
-                    "name": "Camura Team"
-                },
-
-                "datePublished": "2025-01-15",
-
-                "dateModified": "2025-01-15",
-
-                "description": "Discover the best CCTV cameras for home security in Dharashiv."
-            }
-
-        ]
-    }
-
-    </script>
-
-
-
-    <!-- =====================================================
-         SERVICE SCHEMA
-    ====================================================== -->
-
-    <script type="application/ld+json">
-
-    {
-        "@context": "https://schema.org",
-
-        "@type": "Service",
-
-        "name": "CCTV Installation Service",
-
-        "provider": {
-
-            "@type": "Organization",
-
-            "name": "Camura",
-
-            "url": "https://www.camura.in/"
-        },
-
-        "areaServed": "IN",
-
-        "serviceType": "CCTV Installation",
-
-        "url": "https://www.camura.in/book-service/"
-    }
-
-    </script>
 
 
 
@@ -655,7 +517,7 @@
 
                 bottom: 0;
 
-                height: 68px;
+                height: calc(68px + env(safe-area-inset-bottom));
 
                 background: #ffffff;
 
@@ -669,6 +531,8 @@
 
                 padding-bottom:
                     env(safe-area-inset-bottom);
+                
+                box-sizing: border-box;
 
             }
 
@@ -782,9 +646,7 @@
             /* Page bottom space */
 
             body {
-
-                padding-bottom: 75px;
-
+                    padding-bottom: calc(75px + env(safe-area-inset-bottom));
             }
 
 
@@ -1061,15 +923,7 @@
 
                         <li>
 
-                            <a class="dropdown-item"
-                               href="/productlist/">
-
-                                <i class="bi bi-camera-video me-2"></i>
-
-                                CCTV Combo Kits
-
-                            </a>
-
+                            <a href="{% url 'product_list' %}" class="dropdown-item"> CCTV Combo Kits </a>
                         </li>
 
                     </ul>
@@ -1484,7 +1338,7 @@
 
                 <p>
 
-                    <a href="/productlist"
+                    <a href="{% url 'product_list' %}"
                        class="text-white text-decoration-none">
 
                         CCTV Combo Kits
