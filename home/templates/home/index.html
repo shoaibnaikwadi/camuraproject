@@ -1,365 +1,46 @@
 {% extends "base.html" %}
-{% block title %}CCTV Installation in Dharashiv | Hikvision | CP Plus | Camura{% endblock %}
-
+{% load static %}
+{% block title %}CCTV Camera Installation & Repair in Dharashiv | Camura{% endblock %}
 {% block content %}
-
-<!-- ⭐ JSON-LD SEO SCHEMA -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  "name": "Camura - Netshop Sales",
-  "image": "",
-  "address": {
-    "@type": "PostalAddress",
-    "streetAddress": "Pawar Complex Shop No.1, Opp. Judge Quarter, Behind Tuljabhawani Stadium",
-    "addressLocality": "Dharashiv",
-    "addressRegion": "Maharashtra",
-    "postalCode": "413501",
-    "addressCountry": "IN"
-  },
-  "telephone": "9850504728",
-  "email": "support@camura.in",
-  "url": "https://camura.in",
-  "priceRange": "₹₹",
-  "paymentAccepted": "Cash, UPI, Card",
-  "openingHours": "Mo-Su 00:00-23:59",
-  "servesLocation": "Dharashiv, Osmanabad, Solapur, Beed"
-}
-</script>
-
-<script type="application/ld+json">
-{
- "@context": "https://schema.org",
- "@type": "Service",
- "serviceType": "CCTV Installation",
- "provider": {
-   "@type": "LocalBusiness",
-   "name": "Camura - Netshop Sales"
- },
- "areaServed": ["Dharashiv", "Osmanabad"],
- "description": "Professional CCTV installation, DVR/NVR setup, WiFi cameras, home/office surveillance systems"
-}
-</script>
-
-<script type="application/ld+json">
-{
- "@context": "https://schema.org",
- "@type": "FAQPage",
- "mainEntity": [{
-   "@type": "Question",
-   "name": "Do you provide CCTV installation in Dharashiv?",
-   "acceptedAnswer": {
-     "@type": "Answer",
-     "text": "Yes, we provide same-day CCTV camera installation in Dharashiv for homes, shops, offices & industries."
-   }
- },{
-   "@type": "Question",
-   "name": "Which CCTV brands do you sell?",
-   "acceptedAnswer": {
-     "@type": "Answer",
-     "text": "We sell Hikvision, CP Plus, Dahua, Godrej, TP-Link WiFi Cameras, and more."
-   }
- },{
-   "@type": "Question",
-   "name": "Do you provide DVR/NVR installation?",
-   "acceptedAnswer": {
-     "@type": "Answer",
-     "text": "Yes, we provide installation and configuration for DVR, NVR, hard drives, and remote mobile view."
-   }
- }]
-}
-</script>
-
-<!-- 🌟 HERO SECTION (PREMIUM) -->
-<section class="py-5 text-white"
-    style="background: linear-gradient(rgba(240, 238, 238, 0.6), rgba(241, 235, 235, 0.6)), url('https://images.unsplash.com/photo-1557770347-47c8fe3c5f0b') center/cover;">
-    <div class="container text-center py-5">
-        <h1 class="display-4 fw-bold text-dark">
-            Professional CCTV Installation & Repair in Dharashiv
-        </h1>
-
-        <p class="lead text-dark">
-            Fast installation, expert repair, genuine products, and support within 24 hours.
-        </p>
-
-        <a href="/book-service/" class="btn btn-primary btn-lg px-4">Book a Service</a>
-        <!-- <a href="#services" class="btn btn-outline-dark btn-lg mt-3 ms-2 px-4">Our Services</a> -->
+<style>
+.camura-hero{background:linear-gradient(115deg,#101d35,#164b80);color:white;padding:5rem 0}
+.camura-hero .lead{max-width:700px}.camura-section{padding:4.5rem 0}.camura-card{height:100%;border:1px solid #e9eef5;border-radius:1rem;transition:transform .2s,box-shadow .2s}.camura-card:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,.08)}.camura-icon{font-size:2rem;color:#0d6efd}.camura-muted{color:#526277}.camura-section h2{letter-spacing:-.025em}.camura-faq .accordion-button{font-weight:600}
+</style>
+<section class="camura-hero">
+  <div class="container">
+    <div class="row align-items-center g-4">
+      <div class="col-lg-8">
+        <span class="badge bg-warning text-dark mb-3">CCTV Products, Installation & Repair • Dharashiv</span>
+        <h1 class="display-4 fw-bold mb-3">CCTV Camera Installation & Repair in Dharashiv</h1>
+        <p class="lead mb-4">Protect your home, shop or office with CCTV solutions from Camura. Explore HD and IP cameras, DVR/NVR systems, Wi-Fi cameras, installation, troubleshooting and mobile-view configuration.</p>
+        <div class="d-flex flex-wrap gap-3"><a href="/book-service/" class="btn btn-warning btn-lg fw-semibold">Book CCTV Service</a><a href="/productlist/" class="btn btn-outline-light btn-lg">Explore CCTV Products</a></div>
+      </div>
+      <div class="col-lg-4"><div class="p-4 rounded-4 bg-white text-dark shadow"><h2 class="h4 fw-bold">Need help with existing CCTV?</h2><p class="mb-3">Camera offline, no recording, unclear footage or mobile viewing not working? Book an inspection so the problem can be checked before a repair estimate is provided.</p><a href="/book-service/" class="btn btn-primary w-100">Request Inspection</a></div></div>
     </div>
+  </div>
 </section>
-
-<section class="py-5 text-white"
-    style="background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('https://images.unsplash.com/photo-1518770660439-4636190af475') center/cover;">
-    <div class="container text-center py-5">
-        <h1 class="display-4 fw-bold">Buy Genuine CCTV Cameras & Accessories</h1>
-
-        <p class="lead">Explore HD, IP, Wi-Fi Cameras, DVRs, NVRs, Hard Drives and Accessories at the best prices.</p>
-
-        <a href="/productlist" class="btn btn-warning btn-lg px-5 fw-bold">Shop Now</a>
-        
-    </div>
-</section>
-
-<!-- 💥 FEATURES STRIP -->
-<section class="bg-primary text-white py-3">
-    <div class="container">
-        <div class="row text-center">
-
-            <div class="col-6 col-md-3"><i class="bi bi-lightning-charge"></i> Same-Day Installation</div>
-            <div class="col-6 col-md-3"><i class="bi bi-shield-check"></i> Warranty Included</div>
-            <div class="col-6 col-md-3"><i class="bi bi-camera-video"></i> HD & WiFi Cameras</div>
-            <div class="col-6 col-md-3"><i class="bi bi-headset"></i> Remote Support Support</div>
-
-        </div>
-    </div>
-</section>
-
-<!-- this is new comment -->
-<script type="text/comment">
-<!-- 🎯 SERVICES -->
-<section class="py-5" id="services">
-    <div class="container">
-        <h2 class="text-center fw-bold mb-4">Premium CCTV Services in Dharashiv</h2>
-
-        <div class="row g-4">
-
-            <div class="col-md-4">
-                <div class="card shadow-lg h-100 border-0">
-                    <img src="https://images.unsplash.com/photo-1581091012184-5c4c37e7cb18" class="card-img-top">
-                    <div class="card-body text-center">
-                        <h4>CCTV Installation</h4>
-                        <p>Professional and clean installation for home, shops, offices & industries.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="card shadow-lg h-100 border-0">
-                    <img src="https://images.unsplash.com/photo-1581093458793-61b1a5b75e87" class="card-img-top">
-                    <div class="card-body text-center">
-                        <h4>DVR / NVR Setup</h4>
-                        <p>Complete DVR/NVR configuration with remote mobile view setup.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="card shadow-lg h-100 border-0">
-                    <img src="https://images.unsplash.com/photo-1562892841-2d0b6b0c8f20" class="card-img-top">
-                    <div class="card-body text-center">
-                        <h4>WiFi Smart Cameras</h4>
-                        <p>Wireless cameras with two-way audio, night vision & motion alerts.</p>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</section>
-
-<!-- 🛍 POPULAR PACKAGES -->
-<section class="py-5 bg-light">
-    <div class="container">
-        <h2 class="text-center fw-bold mb-4">CCTV Installation Packages</h2>
-
-        <div class="row g-4">
-
-            <div class="col-md-4">
-                <div class="card shadow border-0">
-                    <div class="card-body text-center">
-                        <h4>2 Camera Package</h4>
-                        <p>Includes wiring, DVR setup & installation</p>
-                        <h3 class="text-primary">₹6,999</h3>
-                        <a href="/productlist" class="btn btn-primary mt-2">View Details</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="card shadow border-0">
-                    <div class="card-body text-center">
-                        <h4>4 Camera Package</h4>
-                        <p>HD cameras + DVR + full installation</p>
-                        <h3 class="text-primary">₹10,999</h3>
-                        <a href="/productlist" class="btn btn-primary mt-2">View Details</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="card shadow border-0">
-                    <div class="card-body text-center">
-                        <h4>8 Camera Package</h4>
-                        <p>High clarity cameras with full setup</p>
-                        <h3 class="text-primary">₹18,999</h3>
-                        <a href="/productlist" class="btn btn-primary mt-2">View Details</a>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</section>
-</script>
-
-
-<!-- ⭐ CUSTOMER REVIEWS -->
-<section class="py-5">
-    <div class="container">
-        <h2 class="text-center fw-bold mb-4">What Our Customers Say</h2>
-
-        <div class="row g-4">
-
-            <div class="col-md-4">
-                <div class="card shadow border-0">
-                    <div class="card-body">
-                        <p>"Quick installation and very professional. Best CCTV service in Dharashiv."</p>
-                        <strong>- Rahul S.</strong>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="card shadow border-0">
-                    <div class="card-body">
-                        <p>"Affordable and reliable. Mobile view setup is perfect."</p>
-                        <strong>- Priya K.</strong>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="card shadow border-0">
-                    <div class="card-body">
-                        <p>"Used their package for my shop. Very satisfied with clarity."</p>
-                        <strong>- Imran M.</strong>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</section>
-<section class="py-5 bg-light">
-    <div class="container">
-        <h2 class="text-center fw-bold mb-2">Our Installation Work</h2>
-        <p class="text-center text-muted mb-5">
-            Real CCTV installation projects for homes, shops, offices and industries.
-        </p>
-
-        <div class="row g-4">
-
-            
-
-            <div class="col-md-3 col-6">
-                <img src="https://images.pexels.com/photos/442150/pexels-photo-442150.jpeg"
-                     class="img-fluid rounded shadow"
-                     alt="Security camera installation">
-            </div>
-
-            <div class="col-md-3 col-6">
-                <img src="https://images.pexels.com/photos/257736/pexels-photo-257736.jpeg"
-                     class="img-fluid rounded shadow"
-                     alt="Office CCTV monitoring system">
-            </div>
-
-            <div class="col-md-3 col-6">
-                <img src="https://images.pexels.com/photos/430208/pexels-photo-430208.jpeg"
-                     class="img-fluid rounded shadow"
-                     alt="CCTV surveillance camera">
-            </div>
-
-            <div class="col-md-3 col-6">
-                <img src="https://images.pexels.com/photos/430208/pexels-photo-430208.jpeg"
-                     class="img-fluid rounded shadow"
-                     alt="CCTV surveillance camera">
-            </div>
-
-        </div>
-    </div>
-</section>
-
-
-<!-- ❓ FAQ SECTION -->
-<section class="py-5">
-    <div class="container">
-        <h2 class="fw-bold text-center mb-4">Frequently Asked Questions</h2>
-
-        <div class="accordion" id="faq">
-
-            <div class="accordion-item">
-                <h2 class="accordion-header">
-                    <button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#q1">
-                        Do you provide same-day installation in Dharashiv?
-                    </button>
-                </h2>
-                <div id="q1" class="accordion-collapse collapse ">
-                    <div class="accordion-body">Yes, same-day installation is available for most locations in Dharashiv.
-                    </div>
-                </div>
-            </div>
-
-            <div class="accordion-item">
-                <h2 class="accordion-header">
-                    <button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#q1">
-                        I have 2 year old CCTV setup but its not working now. does camura.in provide repair service in dharashiv?
-                    </button>
-                </h2>
-                <div id="q2" class="accordion-collapse collapse ">
-                    <div class="accordion-body">Yes, Camura.in provide repair service in Dharashiv. whether you have 2 year or more old CCTV setup.
-                    </div>
-                </div>
-            </div>
-
-
-             <div class="accordion-item">
-                <h2 class="accordion-header">
-                    <button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#q1">
-                        How much does CCTV installation cost in Dharashiv? 
-                    </button>
-                </h2>
-                <div id="q3" class="accordion-collapse collapse ">
-                    <div class="accordion-body">CCTV Installation cost is depend on the camera type and instalation side. If instalation side is smaller then it cost around 500 to 1000 if installation side big and work is on height then it will cost more likely 2000 to 5000.
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="accordion-item">
-                <h2 class="accordion-header">
-                    <button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#q1">
-                        Which CCTV camera is best for home in Dharashiv? 
-                    </button>
-                </h2>
-                <div id="q4" class="accordion-collapse collapse">
-                    <div class="accordion-body">For home the best CCTV camera in dharshiv HD or you can also use IP camera if you want more clarity.
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="accordion-item">
-                <h2 class="accordion-header">
-                    <button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#q1">
-                        Which brands do you install?
-                    </button>
-                </h2>
-                <div id="q5" class="accordion-collapse collapse">
-                    <div class="accordion-body">Hikvision, CP Plus, Dahua, Godrej, TP-Link, and more.</div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</section>
-
-<!-- 🔥 FINAL CTA -->
-<section class="py-5 bg-primary text-white text-center">
-    <div class="container">
-        <h2 class="fw-bold">Secure Your Home Today</h2>
-        <p>Best pricing, fastest delivery & expert technicians.</p>
-        <a href="/productlist" class="btn btn-light btn-lg">Browse CCTV Products</a>
-    </div>
-</section>
-
+<div class="bg-warning-subtle border-bottom py-3"><div class="container text-center fw-semibold"><i class="bi bi-geo-alt-fill me-1"></i> On-site CCTV installation and repair services are available within Dharashiv city only.</div></div>
+<section class="camura-section" id="about"><div class="container"><div class="row g-5 align-items-center"><div class="col-lg-7"><span class="text-primary fw-semibold">ABOUT CAMURA</span><h2 class="fw-bold mt-2">CCTV Security Solutions for Homes, Shops & Offices</h2><p>Camura helps customers in Dharashiv choose and maintain surveillance systems suited to their property. Whether you need a new CCTV setup or support for an existing system, we can help with camera selection, placement, recording equipment and viewing footage on a compatible mobile app.</p><p>We work with common CCTV system types, including HD analogue cameras, IP cameras, DVRs, NVRs and Wi-Fi cameras. The right system depends on your coverage area, lighting, recording requirements, internet availability and budget.</p><a href="/blog/" class="btn btn-outline-primary">Read Our CCTV Blog</a></div><div class="col-lg-5"><div class="p-4 p-lg-5 bg-light rounded-4"><h3 class="h4 fw-bold">What can we help with?</h3><ul class="list-unstyled mb-0"><li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>New CCTV camera installation</li><li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>Existing camera inspection & repair</li><li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>DVR/NVR setup & recording checks</li><li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>Mobile viewing & network setup</li><li><i class="bi bi-check-circle-fill text-success me-2"></i>CCTV products & accessories</li></ul></div></div></div></div></section>
+<section class="camura-section bg-light" id="services"><div class="container"><div class="text-center mb-5"><span class="text-primary fw-semibold">OUR SERVICES</span><h2 class="fw-bold mt-2">CCTV Installation, Repair & Configuration</h2><p class="camura-muted mx-auto" style="max-width:720px">From installing a new camera to diagnosing an older system, choose the service that matches your requirements.</p></div><div class="row g-4">
+{% for item in services %}{% empty %}
+<div class="col-md-6 col-lg-4"><div class="card camura-card p-4"><i class="bi bi-camera-video camura-icon"></i><h3 class="h5 fw-bold mt-3">CCTV Camera Installation</h3><p>Camera placement, mounting, cabling and basic system configuration for residential and commercial properties.</p></div></div>
+<div class="col-md-6 col-lg-4"><div class="card camura-card p-4"><i class="bi bi-tools camura-icon"></i><h3 class="h5 fw-bold mt-3">CCTV Inspection & Repair</h3><p>Diagnosis of offline cameras, faulty connections, power problems, recording issues and other common faults.</p></div></div>
+<div class="col-md-6 col-lg-4"><div class="card camura-card p-4"><i class="bi bi-hdd-network camura-icon"></i><h3 class="h5 fw-bold mt-3">DVR & NVR Setup</h3><p>Recorder installation, camera connections, storage configuration and playback troubleshooting.</p></div></div>
+<div class="col-md-6 col-lg-4"><div class="card camura-card p-4"><i class="bi bi-wifi camura-icon"></i><h3 class="h5 fw-bold mt-3">Wi-Fi Camera Setup</h3><p>Assistance with compatible smart cameras, wireless connectivity, app pairing and notification settings.</p></div></div>
+<div class="col-md-6 col-lg-4"><div class="card camura-card p-4"><i class="bi bi-phone camura-icon"></i><h3 class="h5 fw-bold mt-3">Mobile Viewing</h3><p>Configure supported CCTV apps and help troubleshoot remote viewing when your camera or recorder is offline.</p></div></div>
+<div class="col-md-6 col-lg-4"><div class="card camura-card p-4"><i class="bi bi-shield-lock camura-icon"></i><h3 class="h5 fw-bold mt-3">System Maintenance</h3><p>Check camera image quality, recording status, storage health, cables and basic security settings.</p></div></div>
+{% endfor %}
+</div><div class="text-center mt-4"><a href="/book-service/" class="btn btn-primary btn-lg">Book a Service</a></div></div></section>
+<section class="camura-section"><div class="container"><div class="text-center mb-5"><span class="text-primary fw-semibold">CHOOSING A CAMERA</span><h2 class="fw-bold mt-2">Which CCTV System Do You Need?</h2></div><div class="row g-4"><div class="col-md-4"><div class="card camura-card p-4"><i class="bi bi-camera-video camura-icon"></i><h3 class="h5 fw-bold mt-3">HD CCTV Cameras</h3><p>Often suitable when upgrading or installing a conventional wired DVR-based surveillance system. Compare resolution, night vision and lens coverage.</p></div></div><div class="col-md-4"><div class="card camura-card p-4"><i class="bi bi-diagram-3 camura-icon"></i><h3 class="h5 fw-bold mt-3">IP CCTV Cameras</h3><p>Network cameras can support higher resolutions and flexible NVR-based installations. Network design and storage capacity matter.</p></div></div><div class="col-md-4"><div class="card camura-card p-4"><i class="bi bi-wifi camura-icon"></i><h3 class="h5 fw-bold mt-3">Wi-Fi Smart Cameras</h3><p>A practical option for selected indoor or small-area uses where reliable Wi-Fi and suitable power are available. Features vary by model.</p></div></div></div><div class="text-center mt-4"><a href="/productlist/" class="btn btn-outline-primary btn-lg">Browse Cameras & Accessories</a></div></div></section>
+<section class="camura-section bg-light"><div class="container"><h2 class="fw-bold text-center mb-5">CCTV Solutions for Different Properties</h2><div class="row g-4"><div class="col-md-4"><div class="bg-white rounded-4 p-4 h-100"><i class="bi bi-house-door camura-icon"></i><h3 class="h5 fw-bold mt-3">Home CCTV</h3><p>Monitor entrances, gates, parking areas and common spaces. Choose camera placement with your family's privacy in mind.</p></div></div><div class="col-md-4"><div class="bg-white rounded-4 p-4 h-100"><i class="bi bi-shop camura-icon"></i><h3 class="h5 fw-bold mt-3">Shop CCTV</h3><p>Cover entrances, billing counters and inventory areas with a suitable recording and storage plan.</p></div></div><div class="col-md-4"><div class="bg-white rounded-4 p-4 h-100"><i class="bi bi-building camura-icon"></i><h3 class="h5 fw-bold mt-3">Office CCTV</h3><p>Plan camera coverage for entrances, reception and other appropriate shared areas while respecting employee and visitor privacy.</p></div></div></div></div></section>
+<section class="camura-section"><div class="container"><div class="row g-5 align-items-center"><div class="col-lg-6"><h2 class="fw-bold">How Our Service Booking Works</h2><p>Book an inspection for an existing CCTV issue or contact us about a new installation. Inspection and repair costs are separate.</p><ol class="ps-3"><li class="mb-3"><strong>Submit a request.</strong> Sign in and describe your CCTV issue, preferred visit date and Dharashiv city address.</li><li class="mb-3"><strong>Inspection.</strong> We check the system and identify possible repairs or replacement parts.</li><li class="mb-3"><strong>Review the estimate.</strong> Any additional repair, parts or installation charges are explained after inspection and require your approval.</li></ol><p class="small text-muted">The amount paid during service booking covers inspection only, not additional repairs or parts. Visit our <a href="/terms-and-conditions/">Terms & Conditions</a> for details.</p><a href="/book-service/" class="btn btn-primary">Book CCTV Inspection</a></div><div class="col-lg-6"><div class="bg-light rounded-4 p-4 p-lg-5"><h3 class="h4 fw-bold">Before You Book</h3><p>To help us understand the issue, please mention:</p><ul><li>Camera or DVR/NVR brand and model, if known</li><li>Whether the issue affects one camera or the full system</li><li>Any error messages or recording problems</li><li>Whether mobile viewing also stopped working</li></ul><p class="mb-0"><strong>Service area:</strong> Dharashiv city only.</p></div></div></div></div></section>
+<section class="camura-section bg-light"><div class="container"><div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4"><div><span class="text-primary fw-semibold">LEARN MORE</span><h2 class="fw-bold mt-2 mb-0">CCTV Tips & Guides from Our Blog</h2></div><a href="/blog/" class="btn btn-outline-primary">Visit the Blog <i class="bi bi-arrow-right"></i></a></div><p class="camura-muted mb-4">Explore our blog for CCTV product information, installation guidance and troubleshooting topics.</p><div class="row g-4"><div class="col-md-4"><div class="bg-white rounded-4 p-4 h-100"><i class="bi bi-lightbulb camura-icon"></i><h3 class="h5 fw-bold mt-3">Choosing CCTV Cameras</h3><p>Learn which camera specifications and features to compare before buying.</p><a href="/blog/" class="btn btn-outline-primary">Explore our blog</a></div></div><div class="col-md-4"><div class="bg-white rounded-4 p-4 h-100"><i class="bi bi-wrench-adjustable camura-icon"></i><h3 class="h5 fw-bold mt-3">CCTV Troubleshooting</h3><p>Understand common camera, recorder, cabling and mobile-viewing problems.</p><a href="/blog/" class="btn btn-outline-primary">Explore our blog</a></div></div><div class="col-md-4"><div class="bg-white rounded-4 p-4 h-100"><i class="bi bi-journal-text camura-icon"></i><h3 class="h5 fw-bold mt-3">Installation & Maintenance</h3><p>Find practical information about planning coverage and maintaining your system.</p><a href="/blog/" class="btn btn-outline-primary">Explore our blog</a></div></div></div></div></section>
+<section class="camura-section camura-faq"><div class="container" style="max-width:920px"><h2 class="fw-bold text-center mb-4">Frequently Asked Questions</h2><div class="accordion" id="camuraHomeFaq">
+<div class="accordion-item"><h3 class="accordion-header" id="faqHead1"><button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faqBody1" aria-expanded="true" aria-controls="faqBody1">Where does Camura provide on-site CCTV service?</button></h3><div id="faqBody1" class="accordion-collapse collapse show" aria-labelledby="faqHead1" data-bs-parent="#camuraHomeFaq"><div class="accordion-body">On-site CCTV installation, inspection and repair are currently available within Dharashiv city only.</div></div></div>
+<div class="accordion-item"><h3 class="accordion-header" id="faqHead2"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqBody2" aria-expanded="false" aria-controls="faqBody2">Can you repair my existing CCTV system?</button></h3><div id="faqBody2" class="accordion-collapse collapse" aria-labelledby="faqHead2" data-bs-parent="#camuraHomeFaq"><div class="accordion-body">Yes. You can book an inspection for an older or non-working CCTV setup. Repair options and costs depend on the issue and availability of compatible parts.</div></div></div>
+<div class="accordion-item"><h3 class="accordion-header" id="faqHead3"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqBody3" aria-expanded="false" aria-controls="faqBody3">Does the booking charge include repairs?</button></h3><div id="faqBody3" class="accordion-collapse collapse" aria-labelledby="faqHead3" data-bs-parent="#camuraHomeFaq"><div class="accordion-body">No. The booking payment is for inspection only. Any repair, replacement parts or additional installation work is quoted separately after inspection.</div></div></div>
+<div class="accordion-item"><h3 class="accordion-header" id="faqHead4"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqBody4" aria-expanded="false" aria-controls="faqBody4">Can I view CCTV cameras on my phone?</button></h3><div id="faqBody4" class="accordion-collapse collapse" aria-labelledby="faqHead4" data-bs-parent="#camuraHomeFaq"><div class="accordion-body">Many compatible DVR, NVR and Wi-Fi camera systems support mobile viewing. The setup depends on the camera model, network connection and supported app.</div></div></div>
+<div class="accordion-item"><h3 class="accordion-header" id="faqHead5"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqBody5" aria-expanded="false" aria-controls="faqBody5">Which CCTV brands do you work with?</button></h3><div id="faqBody5" class="accordion-collapse collapse" aria-labelledby="faqHead5" data-bs-parent="#camuraHomeFaq"><div class="accordion-body">Camura works with common CCTV systems including Hikvision, CP Plus, Dahua, Godrej and TP-Link. Compatibility and support depend on the model.</div></div></div>
+</div></div></section>
+<section class="py-5 bg-primary text-white"><div class="container text-center"><h2 class="fw-bold">Need CCTV Products or Service in Dharashiv?</h2><p class="lead">Browse our products or request an inspection for your existing CCTV setup.</p><div class="d-flex flex-wrap gap-3 justify-content-center"><a href="/book-service/" class="btn btn-warning btn-lg fw-semibold">Book Service</a><a href="/productlist/" class="btn btn-outline-light btn-lg">Shop CCTV Products</a></div></div></section>
 {% endblock %}
