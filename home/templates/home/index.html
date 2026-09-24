@@ -2,6 +2,12 @@
 {% load static %}
 {% block title %}CCTV Camera Installation & Repair in Dharashiv | Camura{% endblock %}
 {% block content %}
+
+<!-- =====================================================
+     CAMURA HOMEPAGE SEO STRUCTURED DATA
+     Insert immediately after {% block content %}
+====================================================== -->
+
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -10,13 +16,17 @@
       "@type": "LocalBusiness",
       "@id": "https://camura.in/#business",
       "name": "Camura",
+      "alternateName": "Camura.in",
       "legalName": "N S Corporation",
+      "description": "Camura supplies CCTV cameras and accessories and provides CCTV installation, inspection, repair and maintenance services in Dharashiv city.",
       "url": "https://camura.in/",
+      "logo": "https://camura.in/static/img/camura_logo.png",
+      "image": "https://camura.in/static/img/camura_logo.png",
       "telephone": "+91-9850504728",
       "email": "support@camura.in",
       "address": {
         "@type": "PostalAddress",
-        "streetAddress": "Pawar Complex Shop No.1, Opp. Judge Quarter, Behind Tuljabhawani Stadium",
+        "streetAddress": "Pawar Complex, Shop No. 1, Opp. Judge Quarter, Behind Tuljabhawani Stadium",
         "addressLocality": "Dharashiv",
         "addressRegion": "Maharashtra",
         "postalCode": "413501",
@@ -25,17 +35,56 @@
       "areaServed": {
         "@type": "City",
         "name": "Dharashiv"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+91-9850504728",
+        "email": "support@camura.in",
+        "contactType": "customer service",
+        "availableLanguage": [
+          "English",
+          "Hindi",
+          "Marathi"
+        ]
       }
     },
     {
+      "@type": "WebSite",
+      "@id": "https://camura.in/#website",
+      "name": "Camura",
+      "url": "https://camura.in/",
+      "publisher": {
+        "@id": "https://camura.in/#business"
+      },
+      "inLanguage": "en-IN"
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://camura.in/#webpage",
+      "url": "https://camura.in/",
+      "name": "CCTV Camera Installation & Repair in Dharashiv | Camura",
+      "description": "Shop CCTV cameras and book CCTV installation, inspection, repair, DVR/NVR setup and maintenance services in Dharashiv.",
+      "isPartOf": {
+        "@id": "https://camura.in/#website"
+      },
+      "about": {
+        "@id": "https://camura.in/#business"
+      },
+      "inLanguage": "en-IN"
+    },
+    {
       "@type": "Service",
-      "name": "CCTV Installation and Repair",
+      "@id": "https://camura.in/#cctv-service",
+      "name": "CCTV Installation, Inspection and Repair in Dharashiv",
+      "description": "On-site CCTV installation, inspection, repair, DVR/NVR configuration, mobile viewing setup and CCTV maintenance within Dharashiv city.",
       "serviceType": [
-        "CCTV Installation",
+        "CCTV Camera Installation",
+        "CCTV Inspection",
         "CCTV Repair",
-        "DVR and NVR Configuration",
-        "CCTV Maintenance",
-        "Mobile Viewing Setup"
+        "DVR and NVR Setup",
+        "Wi-Fi Camera Setup",
+        "Mobile Viewing Configuration",
+        "CCTV Maintenance"
       ],
       "provider": {
         "@id": "https://camura.in/#business"
@@ -44,11 +93,60 @@
         "@type": "City",
         "name": "Dharashiv"
       },
-      "url": "https://camura.in/book-service/"
+      "url": "https://camura.in/book-service/",
+      "termsOfService": "https://camura.in/terms-and-conditions/"
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://camura.in/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Where does Camura provide on-site CCTV service?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "On-site CCTV installation, inspection and repair are currently available within Dharashiv city only."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can you repair my existing CCTV system?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. You can book an inspection for an older or non-working CCTV setup. Repair options and costs depend on the issue and availability of compatible parts."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does the booking charge include repairs?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. The booking payment is for inspection only. Any repair, replacement parts or additional installation work is quoted separately after inspection."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I view CCTV cameras on my phone?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Many compatible DVR, NVR and Wi-Fi camera systems support mobile viewing. The setup depends on the camera model, network connection and supported app."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Which CCTV brands do you work with?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Camura works with common CCTV systems including Hikvision, CP Plus, Dahua, Godrej and TP-Link. Compatibility and support depend on the model."
+          }
+        }
+      ]
     }
   ]
 }
 </script>
+
+
 <style>
 .camura-hero{background:linear-gradient(115deg,#101d35,#164b80);color:white;padding:5rem 0}
 .camura-hero .lead{max-width:700px}.camura-section{padding:4.5rem 0}.camura-card{height:100%;border:1px solid #e9eef5;border-radius:1rem;transition:transform .2s,box-shadow .2s}.camura-card:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,.08)}.camura-icon{font-size:2rem;color:#0d6efd}.camura-muted{color:#526277}.camura-section h2{letter-spacing:-.025em}.camura-faq .accordion-button{font-weight:600}
