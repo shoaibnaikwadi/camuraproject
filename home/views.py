@@ -1,63 +1,3 @@
-# from django.shortcuts import render, redirect, get_object_or_404
-# from django.contrib.auth.decorators import login_required
-# from django.contrib.auth.forms import UserCreationForm
-# from django.contrib import messages
-# from django.contrib.auth.decorators import login_required
-# import razorpay
-# from django.conf import settings
-# from .models import Order, OrderItem, CartItem, ComboProduct, CustomerProfile
-# from .forms import CustomerProfileForm
-# from .models import Order, OrderItem, CartItem, CustomerProfile, ComboProduct
-# from django.shortcuts import render, redirect, get_object_or_404
-# from django.contrib import messages
-# from django.contrib.auth.decorators import login_required
-# from django.shortcuts import render, redirect
-# from django.contrib.auth.decorators import login_required
-# from .models import Profile
-# from django.shortcuts import render
-# from .forms import ServiceBookingForm
-# from django.shortcuts import render, redirect
-# from django.contrib.auth.models import User
-# from django.contrib.auth import login
-# from django.contrib import messages
-# from django.contrib.auth.decorators import login_required
-# from .models import Profile
-# import requests, random
-# from decouple import config
-# import random, requests
-# from django.shortcuts import render, redirect
-# from django.contrib.auth.decorators import login_required
-# from django.contrib import messages
-
-
-# from django.core.mail import send_mail
-# from django.conf import settings
-# from django.contrib import messages
-# from django.shortcuts import render, redirect
-
-# from django.shortcuts import render, redirect, get_object_or_404
-# from django.contrib.admin.views.decorators import staff_member_required
-# from django.contrib.auth.decorators import login_required
-# from .models import Camera, DVR, Cable, PowerSupply, Accessory, InstallationCharge, ComboProduct
-# from .forms import (CameraForm, DVRForm, CableForm, PowerSupplyForm,
-#                     AccessoryForm, InstallationForm, ComboForm)
-# from django.contrib import messages
-# from django.shortcuts import get_object_or_404, redirect
-# from .models import Order
-
-# from django.shortcuts import render, redirect, get_object_or_404
-# from django.contrib.auth.decorators import login_required
-# from django.contrib import messages
-# from .models import ComboProduct, CartItem, Order
-
-# from .models import CartItem, Order, OrderItem, CustomerProfile, ComboProduct
-
-# from django.views.decorators.csrf import csrf_exempt
-
-# from django.http import HttpResponse
-# from django.utils.html import strip_tags
-# from django.urls import reverse
-# from .models import ComboProduct
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -79,6 +19,7 @@ import razorpay
 import requests
 import random
 from decouple import config
+from django.contrib.auth import get_user_model
 
 from .models import (
     Order, OrderItem, CartItem, ComboProduct, CustomerProfile,
@@ -86,10 +27,7 @@ from .models import (
 )
 
 from .forms import (
-    CustomerProfileForm, ServiceBookingForm, CameraForm, 
-    # DVRForm,
-    CableForm, PowerSupplyForm, AccessoryForm, InstallationForm, ComboForm
-)
+    CustomerProfileForm, ServiceBookingForm, CameraForm, CableForm, PowerSupplyForm, AccessoryForm, InstallationForm, ComboForm )
  
 
 
@@ -133,9 +71,6 @@ def product_list(request):
 
 
 
-# def product_detail(request, pk):
-#     combo = get_object_or_404(ComboProduct, pk=pk)
-#     return render(request, 'home/product_detail.html', {'combo': combo})
 
 
 
@@ -155,9 +90,7 @@ def product_detail(request, pk):
 
 
 
-def clear_cart(request):
-    request.session['cart'] = {}
-    return redirect('view_cart')
+
 
 
 
@@ -224,8 +157,7 @@ def delete_camera(request, pk):
         return redirect('staff_dashboard')
     return render(request, 'shop/manage/confirm_delete.html', {'object': obj, 'title': 'Delete Camera'})
 
-# Repeat for DVR, Cable, PowerSupply, Accessory, InstallationCharge, ComboProduct
-# For brevity include Combo add/edit/delete below:
+
 
 @staff_member_required
 def add_combo(request):
@@ -259,49 +191,532 @@ def delete_combo(request, pk):
     return render(request, 'shop/manage/confirm_delete.html', {'object': obj, 'title': 'Delete Combo'})
 
 
+##################################################################################
+# accesories page 
 
 
+from django.shortcuts import render
+from django.http import JsonResponse
+from django.db.models import Q
+
+from .models import (
+    Camera, CameraBullet, DVR, HardDisk,
+    Cable, PowerSupply, Accessory
+)
+
+
+def get_accessory_products():
+
+    products = []
+
+    categories = [
+        (Camera, "Camera", "camera_type", "camera"),
+        (
+            CameraBullet, "Bullet Camera",
+            "bullet_camera_type", "bullet_camera"
+        ),
+        (DVR, "DVR", "dvr_name", "dvr"),
+        (HardDisk, "Hard Disk", "size", "hard_disk"),
+        (Cable, "Cable", "length", "cable"),
+        (
+            PowerSupply, "Power Supply",
+            "range_slug", "power_supply"
+        ),
+        (Accessory, "Accessory", "name", "accessory"),
+    ]
+
+    for model, category, name_field, product_type in categories:
+
+        for item in model.objects.all():
+
+            name = getattr(item, name_field)
+
+            model_number = (
+                getattr(item, "model_number", None)
+                or getattr(item, "bullet_model_number", None)
+            )
+
+            products.append({
+                "id": item.pk,
+                "name": name,
+                "category": category,
+                "product_type": product_type,
+                "model_number": model_number,
+                "price": item.price,
+                "stock": item.stock,
+                "image": item.image,
+
+            })
+
+    return products
+
+def accessories(request):
+    query = request.GET.get("q", "").strip()
+    category = request.GET.get("category", "").strip()
+
+    products = get_accessory_products()
+
+    if category:
+        products = [
+            p for p in products
+            if p["category"] == category
+        ]
+
+    if query:
+        products = [
+            p for p in products
+            if query.lower() in (
+                p["name"] + " " +
+                (p["model_number"] or "")
+            ).lower()
+        ]
+
+    products.sort(key=lambda p: p["name"].lower())
+
+    return render(request, "home/accessories.html", {
+        "products": products,
+        "query": query,
+        "selected_category": category,
+        "categories": [
+            "Camera", "Bullet Camera", "DVR",
+            "Hard Disk", "Cable", "Power Supply",
+            "Accessory"
+        ],
+    })
+
+
+def accessory_suggestions(request):
+    query = request.GET.get("q", "").strip()
+
+    if len(query) < 2:
+        return JsonResponse({"suggestions": []})
+
+    products = get_accessory_products()
+
+    matches = [
+        {
+            "name": p["name"],
+            "category": p["category"],
+            "model_number": p["model_number"],
+        }
+        for p in products
+        if query.lower() in (
+            p["name"] + " " +
+            (p["model_number"] or "")
+        ).lower()
+    ]
+
+    return JsonResponse({
+        "suggestions": matches[:8]
+    })
 #####################################################################################
+
+
+
+###########################################################cart related ##################
 
 
 # @login_required
 # def add_to_cart(request, combo_id):
 #     combo = get_object_or_404(ComboProduct, id=combo_id)
+
+#     # Get the quantity from the form, default to 1 if not provided
+#     qty = int(request.POST.get('qty', 1))
+
+#     # Get or create cart item
 #     cart_item, created = CartItem.objects.get_or_create(user=request.user, combo=combo)
+
 #     if not created:
-#         cart_item.quantity += 1
+#         cart_item.quantity += qty  # ✅ increment by selected qty
+#     else:
+#         cart_item.quantity = qty  # ✅ set initial qty
+
 #     cart_item.save()
+
 #     messages.success(request, f"{combo.name} added to cart.")
 #     return redirect('cart')
 
 
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.core.exceptions import ValidationError
+from django.db import transaction
+from django.shortcuts import (
+    render, redirect, get_object_or_404
+)
+from django.views.decorators.http import require_POST
+
+from .models import (
+    ComboProduct, Camera, CameraBullet, DVR,
+    HardDisk, Cable, PowerSupply, Accessory,
+    CartItem, Order, OrderItem, CustomerProfile
+)
+
+
+PRODUCT_MODELS = {
+    "combo": ComboProduct,
+    "camera": Camera,
+    "bullet_camera": CameraBullet,
+    "dvr": DVR,
+    "hard_disk": HardDisk,
+    "cable": Cable,
+    "power_supply": PowerSupply,
+    "accessory": Accessory,
+}
+
 
 @login_required
-def add_to_cart(request, combo_id):
-    combo = get_object_or_404(ComboProduct, id=combo_id)
+@require_POST
+def add_to_cart(request, product_type, product_id):
 
-    # Get the quantity from the form, default to 1 if not provided
-    qty = int(request.POST.get('qty', 1))
+    model = PRODUCT_MODELS.get(product_type)
 
-    # Get or create cart item
-    cart_item, created = CartItem.objects.get_or_create(user=request.user, combo=combo)
+    if model is None:
+        messages.error(request, "Invalid product.")
+        return redirect("product_list")
 
-    if not created:
-        cart_item.quantity += qty  # ✅ increment by selected qty
-    else:
-        cart_item.quantity = qty  # ✅ set initial qty
+    product = get_object_or_404(
+        model, pk=product_id
+    )
 
-    cart_item.save()
+    try:
+        qty = int(
+            request.POST.get(
+                "qty",
+                request.POST.get("quantity", 1)
+            )
+        )
+    except (TypeError, ValueError):
+        messages.error(request, "Invalid quantity.")
+        return redirect("cart")
 
-    messages.success(request, f"{combo.name} added to cart.")
-    return redirect('cart')
+    if qty < 1:
+        messages.error(request, "Quantity must be at least 1.")
+        return redirect("cart")
+
+    with transaction.atomic():
+
+        # Serialize changes to this customer's cart.
+        User = get_user_model()
+
+        User.objects.select_for_update().get(
+            pk=request.user.pk
+        )
+
+        cart_item, created = CartItem.objects.get_or_create(
+            user=request.user,
+            **{product_type: product},
+            defaults={"quantity": qty}
+        )
+
+        if not created:
+            cart_item.quantity += qty
+
+        try:
+            cart_item.full_clean()
+        except ValidationError as exc:
+            messages.error(
+                request,
+                "; ".join(exc.messages)
+            )
+            if created:
+                cart_item.delete()
+            return redirect("cart")
+
+        cart_item.save()
+
+    messages.success(
+        request,
+        f"{cart_item.product_name} added to cart."
+    )
+
+    return redirect("cart")
+
+
+# @login_required
+# def cart(request):
+#     items = CartItem.objects.filter(user=request.user)
+#     total = sum(item.subtotal() for item in items)
+#     return render(request, 'home/cart.html', {'items': items, 'total': total})
+
+
+# @login_required
+# def remove_cart_item(request, item_id):
+#     cart_item = get_object_or_404(CartItem, id=item_id, user=request.user)
+#     cart_item.delete()
+#     return redirect('cart')  # Redirect back to the cart page
+
+from decimal import Decimal
 
 
 @login_required
 def cart(request):
-    items = CartItem.objects.filter(user=request.user)
-    total = sum(item.subtotal() for item in items)
-    return render(request, 'home/cart.html', {'items': items, 'total': total})
+
+    items = CartItem.objects.filter(
+        user=request.user
+    ).select_related(
+        "combo", "camera", "bullet_camera",
+        "dvr", "hard_disk", "cable",
+        "power_supply", "accessory"
+    )
+
+    total = sum(
+        (item.subtotal() for item in items),
+        Decimal("0.00")
+    )
+
+    return render(request, "home/cart.html", {
+        "items": items,
+        "total": total
+    })
+
+
+@login_required
+@require_POST
+def remove_cart_item(request, item_id):
+
+    cart_item = get_object_or_404(
+        CartItem,
+        id=item_id,
+        user=request.user
+    )
+
+    cart_item.delete()
+
+    messages.success(
+        request,
+        "Product removed from your cart."
+    )
+
+    return redirect("cart")
+
+
+
+# @login_required
+# def cart_checkout(request):
+#     # Ensure address selected
+#     address_id = request.session.get('selected_address_id')
+#     if not address_id:
+#         return redirect('select_address')
+
+#     profile = get_object_or_404(CustomerProfile, id=address_id, user=request.user)
+#     cart_items = CartItem.objects.filter(user=request.user)
+
+#     if not cart_items.exists():
+#         messages.error(request, "Your cart is empty!")
+#         return redirect('product_list')
+
+#     total = sum(item.subtotal() for item in cart_items)
+
+#     # Razorpay order
+#     client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+#     payment = client.order.create({
+#         'amount': int(total * 100),
+#         'currency': 'INR',
+#         'payment_capture': '1'
+#     })
+
+#     # Create order
+#     order = Order.objects.create(
+#         user=request.user,
+#         profile=profile,
+#         total_amount=total,
+#         razorpay_order_id=payment['id']
+#     )
+
+#     # Create order items
+#     for item in cart_items:
+#         OrderItem.objects.create(
+#             order=order,
+#             combo=item.combo,
+#             quantity=item.quantity,
+#             price=item.combo.total_price()
+#         )
+
+#     CartItem.objects.filter(user=request.user).delete()
+
+#     context = {
+#         'order': order,
+#         'profile': profile,
+#         'razorpay_key': settings.RAZORPAY_KEY_ID,
+#         'amount': total,
+#         'payment_id': payment['id']
+#     }
+#     return render(request, 'home/payment.html', context)
+
+
+
+from decimal import Decimal, ROUND_HALF_UP
+
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.db import transaction
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
+
+import razorpay
+
+from .models import (
+    CartItem,
+    CustomerProfile,
+    Order,
+    OrderItem,
+)
+
+from decimal import Decimal, ROUND_HALF_UP
+import razorpay
+
+from django.conf import settings
+
+
+@login_required
+@require_POST
+def cart_checkout(request):
+
+    address_id = request.session.get(
+        "selected_address_id"
+    )
+
+    if not address_id:
+        return redirect("select_address")
+
+    profile = get_object_or_404(
+        CustomerProfile,
+        id=address_id,
+        user=request.user
+    )
+
+    cart_items = list(
+        CartItem.objects.filter(
+            user=request.user
+        ).select_related(
+            "combo", "camera", "bullet_camera",
+            "dvr", "hard_disk", "cable",
+            "power_supply", "accessory"
+        )
+    )
+
+    if not cart_items:
+        messages.error(
+            request,
+            "Your cart is empty!"
+        )
+        return redirect("cart")
+
+    # Validate quantities and stock.
+    for item in cart_items:
+
+        try:
+            item.full_clean()
+        except ValidationError as exc:
+            messages.error(
+                request,
+                f"{item.product_name}: "
+                + "; ".join(exc.messages)
+            )
+            return redirect("cart")
+
+    total = sum(
+        (item.subtotal() for item in cart_items),
+        Decimal("0.00")
+    )
+
+    if total <= 0:
+        messages.error(
+            request,
+            "Invalid order amount."
+        )
+        return redirect("cart")
+
+    amount_paise = int(
+        (total * 100).quantize(
+            Decimal("1"),
+            rounding=ROUND_HALF_UP
+        )
+    )
+
+    client = razorpay.Client(
+        auth=(
+            settings.RAZORPAY_KEY_ID,
+            settings.RAZORPAY_KEY_SECRET
+        )
+    )
+
+    try:
+        payment = client.order.create({
+            "amount": amount_paise,
+            "currency": "INR",
+            "payment_capture": 1
+        })
+    except Exception:
+        messages.error(
+            request,
+            "Unable to initiate payment. Please try again."
+        )
+        return redirect("cart")
+
+    # Save the order and purchased item snapshots.
+    with transaction.atomic():
+
+        order = Order.objects.create(
+            user=request.user,
+            profile=profile,
+            total_amount=total,
+            razorpay_order_id=payment["id"],
+            payment_status="Pending"
+        )
+
+        for item in cart_items:
+
+            product_fields = {
+                field: getattr(item, field)
+                for field in CartItem.PRODUCT_FIELDS
+            }
+
+            OrderItem.objects.create(
+                order=order,
+                **product_fields,
+                product_name=item.product_name,
+                quantity=item.quantity,
+                price=item.unit_price
+            )
+
+    context = {
+        "order": order,
+        "profile": profile,
+        "razorpay_key": settings.RAZORPAY_KEY_ID,
+        "amount": total,
+        "payment_id": payment["id"]
+    }
+
+    return render(
+        request,
+        "home/payment.html",
+        context
+    )
+    
+@login_required
+@require_POST
+def clear_cart(request):
+
+    CartItem.objects.filter(
+        user=request.user
+    ).delete()
+
+    messages.success(
+        request,
+        "Your cart has been cleared."
+    )
+
+    return redirect("cart")
+
+
+
+
+
+###########################################cart related end################################
 
 
 
@@ -318,93 +733,6 @@ import csv
 from django.http import HttpResponse
 from django.utils.html import strip_tags
 from .models import ComboProduct
-
-# def google_feed(request):
-#     response = HttpResponse(content_type="text/csv")
-#     response["Content-Disposition"] = "inline; filename=google_feed.csv"
-
-#     writer = csv.writer(response)
-
-#     writer.writerow([
-#         "id",
-#         "title",
-#         "description",
-#         "link",
-#         "image_link",
-#         "price",
-#         "availability",
-#         "inventory_quantity",
-#         "condition",
-#         "brand",
-#         "google_product_category",
-#         "mpn",
-#         "product_type",
-#         "included_items",
-#         "identifier_exists",
-#     ])
-
-#     for combo in ComboProduct.objects.all():
-
-#         # ✅ INVENTORY (THIS FIXES THE ERROR)
-#         availability = "in_stock" if combo.stock > 0 else "out_of_stock"
-#         inventory_qty = combo.stock
-
-#         # INCLUDED ITEMS
-#         components = [
-#             f"Camera: {combo.camera} x {combo.camera_qty}",
-#             f"DVR: {combo.dvr}",
-#         ]
-
-#         if combo.cameraBullet:
-#             components.append(
-#                 f"Bullet Camera: {combo.cameraBullet} x {combo.camerabullet_qty}"
-#             )
-
-#         if combo.hard_disk:
-#             components.append(
-#                 f"Hard Disk: {combo.hard_disk} x {combo.hard_disk_qty}"
-#             )
-
-#         components.extend([
-#             f"Cable: {combo.cable} x {combo.cable_qty}",
-#             f"Power Supply: {combo.power} x {combo.power_qty}",
-#             f"BNC Connector: {combo.bnc_connector} x {combo.bnc_qty}",
-#             f"DC Connector: {combo.dc_connector} x {combo.dc_qty}",
-#             f"Installation: {combo.installation} x {combo.installation_qty}",
-#         ])
-
-#         included_items = ", ".join(components)
-
-#         # DESCRIPTION
-#         desc = strip_tags(combo.description or "")
-#         desc = f"{desc}\n\nIncluded in Combo:\n{included_items}"
-
-#         # LINKS
-#         link = request.build_absolute_uri(f"/product/{combo.id}/")
-#         image = request.build_absolute_uri(
-#             combo.image.url if combo.image else "/static/no-image.jpg"
-#         )
-
-#         writer.writerow([
-#             f"combo-{combo.id}",          # ✅ UNIQUE ID
-#             combo.name,
-#             desc[:5000],                  # Google limit safety
-#             link,
-#             image,
-#             f"{combo.total_price():.2f} INR",
-#             availability,                 # ✅ REQUIRED
-#             inventory_qty,                # ✅ REQUIRED
-#             "new",
-#             combo.brand,
-#             "6720",
-#             f"SV-COMBO-{combo.id}",
-#             "CCTV Combo Kit",
-#             included_items,
-#             "no",
-#         ])
-
-#     return response
-
 
 
 
@@ -503,256 +831,6 @@ def google_feed(request):
 
 
 
-# def google_feed(request):
-#     response = HttpResponse(content_type="text/csv; charset=utf-8")
-#     response["Content-Disposition"] = "inline; filename=google_feed.csv"
-
-#     writer = csv.writer(response)
-
-#     writer.writerow([
-#         "id",
-#         "title",
-#         "description",
-#         "link",
-#         "image_link",
-#         "price",
-#         "availability",
-#         "condition",
-#         "brand",
-#         "google_product_category",
-#         "mpn",
-#         "product_type",
-#         "included_items",
-#         "identifier_exists",
-#         "inventory_quantity",
-
-#     ])
-
-#     for combo in ComboProduct.objects.all():
-
-#         # ✅ FIX: Use available_stock instead of combo.stock
-#         availability = "in_stock" if combo.available_stock > 0 else "out_of_stock"
-
-#         # INCLUDED ITEMS
-#         components = [
-#             f"Camera: {combo.camera} x {combo.camera_qty}",
-#             f"DVR: {combo.dvr}",
-#         ]
-#         if combo.cameraBullet:
-#             components.append(f"Bullet Camera: {combo.cameraBullet} x {combo.camerabullet_qty}")
-#         if combo.hard_disk:
-#             components.append(f"Hard Disk: {combo.hard_disk} x {combo.hard_disk_qty}")
-
-#         components.extend([
-#             f"Cable: {combo.cable} x {combo.cable_qty}",
-#             f"Power Supply: {combo.power} x {combo.power_qty}",
-#             f"BNC Connector: {combo.bnc_connector} x {combo.bnc_qty}",
-#             f"DC Connector: {combo.dc_connector} x {combo.dc_qty}",
-#             f"Installation: {combo.installation} x {combo.installation_qty}",
-#         ])
-
-#         included_items = ", ".join(components)
-
-#         # DESCRIPTION
-#         desc = strip_tags(combo.description or "")
-#         desc = f"{desc}\n\nIncluded in Combo:\n{included_items}"
-
-#         # LINKS
-#         link = request.build_absolute_uri(f"/product/{combo.id}/")
-#         image = request.build_absolute_uri(combo.image.url if combo.image else "/static/no-image.jpg")
-
-#         inventory_qty = combo.available_stock
-
-#         writer.writerow([
-#             f"combo-{combo.id}",          # id
-#             combo.name,                   # title
-#             desc[:5000],                  # description
-#             link,                         # link
-#             image,                        # image_link
-#             f"{combo.total_price():.2f} INR",  # price
-#             availability,                 # availability
-#             "new",                        # condition
-#             combo.brand or "Generic",     # brand
-#             "6720",                        # google_product_category
-#             f"SV-COMBO-{combo.id}",       # mpn
-#             "CCTV Combo Kit",             # product_type
-#             included_items,               # included_items
-#             "FALSE",                      # identifier_exists
-#             inventory_qty,  # NEW COLUMN
-
-#         ])
-
-        
-
-#     return response
-
-# def google_feed(request):
-#     response = HttpResponse(content_type="text/csv")
-#     response["Content-Disposition"] = "inline; filename=google_feed.csv"
-
-#     writer = csv.writer(response)
-
-#     # ✅ GOOGLE-APPROVED HEADERS
-#     writer.writerow([
-#         "id",
-#         "title",
-#         "description",
-#         "link",
-#         "image_link",
-#         "price",
-#         "availability",
-#         "condition",
-#         "brand",
-#         "google_product_category",
-#         "mpn",
-#         "product_type",
-#         "included_items",
-#         "identifier_exists",
-#     ])
-
-#     for combo in ComboProduct.objects.all():
-
-#         # ✅ AVAILABILITY (REQUIRED)
-#         availability = "in_stock" if combo.stock > 0 else "out_of_stock"
-
-#         # INCLUDED ITEMS
-#         components = [
-#             f"Camera: {combo.camera} x {combo.camera_qty}",
-#             f"DVR: {combo.dvr}",
-#         ]
-
-#         if combo.cameraBullet:
-#             components.append(
-#                 f"Bullet Camera: {combo.cameraBullet} x {combo.camerabullet_qty}"
-#             )
-
-#         if combo.hard_disk:
-#             components.append(
-#                 f"Hard Disk: {combo.hard_disk} x {combo.hard_disk_qty}"
-#             )
-
-#         components.extend([
-#             f"Cable: {combo.cable} x {combo.cable_qty}",
-#             f"Power Supply: {combo.power} x {combo.power_qty}",
-#             f"BNC Connector: {combo.bnc_connector} x {combo.bnc_qty}",
-#             f"DC Connector: {combo.dc_connector} x {combo.dc_qty}",
-#             f"Installation: {combo.installation} x {combo.installation_qty}",
-#         ])
-
-#         included_items = ", ".join(components)
-
-#         # DESCRIPTION
-#         desc = strip_tags(combo.description or "")
-#         desc = f"{desc}\n\nIncluded in Combo:\n{included_items}"
-
-#         # LINKS
-#         link = request.build_absolute_uri(f"/product/{combo.id}/")
-#         image = request.build_absolute_uri(
-#             combo.image.url if combo.image else "/static/no-image.jpg"
-#         )
-
-#         writer.writerow([
-#             f"combo-{combo.id}",                # ✅ UNIQUE ID
-#             combo.name,
-#             desc[:5000],                        # Google limit
-#             link,
-#             image,
-#             f"{combo.total_price():.2f} INR",
-#             availability,                       # ✅ REQUIRED
-#             "new",
-#             combo.brand or "Generic",
-#             "6720",                              # CCTV category
-#             f"SV-COMBO-{combo.id}",              # MPN (optional but consistent)
-#             "CCTV Combo Kit",
-#             included_items,
-#             "FALSE",                             # ✅ IMPORTANT
-#         ])
-
-#     return response
-
-
-
-# def google_feed(request):
-#     response = HttpResponse(content_type="text/csv")
-#     response["Content-Disposition"] = "inline; filename=google_feed.csv"
-
-#     writer = csv.writer(response)
-
-#     writer.writerow([
-#         "id",
-#         "title",
-#         "description",
-#         "link",
-#         "image_link",
-#         "price",
-#         "availability",
-#         "condition",
-#         "brand",
-#         "google_product_category",
-#         "mpn",
-#         "product_type",
-#         "included_items",
-#         "identifier_exists",
-#     ])
-
-#     for combo in ComboProduct.objects.all():
-
-#         # INCLUDED ITEMS (STRICTLY FROM MODEL)
-#         components = [
-#             f"Camera: {combo.camera} x {combo.camera_qty}",
-#             f"DVR: {combo.dvr}",
-#         ]
-
-#         if combo.cameraBullet:
-#             components.append(
-#                 f"Bullet Camera: {combo.cameraBullet} x {combo.camerabullet_qty}"
-#             )
-
-#         if combo.hard_disk:
-#             components.append(
-#                 f"Hard Disk: {combo.hard_disk} x {combo.hard_disk_qty}"
-#             )
-
-#         components.extend([
-#             f"Cable: {combo.cable} x {combo.cable_qty}",
-#             f"Power Supply: {combo.power} x {combo.power_qty}",
-#             f"BNC Connector: {combo.bnc_connector} x {combo.bnc_qty}",
-#             f"DC Connector: {combo.dc_connector} x {combo.dc_qty}",
-#             f"Installation: {combo.installation} x {combo.installation_qty}",
-#         ])
-
-#         included_items = ", ".join(components)
-
-#         # DESCRIPTION
-#         desc = strip_tags(combo.description or "")
-#         desc = f"{desc}\n\nIncluded in Combo:\n{included_items}"
-
-#         # LINKS
-#         link = request.build_absolute_uri(f"/product/{combo.id}/")
-#         image = request.build_absolute_uri(
-#             combo.image.url if combo.image else "/static/no-image.jpg"
-#         )
-
-#         writer.writerow([
-#             combo.id,
-#             combo.name,
-#             desc,
-#             link,
-#             image,
-#             f"{combo.total_price():.2f} INR",
-#             "in_stock",
-#             "new",
-#             "Servisco",
-#             "6720",  # CCTV category
-#             f"SV-COMBO-{combo.id}",
-#             "CCTV Combo Kit",
-#             included_items,
-#             "no",  # no GTIN
-#         ])
-
-#     return response
-
-
 
 @login_required
 def user_profile(request):
@@ -786,11 +864,6 @@ def user_profile(request):
 
 
 # this will remove item from cart 
-@login_required
-def remove_cart_item(request, item_id):
-    cart_item = get_object_or_404(CartItem, id=item_id, user=request.user)
-    cart_item.delete()
-    return redirect('cart')  # Redirect back to the cart page
 
 
 
@@ -870,7 +943,10 @@ def select_address(request):
         total = combo.total_price()
         items = [{'name': combo.name, 'qty': 1, 'subtotal': total}]
     else:
-        items = [{'name': i.combo.name, 'qty': i.quantity, 'subtotal': i.subtotal()} for i in cart_items]
+        # items = [{'name': i.combo.name, 'qty': i.quantity, 'subtotal': i.subtotal()} for i in cart_items]
+        items = [{'name': i.product_name, 'qty': i.quantity, 'price': i.unit_price, 'subtotal': i.subtotal()}
+    for i in cart_items
+    ]
         total = sum(i['subtotal'] for i in items)
 
     # ----- POST Request -----
@@ -919,59 +995,6 @@ def select_address(request):
 
 
 
-
-
-@login_required
-def cart_checkout(request):
-    # Ensure address selected
-    address_id = request.session.get('selected_address_id')
-    if not address_id:
-        return redirect('select_address')
-
-    profile = get_object_or_404(CustomerProfile, id=address_id, user=request.user)
-    cart_items = CartItem.objects.filter(user=request.user)
-
-    if not cart_items.exists():
-        messages.error(request, "Your cart is empty!")
-        return redirect('product_list')
-
-    total = sum(item.subtotal() for item in cart_items)
-
-    # Razorpay order
-    client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
-    payment = client.order.create({
-        'amount': int(total * 100),
-        'currency': 'INR',
-        'payment_capture': '1'
-    })
-
-    # Create order
-    order = Order.objects.create(
-        user=request.user,
-        profile=profile,
-        total_amount=total,
-        razorpay_order_id=payment['id']
-    )
-
-    # Create order items
-    for item in cart_items:
-        OrderItem.objects.create(
-            order=order,
-            combo=item.combo,
-            quantity=item.quantity,
-            price=item.combo.total_price()
-        )
-
-    CartItem.objects.filter(user=request.user).delete()
-
-    context = {
-        'order': order,
-        'profile': profile,
-        'razorpay_key': settings.RAZORPAY_KEY_ID,
-        'amount': total,
-        'payment_id': payment['id']
-    }
-    return render(request, 'home/payment.html', context)
 
 
 # Because buy_now must ONLY redirect to address selection, while
@@ -1170,75 +1193,6 @@ def send_otp(mobile):
 
 
 
-
-
-# def register(request):
-#     stage = "mobile"   # default stage
-
-#     if request.method == "POST":
-
-#         # ---------------------------------------
-#         # STAGE 1 → SEND OTP
-#         # ---------------------------------------
-#         if "send_otp" in request.POST:
-#             mobile = request.POST.get("mobile")
-
-#             otp = send_otp(mobile)
-
-#             request.session["reg_mobile"] = mobile
-#             request.session["reg_otp"] = otp
-
-#             # Check if user exists
-#             request.session["user_exists"] = User.objects.filter(username=mobile).exists()
-
-#             stage = "otp"   # show OTP form
-#             messages.success(request, "OTP Sent Successfully!")
-
-#         # ---------------------------------------
-#         # STAGE 2 → VERIFY OTP
-#         # ---------------------------------------
-#         elif "verify_otp" in request.POST:
-#             entered = request.POST.get("otp")
-#             real = str(request.session["reg_otp"])
-#             mobile = request.session["reg_mobile"]
-
-#             if entered == real:
-#                 # If user exists → login
-#                 if request.session.get("user_exists"):
-#                     user = User.objects.get(username=mobile)
-#                 # Else → create new user
-#                 else:
-#                     user = User.objects.create_user(username=mobile, password=mobile)
-
-#                 # Login user
-#                 login(request, user)
-
-#                 # Ensure profile exists
-#                 profile, created = Profile.objects.get_or_create(user=user)
-#                 profile.mobile = mobile
-#                 profile.save()
-
-#                 # Clean session
-#                 request.session.pop("reg_mobile", None)
-#                 request.session.pop("reg_otp", None)
-#                 request.session.pop("user_exists", None)
-
-
-#                 # ------------------------------
-#                 # Conditional redirect
-#                 # ------------------------------
-#                 if profile.full_name and profile.email:
-#                     return redirect("product_list")  # already completed profile
-#                 else:
-#                     return redirect("profile")      # complete profile
-
-#             else:
-#                 messages.error(request, "Invalid OTP")
-#                 stage = "otp"
-
-#     return render(request, "home/register.html", {"stage": stage})
-
-
 def register(request):
     stage = "mobile"
 
@@ -1342,28 +1296,6 @@ def register(request):
     
 
 
-
-
-
-# def book_service(request):
-#     booking_id = None
-
-#     if request.method == "POST":
-#         form = ServiceBookingForm(request.POST, request.FILES)
-
-#         if form.is_valid():
-#             booking = form.save()
-#             booking_id = booking.id
-#         else:
-#             print("FORM ERRORS:", form.errors)   # <-- ADD THIS LINE
-
-#     else:
-#         form = ServiceBookingForm()
-
-#     return render(request, "home/servicebooking.html", {
-#         "form": form,
-#         "booking_id": booking_id,
-#     }) 
 
 @login_required
 def book_service(request):
@@ -1591,128 +1523,11 @@ def booking_list(request):
 # from django.shortcuts import render
 from .forms import CCTVEngineerForm
 
-# def engineer_register(request):
-#     message = None
-
-#     if request.method == "POST":
-#         form = CCTVEngineerForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             message = "Registration successful! Our team will contact you shortly."
-#             form = CCTVEngineerForm()  # reset form after success
-#     else:
-#         form = CCTVEngineerForm()
-
-#     return render(request, 'home/engineer_register.html', {
-#         'form': form,
-#         'message': message
-#     })
-
-
-# from .forms import CCTVEngineerForm
-
-# def engineer_register(request):
-#     message = None
-
-#     if request.method == "POST":
-#         form = CCTVEngineerForm(request.POST, request.FILES)  # 🆕 request.FILES
-#         if form.is_valid():
-#             form.save()
-#             message = "Registration successful! Our team will contact you shortly."
-#             form = CCTVEngineerForm()
-#     else:
-#         form = CCTVEngineerForm()
-
-#     return render(request, 'home/engineer_register.html', {
-#         'form': form,
-#         'message': message
-#     })
-
-
 
 
 from django.conf import settings
 from django.core.mail import send_mail
 from .forms import CCTVEngineerForm
-
-# def engineer_register(request):
-#     message = None
-
-#     if request.method == "POST":
-#         form = CCTVEngineerForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             engineer = form.save()
-
-#             # ------------------ EMAIL TO ADMIN ------------------
-#             admin_subject = "New CCTV Engineer Registration - Camura.in"
-#             admin_body = f"""
-# A new CCTV engineer has registered on Camura.in
-
-# Name: {engineer.full_name}
-# Mobile: {engineer.mobile}
-# Email: {engineer.email}
-# Experience: {engineer.experience}
-# City: {engineer.city}
-# Certified: {"Yes" if engineer.certified else "No"}
-
-# Address:
-# {engineer.address}
-
-# Login to admin panel to view full details and identity proof.
-#             """
-
-#             send_mail(
-#                 admin_subject,
-#                 admin_body,
-#                 settings.DEFAULT_FROM_EMAIL,
-#                 [settings.ADMIN_NOTIFICATION_EMAIL],
-#                 fail_silently=False,
-#             )
-#             # -----------------------------------------------------
-
-
-#             # ---------------- EMAIL TO ENGINEER ------------------
-#             engineer_subject = "Registration Successful - Camura.in"
-#             engineer_body = f"""
-# Hello {engineer.full_name},
-
-# Thank you for registering as a CCTV Installation Engineer on Camura.in.
-
-# Our team will contact you shortly to verify your details and activate your profile.
-
-# Your submitted details:
-# ----------------------------------
-# Name: {engineer.full_name}
-# Mobile: {engineer.mobile}
-# Email: {engineer.email}
-# City: {engineer.city}
-# Experience: {engineer.experience}
-# Certified: {"Yes" if engineer.certified else "No"}
-# ----------------------------------
-
-# Thank you,
-# Team Camura.in
-#             """
-
-#             send_mail(
-#                 engineer_subject,
-#                 engineer_body,
-#                 settings.DEFAULT_FROM_EMAIL,
-#                 [engineer.email],     # Email to Engineer
-#                 fail_silently=False,
-#             )
-#             # ------------------------------------------------------
-
-#             message = "Registration successful! A confirmation email has been sent."
-#             form = CCTVEngineerForm()
-#     else:
-#         form = CCTVEngineerForm()
-
-#     return render(request, 'home/engineer_register.html', {
-#         'form': form,
-#         'message': message
-#     })
-
 
 
 

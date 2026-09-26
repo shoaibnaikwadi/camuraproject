@@ -1,0 +1,559 @@
+{% extends "base.html" %}
+
+{% block title %}
+CCTV Products & Accessories | Camura.in
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-4 py-md-5">
+
+    <!-- PAGE HEADER -->
+    <div class="text-center mb-4">
+
+        <h1 class="fw-bold mb-2">
+            CCTV Products & Accessories
+        </h1>
+
+        <p class="text-muted mb-0">
+            Find CCTV cameras, DVRs, hard disks, cables,
+            power supplies and other CCTV accessories.
+        </p>
+
+    </div>
+
+
+    <!-- SEARCH -->
+    <div class="position-relative mb-4">
+
+        <form method="GET"
+              action="{% url 'accessories' %}">
+
+            <div class="input-group">
+
+                <input
+                    type="search"
+                    name="q"
+                    id="productSearch"
+                    class="form-control form-control-lg"
+                    placeholder="Search products or model numbers"
+                    value="{{ query }}"
+                    autocomplete="off"
+                    aria-label="Search CCTV products"
+                >
+
+                <button
+                    class="btn btn-success px-3 px-md-4"
+                    type="submit">
+
+                    <i class="bi bi-search me-1"></i>
+                    Search
+
+                </button>
+
+            </div>
+
+        </form>
+
+
+        <!-- LIVE SEARCH SUGGESTIONS -->
+        <div
+            id="searchSuggestions"
+            class="list-group position-absolute w-100 shadow d-none"
+            style="z-index: 1050; top: 100%;"
+        ></div>
+
+    </div>
+
+
+    <!-- CATEGORY FILTER -->
+    <div class="mb-4">
+
+        <div class="d-flex flex-wrap gap-2 justify-content-center">
+
+            <a
+                href="{% url 'accessories' %}"
+                class="btn btn-sm {% if not selected_category %}btn-primary{% else %}btn-outline-primary{% endif %}"
+            >
+                All
+            </a>
+
+            {% for category in categories %}
+
+            <a
+                href="{% url 'accessories' %}?category={{ category|urlencode }}"
+                class="btn btn-sm {% if selected_category == category %}btn-primary{% else %}btn-outline-primary{% endif %}"
+            >
+                {{ category }}
+            </a>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+
+    <!-- PRODUCTS -->
+    <div class="row g-3 g-md-4">
+
+        {% for product in products %}
+
+        <div class="col-6 col-md-4 col-lg-3">
+
+            <div class="card h-100 border-0 shadow-sm product-card">
+
+
+                <!-- PRODUCT IMAGE -->
+                <div
+                    class="product-image-wrapper bg-light d-flex align-items-center justify-content-center"
+                >
+
+                    {% if product.image %}
+
+                        <img
+                            src="{{ product.image.url }}"
+                            alt="{{ product.name }}"
+                            class="product-image"
+                            loading="lazy"
+                        >
+
+                    {% else %}
+
+                        <div class="text-center text-muted">
+
+                            <i class="bi bi-camera-video fs-1"></i>
+
+                            <div class="small mt-1">
+                                No Image
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- PRODUCT DETAILS -->
+                <div class="card-body d-flex flex-column p-3">
+
+
+                    <!-- CATEGORY -->
+                    <div class="mb-2">
+
+                        <span class="badge bg-secondary">
+                            {{ product.category }}
+                        </span>
+
+                    </div>
+
+
+                    <!-- PRODUCT NAME -->
+                    <h5 class="card-title fw-semibold mb-1">
+
+                        {{ product.name }}
+
+                    </h5>
+
+
+                    <!-- MODEL NUMBER -->
+                    {% if product.model_number %}
+
+                    <p class="small text-muted mb-2">
+
+                        Model:
+                        {{ product.model_number }}
+
+                    </p>
+
+                    {% else %}
+
+                    <div class="small text-muted mb-2">
+                        &nbsp;
+                    </div>
+
+                    {% endif %}
+
+
+                    <!-- PRICE -->
+                    <h5 class="text-success fw-bold mb-2">
+
+                        ₹{{ product.price|floatformat:2 }}
+
+                    </h5>
+
+
+                    <!-- STOCK -->
+                    {% if product.stock > 0 %}
+
+                        <span class="badge bg-success align-self-start mb-3">
+
+                            <i class="bi bi-check-circle me-1"></i>
+                            In Stock
+
+                        </span>
+
+                    {% else %}
+
+                        <span class="badge bg-danger align-self-start mb-3">
+
+                            <i class="bi bi-x-circle me-1"></i>
+                            Out of Stock
+
+                        </span>
+
+                    {% endif %}
+
+
+                    <!-- ADD TO CART -->
+                    <div class="mt-auto">
+
+                        {% if product.stock > 0 %}
+
+                        <form
+                            action="{% url 'add_to_cart' product.product_type product.id %}"
+                            method="post"
+                        >
+
+                            {% csrf_token %}
+
+                            <input
+                                type="hidden"
+                                name="qty"
+                                value="1"
+                            >
+
+                            <button
+                                type="submit"
+                                class="btn btn-success w-100"
+                            >
+
+                                <i class="bi bi-cart-plus me-1"></i>
+                                Add to Cart
+
+                            </button>
+
+                        </form>
+
+                        {% else %}
+
+                        <button
+                            type="button"
+                            class="btn btn-secondary w-100"
+                            disabled
+                        >
+
+                            Out of Stock
+
+                        </button>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        {% empty %}
+
+        <!-- NO PRODUCTS -->
+        <div class="col-12">
+
+            <div class="text-center py-5">
+
+                <i class="bi bi-search fs-1 text-muted"></i>
+
+                <h4 class="mt-3">
+                    No products found
+                </h4>
+
+                <p class="text-muted">
+                    Try another product name, category or model number.
+                </p>
+
+                <a
+                    href="{% url 'accessories' %}"
+                    class="btn btn-outline-primary"
+                >
+                    View All Products
+                </a>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+
+<!-- ============================================================
+     PAGE CSS
+============================================================ -->
+
+<style>
+
+.product-card {
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.2s ease,
+                box-shadow 0.2s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.12) !important;
+}
+
+
+/* PRODUCT IMAGE */
+
+.product-image-wrapper {
+    height: 210px;
+    padding: 15px;
+}
+
+.product-image {
+    width: 100%;
+    height: 180px;
+    object-fit: contain;
+}
+
+
+/* SEARCH SUGGESTIONS */
+
+#searchSuggestions {
+    max-height: 350px;
+    overflow-y: auto;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 575.98px) {
+
+    .product-image-wrapper {
+        height: 160px;
+        padding: 10px;
+    }
+
+    .product-image {
+        height: 140px;
+    }
+
+    .product-card .card-body {
+        padding: 12px !important;
+    }
+
+    .product-card .card-title {
+        font-size: 0.95rem;
+    }
+
+    .product-card h5.text-success {
+        font-size: 1rem;
+    }
+
+}
+
+
+/* TABLET */
+
+@media (min-width: 576px) and (max-width: 991.98px) {
+
+    .product-image-wrapper {
+        height: 190px;
+    }
+
+    .product-image {
+        height: 165px;
+    }
+
+}
+
+</style>
+
+
+<!-- ============================================================
+     LIVE SEARCH JAVASCRIPT
+============================================================ -->
+
+<script>
+
+const searchInput =
+    document.getElementById("productSearch");
+
+const suggestionsBox =
+    document.getElementById("searchSuggestions");
+
+let searchController;
+
+
+if (searchInput && suggestionsBox) {
+
+    searchInput.addEventListener("input", async function () {
+
+        const query = this.value.trim();
+
+
+        /* Cancel previous request */
+
+        if (searchController) {
+            searchController.abort();
+        }
+
+
+        /* Clear old suggestions */
+
+        suggestionsBox.replaceChildren();
+
+        suggestionsBox.classList.add("d-none");
+
+
+        /* Minimum 2 characters */
+
+        if (query.length < 2) {
+            return;
+        }
+
+
+        searchController =
+            new AbortController();
+
+
+        try {
+
+            const url =
+                "{% url 'accessory_suggestions' %}" +
+                "?q=" +
+                encodeURIComponent(query);
+
+
+            const response =
+                await fetch(url, {
+                    signal: searchController.signal
+                });
+
+
+            if (!response.ok) {
+                return;
+            }
+
+
+            const data =
+                await response.json();
+
+
+            if (
+                !data.suggestions ||
+                !data.suggestions.length
+            ) {
+                return;
+            }
+
+
+            data.suggestions.forEach(item => {
+
+                const link =
+                    document.createElement("a");
+
+
+                link.href =
+                    "{% url 'accessories' %}" +
+                    "?q=" +
+                    encodeURIComponent(item.name);
+
+
+                link.className =
+                    "list-group-item list-group-item-action";
+
+
+                const title =
+                    document.createElement("strong");
+
+
+                title.textContent =
+                    item.name;
+
+
+                const detail =
+                    document.createElement("small");
+
+
+                detail.className =
+                    "d-block text-muted";
+
+
+                detail.textContent =
+                    item.category +
+                    (
+                        item.model_number
+                            ? " • " + item.model_number
+                            : ""
+                    );
+
+
+                link.append(
+                    title,
+                    detail
+                );
+
+
+                suggestionsBox.appendChild(link);
+
+            });
+
+
+            suggestionsBox.classList.remove("d-none");
+
+        }
+
+
+        catch (error) {
+
+            if (
+                error.name !== "AbortError"
+            ) {
+
+                console.error(error);
+
+            }
+
+        }
+
+    });
+
+
+    /* Close suggestions when clicking outside */
+
+    document.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                !event.target.closest(
+                    ".position-relative"
+                )
+            ) {
+
+                suggestionsBox.classList.add(
+                    "d-none"
+                );
+
+            }
+
+        }
+    );
+
+}
+
+</script>
+
+
+{% endblock %}

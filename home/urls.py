@@ -46,8 +46,19 @@ urlpatterns = [
 
 
     #########################################################
-    path('cart/', views.cart, name='cart'),
-    path('add-to-cart/<int:combo_id>/', views.add_to_cart, name='add_to_cart'),
+    # path('cart/', views.cart, name='cart'),
+    # # path('add-to-cart/<int:combo_id>/', views.add_to_cart, name='add_to_cart'),
+    # path("add-to-cart/<str:product_type>/<int:product_id>/", views.add_to_cart, name="add_to_cart"),
+    
+    path("add-to-cart/<str:product_type>/<int:product_id>/", views.add_to_cart, name="add_to_cart"),
+
+    path("cart/", views.cart, name="cart"),
+
+    path("remove-cart-item/<int:item_id>/", views.remove_cart_item, name="remove_cart_item"),
+
+    path("cart-checkout/", views.cart_checkout, name="cart_checkout"),
+
+    path("clear-cart/", views.clear_cart, name="clear_cart"),
 
     path('profile/', views.profile, name='profile'),
     path('myorders/', views.my_orders, name='my_orders'),
@@ -101,6 +112,8 @@ urlpatterns = [
     path("booking/<int:booking_id>/cancel/", views.cancel_booking, name="cancel_booking"),
     path("bookings/", views.booking_list, name="booking_list"),
     path("ckeditor5/", include("django_ckeditor_5.urls")),
+    path("accessories/", views.accessories, name="accessories"),
+    path("accessories/suggestions/", views.accessory_suggestions, name="accessory_suggestions"),
 
     
 

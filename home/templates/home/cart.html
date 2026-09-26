@@ -10,14 +10,20 @@
     <tbody>
       {% for item in items %}
       <tr>
-        <td>{{ item.combo.name }}</td>
+        <!-- <td>{{ item.combo.name }}</td>
         <td>{{ item.quantity }}</td>
-        <td>₹{{ item.combo.total_price|floatformat:2 }}</td>
+        <td>₹{{ item.combo.total_price|floatformat:2 }}</td> -->
+        <td>{{ item.product_name }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>₹{{ item.unit_price|floatformat:2 }}</td>
         <td>₹{{ item.subtotal|floatformat:2 }}</td>
         <td>
-          <form action="{% url 'remove_cart_item' item.id %}" method="post">
+          <form method="POST" action="{% url 'remove_cart_item' item.id %}">
             {% csrf_token %}
-            <button class="btn btn-danger btn-sm">Remove</button>
+
+            <button type="submit"
+              class="btn btn-outline-danger btn-sm">
+            <i class="bi bi-trash"></i>Remove </button>
           </form>
         </td>
       </tr>
@@ -32,6 +38,14 @@
     <a href="{% url 'product_list' %}" class="btn btn-danger btn-sm">Keep Shopping</a>
 
   </div>
+  <form method="POST" action="{% url 'clear_cart' %}">
+    {% csrf_token %}
+
+    <button type="submit"
+            class="btn btn-outline-danger">
+        Clear Cart
+    </button>
+  </form>
   {% else %}
   <p>Your cart is empty.</p>
   {% endif %}
