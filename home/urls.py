@@ -16,7 +16,7 @@ urlpatterns = [
     path('product/<int:pk>/', views.product_detail, name='product_detail'),
 
     # Cart checkout
-    path('checkout/', views.cart_checkout, name='cart_checkout'),
+    # path('checkout/', views.cart_checkout, name='cart_checkout'),
 
     # Buy Now checkout
     path('buy-now/<int:combo_id>/', views.buy_now, name='buy_now'),
@@ -56,6 +56,8 @@ urlpatterns = [
 
     path("remove-cart-item/<int:item_id>/", views.remove_cart_item, name="remove_cart_item"),
 
+    # path("cart-checkout/", views.cart_checkout, name="cart_checkout"),
+    path("checkout/", views.cart_checkout, name="checkout_page"),
     path("cart-checkout/", views.cart_checkout, name="cart_checkout"),
 
     path("clear-cart/", views.clear_cart, name="clear_cart"),

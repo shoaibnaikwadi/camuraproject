@@ -569,23 +569,98 @@ class CartItem(models.Model):
 
 
 
+# class Order(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     profile = models.ForeignKey('CustomerProfile', on_delete=models.SET_NULL, null=True)
+#     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+#     razorpay_order_id = models.CharField(max_length=100, blank=True, null=True)
+#     payment_id = models.CharField(max_length=100, blank=True, null=True)
+#     payment_status = models.CharField(max_length=50, default="Pending")
+#     created_at = models.DateTimeField(auto_now_add=True)
+
+#     def calculate_total(self):
+#         return sum(item.subtotal() for item in self.items.all())
+
+#     def __str__(self):
+#         return f"Order #{self.id} - {self.user.username}"
+
+
+
+
+from decimal import Decimal
+
+
+
+
 class Order(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    profile = models.ForeignKey('CustomerProfile', on_delete=models.SET_NULL, null=True)
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    razorpay_order_id = models.CharField(max_length=100, blank=True, null=True)
-    payment_id = models.CharField(max_length=100, blank=True, null=True)
-    payment_status = models.CharField(max_length=50, default="Pending")
-    created_at = models.DateTimeField(auto_now_add=True)
+
+    PAYMENT_METHOD_CHOICES = [
+        ("online", "Online Payment"),
+        ("cod", "Cash on Delivery"),
+    ]
+
+    PAYMENT_STATUS_CHOICES = [
+        ("Pending", "Pending"),
+        ("Paid", "Paid"),
+        ("Failed", "Failed"),
+    ]
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
+
+    profile = models.ForeignKey(
+        "CustomerProfile",
+        on_delete=models.SET_NULL,
+        null=True
+    )
+
+    total_amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2
+    )
+
+    payment_method = models.CharField(
+        max_length=10,
+        choices=PAYMENT_METHOD_CHOICES,
+        default="online"
+    )
+
+    razorpay_order_id = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True
+    )
+
+    payment_id = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True
+    )
+
+    payment_status = models.CharField(
+        max_length=50,
+        choices=PAYMENT_STATUS_CHOICES,
+        default="Pending"
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
 
     def calculate_total(self):
-        return sum(item.subtotal() for item in self.items.all())
+        return sum(
+            (item.subtotal() for item in self.items.all()),
+            Decimal("0.00")
+        )
 
     def __str__(self):
         return f"Order #{self.id} - {self.user.username}"
-
-
-
+    
+    
+    
+    
 # class OrderItem(models.Model):
 #     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
 #     combo = models.ForeignKey('ComboProduct', on_delete=models.SET_NULL, null=True)

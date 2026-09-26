@@ -15,10 +15,12 @@ Select Delivery Address | Camura.in
 
     <div class="row g-4">
 
-        <!-- ADDRESS SELECTION -->
+        <!-- ================= ADDRESS SELECTION ================= -->
+
         <div class="col-lg-7">
 
             <div class="d-flex justify-content-between align-items-center mb-3">
+
                 <h5 class="fw-bold mb-0">
                     Your Saved Addresses
                 </h5>
@@ -26,7 +28,9 @@ Select Delivery Address | Camura.in
                 <span class="badge bg-secondary">
                     {{ addresses|length }} Saved
                 </span>
+
             </div>
+
 
             {% if addresses %}
 
@@ -43,6 +47,7 @@ Select Delivery Address | Camura.in
                 <input type="hidden"
                        name="combo_id"
                        value="{{ combo_id }}">
+
 
                 <div class="row g-3">
 
@@ -62,30 +67,46 @@ Select Delivery Address | Camura.in
                                 {% if selected_address_id == address.id %}
 
                                 <span class="badge bg-success align-self-start mb-2">
+
                                     <i class="bi bi-check-circle me-1"></i>
+
                                     Selected
+
                                 </span>
 
                                 {% endif %}
 
+
                                 <h5 class="card-title fw-bold">
+
                                     {{ address.full_name }}
+
                                 </h5>
+
 
                                 <p class="mb-1">
                                     {{ address.address }}
                                 </p>
 
+
                                 <p class="text-muted small mb-2">
+
                                     {{ address.city }},
-                                    {{ address.state }} -
+                                    {{ address.state }}
+                                    -
                                     {{ address.pincode }}
+
                                 </p>
 
+
                                 <p class="small mb-3">
+
                                     <i class="bi bi-telephone me-1"></i>
+
                                     {{ address.mobile }}
+
                                 </p>
+
 
                                 <button
                                     type="submit"
@@ -101,9 +122,12 @@ Select Delivery Address | Camura.in
                                     {% if selected_address_id == address.id %}
 
                                         <i class="bi bi-check-circle me-1"></i>
+
                                         Selected Address
 
                                     {% else %}
+
+                                        <i class="bi bi-truck me-1"></i>
 
                                         Deliver to This Address
 
@@ -126,15 +150,19 @@ Select Delivery Address | Camura.in
             {% else %}
 
             <div class="alert alert-info text-center">
+
                 <i class="bi bi-info-circle me-1"></i>
+
                 You don't have any saved addresses.
                 Please add one below.
+
             </div>
 
             {% endif %}
 
 
-            <!-- ADD NEW ADDRESS BUTTON -->
+            <!-- ================= ADD NEW ADDRESS ================= -->
+
             <button
                 type="button"
                 class="btn btn-outline-success w-100 mt-3 py-2"
@@ -142,12 +170,14 @@ Select Delivery Address | Camura.in
                 data-bs-target="#addAddressModal">
 
                 <i class="bi bi-plus-circle me-1"></i>
+
                 Add New Address
 
             </button>
 
 
-            <!-- CART CHECKOUT CONFIRMATION -->
+            <!-- ================= PROCEED TO CHECKOUT ================= -->
+
             {% if from_page == "cart" and selected_address_id %}
 
             <div class="card border-success shadow-sm mt-4">
@@ -155,29 +185,29 @@ Select Delivery Address | Camura.in
                 <div class="card-body">
 
                     <h5 class="fw-bold mb-2">
+
                         <i class="bi bi-check-circle text-success me-1"></i>
-                        Ready to Checkout
+
+                        Address Selected
+
                     </h5>
 
-                    <p class="text-muted small">
+                    <p class="text-muted small mb-3">
+
                         Your delivery address has been selected.
-                        Review your order summary before proceeding.
+                        Continue to checkout to review your order.
+
                     </p>
 
-                    <form method="POST"
-                          action="{% url 'cart_checkout' %}">
 
+                    <form method="post" action="{% url 'cart_checkout' %}">
                         {% csrf_token %}
 
-                        <button
-                            type="submit"
+                        <button type="submit"
                             class="btn btn-success btn-lg w-100">
-
-                            <i class="bi bi-shield-lock me-1"></i>
-                            Proceed to Payment
-
+                        <i class="bi bi-arrow-right-circle me-1"></i>
+                        Continue to Checkout
                         </button>
-
                     </form>
 
                 </div>
@@ -189,7 +219,8 @@ Select Delivery Address | Camura.in
         </div>
 
 
-        <!-- ORDER SUMMARY -->
+        <!-- ================= ORDER SUMMARY ================= -->
+
         <div class="col-lg-5">
 
             <div class="card shadow-sm border-0 order-summary">
@@ -197,11 +228,15 @@ Select Delivery Address | Camura.in
                 <div class="card-header bg-primary text-white py-3">
 
                     <h5 class="mb-0">
+
                         <i class="bi bi-receipt me-1"></i>
+
                         Order Summary
+
                     </h5>
 
                 </div>
+
 
                 <div class="card-body">
 
@@ -226,7 +261,9 @@ Select Delivery Address | Camura.in
                                 </div>
 
                                 <strong class="text-nowrap">
+
                                     ₹{{ item.subtotal|floatformat:2 }}
+
                                 </strong>
 
                             </div>
@@ -236,12 +273,17 @@ Select Delivery Address | Camura.in
                         {% empty %}
 
                         <li class="list-group-item text-muted text-center">
+
                             No products selected.
+
                         </li>
 
                         {% endfor %}
 
                     </ul>
+
+
+                    <!-- TOTAL -->
 
                     <div class="d-flex justify-content-between align-items-center">
 
@@ -250,10 +292,13 @@ Select Delivery Address | Camura.in
                         </h5>
 
                         <h4 class="fw-bold text-success mb-0">
+
                             ₹{{ total|floatformat:2 }}
+
                         </h4>
 
                     </div>
+
 
                     {% if total <= 5000 %}
 
@@ -261,15 +306,28 @@ Select Delivery Address | Camura.in
 
                         <i class="bi bi-exclamation-triangle me-1"></i>
 
-                        Minimum order value must be more than ₹5,000.
+                        Minimum order value must be more than
+                        <strong>₹5,000</strong>.
+
+                    </div>
+
+                    {% else %}
+
+                    <div class="alert alert-success mt-3 mb-0 small">
+
+                        <i class="bi bi-check-circle me-1"></i>
+
+                        Minimum order value reached.
 
                     </div>
 
                     {% endif %}
 
+
                     <p class="text-muted small mt-3 mb-0">
-                        Final amount and applicable delivery charges
-                        will be confirmed during checkout.
+
+                        Final amount will be confirmed during checkout.
+
                     </p>
 
                 </div>
@@ -278,12 +336,14 @@ Select Delivery Address | Camura.in
 
 
             <!-- BACK TO CART -->
+
             {% if from_page == "cart" %}
 
             <a href="{% url 'cart' %}"
                class="btn btn-outline-secondary w-100 mt-3">
 
                 <i class="bi bi-arrow-left me-1"></i>
+
                 Back to Cart
 
             </a>
@@ -317,6 +377,7 @@ Select Delivery Address | Camura.in
                     id="addAddressModalLabel">
 
                     <i class="bi bi-geo-alt me-1"></i>
+
                     Add New Address
 
                 </h5>
@@ -337,6 +398,7 @@ Select Delivery Address | Camura.in
                 {% csrf_token %}
 
                 <!-- Preserve Buy Now / Cart flow -->
+
                 <input type="hidden"
                        name="from"
                        value="{{ from_page }}">
@@ -345,7 +407,10 @@ Select Delivery Address | Camura.in
                        name="combo_id"
                        value="{{ combo_id }}">
 
+
                 <div class="modal-body">
+
+                    <!-- FULL NAME -->
 
                     <div class="mb-3">
 
@@ -363,6 +428,8 @@ Select Delivery Address | Camura.in
                     </div>
 
 
+                    <!-- EMAIL -->
+
                     <div class="mb-3">
 
                         <label class="form-label">
@@ -378,6 +445,8 @@ Select Delivery Address | Camura.in
 
                     </div>
 
+
+                    <!-- MOBILE -->
 
                     <div class="mb-3">
 
@@ -398,6 +467,8 @@ Select Delivery Address | Camura.in
                     </div>
 
 
+                    <!-- PINCODE -->
+
                     <div class="mb-3">
 
                         <label class="form-label">
@@ -417,6 +488,8 @@ Select Delivery Address | Camura.in
                     </div>
 
 
+                    <!-- ADDRESS -->
+
                     <div class="mb-3">
 
                         <label class="form-label">
@@ -435,6 +508,8 @@ Select Delivery Address | Camura.in
 
                     <div class="row">
 
+                        <!-- CITY -->
+
                         <div class="col-md-6 mb-3">
 
                             <label class="form-label">
@@ -450,6 +525,8 @@ Select Delivery Address | Camura.in
 
                         </div>
 
+
+                        <!-- STATE -->
 
                         <div class="col-md-6 mb-3">
 
@@ -482,11 +559,13 @@ Select Delivery Address | Camura.in
 
                     </button>
 
+
                     <button
                         type="submit"
                         class="btn btn-success">
 
                         <i class="bi bi-check-circle me-1"></i>
+
                         Save Address
 
                     </button>
@@ -513,7 +592,8 @@ Select Delivery Address | Camura.in
 
 .address-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.10) !important;
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.10) !important;
 }
 
 .order-summary {

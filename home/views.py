@@ -95,22 +95,116 @@ def product_detail(request, pk):
 
 
 
-
-
-
-
-
-
+from django.views.decorators.http import require_POST
 @login_required
+@require_POST
 def cod_payment(request):
-    if request.method == "POST":
-        order_id = request.POST.get('order_id')
-        order = get_object_or_404(Order, id=order_id, user=request.user)
-        order.payment_status = "COD"
-        order.save()
 
-        messages.success(request, "Order placed successfully! Pay with COD on delivery.")
-        return redirect('order_success')
+    order_id = request.POST.get("order_id")
+
+    if not order_id:
+        messages.error(request, "Invalid order.")
+        return redirect("cart")
+
+    order = get_object_or_404(
+        Order,
+        id=order_id,
+        user=request.user
+    )
+
+    # Make sure order is still pending
+    if order.payment_status != "Pending":
+        messages.error(
+            request,
+            "This order has already been processed."
+        )
+        return redirect("order_success")
+
+    # Change payment method to COD
+    order.payment_method = "cod"
+    order.payment_status = "Pending"
+
+    # COD does not need Razorpay order
+    order.razorpay_order_id = None
+
+    order.save(
+        update_fields=[
+            "payment_method",
+            "payment_status",
+            "razorpay_order_id",
+        ]
+    )
+
+    # Clear cart after COD order is successfully created
+    CartItem.objects.filter(
+        user=request.user
+    ).delete()
+
+    # Clear selected address
+    request.session.pop(
+        "selected_address_id",
+        None
+    )
+
+    messages.success(
+        request,
+        f"Order #{order.id} placed successfully!"
+
+    )
+
+    
+    return redirect("order_success")
+    
+
+
+# @login_required
+# @require_POST
+# def cod_payment(request):
+
+#     order_id = request.POST.get("order_id")
+
+#     order = get_object_or_404(
+#         Order,
+#         id=order_id,
+#         user=request.user,
+#         payment_method="cod",
+#     )
+
+#     # Prevent the same order from being processed twice
+#     if order.payment_status != "Pending":
+#         messages.error(
+#             request,
+#             "This order has already been processed."
+#         )
+#         return redirect("order_success")
+
+#     order.payment_status = "COD"
+#     order.save(update_fields=["payment_status"])
+
+#     # Clear cart after successful COD order
+#     CartItem.objects.filter(
+#         user=request.user
+#     ).delete()
+
+#     messages.success(
+#         request,
+#         "Order placed successfully! Pay with COD on delivery."
+#     )
+
+#     return redirect(
+#         "order_success"
+#     )
+
+# @login_required
+# def cod_payment(request):
+#     if request.method == "POST":
+#         order_id = request.POST.get('order_id')
+#         order = get_object_or_404(Order, id=order_id, user=request.user)
+#         order.payment_status = "COD"
+#         order.save()
+
+#         messages.success(request, "Order placed successfully! Pay with COD on delivery.")
+#         return redirect('order_success')
 
 
 
@@ -705,23 +799,309 @@ from django.conf import settings
 
 
 
+# @login_required
+# @require_POST
+# def cart_checkout(request):
+
+#     # --------------------------------------------------
+#     # PAYMENT METHOD
+#     # --------------------------------------------------
+
+#     payment_method = request.POST.get("payment_method")
+
+#     if payment_method not in ["cod", "online"]:
+#         messages.error(
+#             request,
+#             "Please select a valid payment method."
+#         )
+#         return redirect("checkout_page")
 
 
+#     # --------------------------------------------------
+#     # SELECTED ADDRESS
+#     # --------------------------------------------------
+
+#     address_id = request.session.get("selected_address_id")
+
+#     if not address_id:
+#         messages.error(
+#             request,
+#             "Please select a delivery address."
+#         )
+#         return redirect("select_address")
+
+
+#     profile = get_object_or_404(
+#         CustomerProfile,
+#         id=address_id,
+#         user=request.user
+#     )
+
+
+#     # --------------------------------------------------
+#     # GET CART
+#     # --------------------------------------------------
+
+#     cart_items = list(
+#         CartItem.objects.filter(
+#             user=request.user
+#         ).select_related(
+#             "combo",
+#             "camera",
+#             "bullet_camera",
+#             "dvr",
+#             "hard_disk",
+#             "cable",
+#             "power_supply",
+#             "accessory"
+#         )
+#     )
+
+
+#     if not cart_items:
+#         messages.error(
+#             request,
+#             "Your cart is empty."
+#         )
+#         return redirect("cart")
+
+
+#     # --------------------------------------------------
+#     # VALIDATE CART ITEMS
+#     # --------------------------------------------------
+
+#     for item in cart_items:
+
+#         try:
+#             item.full_clean()
+
+#         except ValidationError as exc:
+
+#             messages.error(
+#                 request,
+#                 f"{item.product_name}: "
+#                 f"{'; '.join(exc.messages)}"
+#             )
+
+#             return redirect("cart")
+
+
+#     # --------------------------------------------------
+#     # CALCULATE TOTAL
+#     # --------------------------------------------------
+
+#     total = sum(
+#         (item.subtotal() for item in cart_items),
+#         Decimal("0.00")
+#     )
+
+
+#     # --------------------------------------------------
+#     # MINIMUM ORDER VALUE
+#     # --------------------------------------------------
+
+#     if total <= MINIMUM_ORDER:
+
+#         messages.error(
+#             request,
+#             "Minimum order value must be more than ₹5,000."
+#         )
+
+#         return redirect("cart")
+
+
+#     # --------------------------------------------------
+#     # CREATE ORDER
+#     # --------------------------------------------------
+
+#     with transaction.atomic():
+
+#         order = Order.objects.create(
+#             user=request.user,
+#             profile=profile,
+#             total_amount=total,
+#             payment_method=payment_method,
+#             payment_status="Pending"
+#         )
+
+
+#         # --------------------------------------------------
+#         # SAVE ORDER ITEMS
+#         # --------------------------------------------------
+
+#         for item in cart_items:
+
+#             product_fields = {
+#                 field: getattr(item, field)
+#                 for field in CartItem.PRODUCT_FIELDS
+#             }
+
+#             OrderItem.objects.create(
+#                 order=order,
+#                 **product_fields,
+#                 product_name=item.product_name,
+#                 quantity=item.quantity,
+#                 price=item.unit_price
+#             )
+
+
+#         # ==================================================
+#         # CASH ON DELIVERY
+#         # ==================================================
+
+#         if payment_method == "cod":
+
+#             # COD order does not need Razorpay.
+
+#             order.payment_status = "Pending"
+#             order.save(
+#                 update_fields=["payment_status"]
+#             )
+
+
+#             # Clear cart after successful COD order creation.
+#             CartItem.objects.filter(
+#                 user=request.user
+#             ).delete()
+
+
+#             # Clear selected address session.
+#             request.session.pop(
+#                 "selected_address_id",
+#                 None
+#             )
+
+
+#             messages.success(
+#                 request,
+#                 f"Order #{order.id} placed successfully!"
+#             )
+
+
+#             return redirect(
+#                 "cod_order_success",
+#                 order_id=order.id
+#             )
+
+
+#     # ==================================================
+#     # ONLINE PAYMENT
+#     # ==================================================
+
+#     amount_paise = int(
+#         (total * 100).quantize(
+#             Decimal("1"),
+#             rounding=ROUND_HALF_UP
+#         )
+#     )
+
+
+#     client = razorpay.Client(
+#         auth=(
+#             settings.RAZORPAY_KEY_ID,
+#             settings.RAZORPAY_KEY_SECRET
+#         )
+#     )
+
+
+#     try:
+
+#         payment = client.order.create({
+#             "amount": amount_paise,
+#             "currency": "INR",
+#             "payment_capture": 1
+#         })
+
+
+#     except Exception:
+
+#         # If Razorpay order creation fails,
+#         # remove the pending local order.
+
+#         order.delete()
+
+#         messages.error(
+#             request,
+#             "Unable to initiate online payment. "
+#             "Please try again."
+#         )
+
+#         return redirect("checkout_page")
+
+
+#     # Save Razorpay order ID.
+#     order.razorpay_order_id = payment["id"]
+
+#     order.save(
+#         update_fields=["razorpay_order_id"]
+#     )
+
+
+#     # --------------------------------------------------
+#     # RAZORPAY PAYMENT PAGE
+#     # --------------------------------------------------
+
+#     # context = {
+#     #     "order": order,
+#     #     "profile": profile,
+#     #     "razorpay_key": settings.RAZORPAY_KEY_ID,
+#     #     "amount": total,
+#     #     "payment_id": payment["id"],
+#     # }
+    
+    
+#     amount_paise = int(
+#         (total * 100).quantize(
+#             Decimal("1"),
+#         rounding=ROUND_HALF_UP
+#             )
+#         )
+
+#     context = {
+#         "order": order,
+#         "profile": profile,
+#         "razorpay_key": settings.RAZORPAY_KEY_ID,
+#         "amount": total,
+#         "amount_paise": amount_paise,
+#         "payment_id": payment["id"],
+#     }
+
+
+#     return render(
+#         request,
+#         "home/payment.html",
+#         context
+#     )    
+    
+    
 @login_required
 @require_POST
 def cart_checkout(request):
 
+    # --------------------------------------------------
+    # SELECTED ADDRESS
+    # --------------------------------------------------
+
     address_id = request.session.get("selected_address_id")
 
     if not address_id:
-        messages.error(request, "Please select a delivery address.")
+        messages.error(
+            request,
+            "Please select a delivery address."
+        )
         return redirect("select_address")
+
 
     profile = get_object_or_404(
         CustomerProfile,
         id=address_id,
         user=request.user
     )
+
+
+    # --------------------------------------------------
+    # GET CART
+    # --------------------------------------------------
 
     cart_items = list(
         CartItem.objects.filter(
@@ -738,73 +1118,77 @@ def cart_checkout(request):
         )
     )
 
+
     if not cart_items:
-        messages.error(request, "Your cart is empty.")
+        messages.error(
+            request,
+            "Your cart is empty."
+        )
         return redirect("cart")
 
-    # Validate product selection, quantities and stock.
+
+    # --------------------------------------------------
+    # VALIDATE CART ITEMS
+    # --------------------------------------------------
+
     for item in cart_items:
+
         try:
             item.full_clean()
+
         except ValidationError as exc:
+
             messages.error(
                 request,
-                f"{item.product_name}: {'; '.join(exc.messages)}"
+                f"{item.product_name}: "
+                f"{'; '.join(exc.messages)}"
             )
+
             return redirect("cart")
 
-    # Calculate the current cart total on the server.
+
+    # --------------------------------------------------
+    # CALCULATE TOTAL
+    # --------------------------------------------------
+
     total = sum(
         (item.subtotal() for item in cart_items),
         Decimal("0.00")
     )
 
-    # Orders must be strictly greater than ₹5,000.
+
+    # --------------------------------------------------
+    # MINIMUM ORDER VALUE
+    # --------------------------------------------------
+
     if total <= MINIMUM_ORDER:
+
         messages.error(
             request,
-            "Minimum order value must be more than ₹5,000. "
-            "Please add more products to your cart."
+            "Minimum order value must be more than ₹5,000."
         )
+
         return redirect("cart")
 
-    amount_paise = int(
-        (total * 100).quantize(
-            Decimal("1"),
-            rounding=ROUND_HALF_UP
-        )
-    )
 
-    client = razorpay.Client(
-        auth=(
-            settings.RAZORPAY_KEY_ID,
-            settings.RAZORPAY_KEY_SECRET
-        )
-    )
+    # --------------------------------------------------
+    # CREATE LOCAL ORDER
+    # --------------------------------------------------
 
-    try:
-        payment = client.order.create({
-            "amount": amount_paise,
-            "currency": "INR",
-            "payment_capture": 1
-        })
-    except Exception:
-        messages.error(
-            request,
-            "Unable to initiate payment. Please try again."
-        )
-        return redirect("cart")
-
-    # Save the pending order and item price snapshots.
     with transaction.atomic():
 
         order = Order.objects.create(
             user=request.user,
             profile=profile,
             total_amount=total,
-            razorpay_order_id=payment["id"],
+            payment_method="online",
             payment_status="Pending"
         )
+
+
+        # --------------------------------------------------
+        # SAVE ORDER ITEMS
+        # --------------------------------------------------
 
         for item in cart_items:
 
@@ -821,24 +1205,82 @@ def cart_checkout(request):
                 price=item.unit_price
             )
 
+
+    # ==================================================
+    # CREATE RAZORPAY ORDER
+    # ==================================================
+
+    amount_paise = int(
+        (total * 100).quantize(
+            Decimal("1"),
+            rounding=ROUND_HALF_UP
+        )
+    )
+
+
+    client = razorpay.Client(
+        auth=(
+            settings.RAZORPAY_KEY_ID,
+            settings.RAZORPAY_KEY_SECRET
+        )
+    )
+
+
+    try:
+
+        payment = client.order.create({
+            "amount": amount_paise,
+            "currency": "INR",
+            "payment_capture": 1
+        })
+
+
+    except Exception:
+
+        # Delete local order if Razorpay order
+        # could not be created.
+
+        order.delete()
+
+        messages.error(
+            request,
+            "Unable to initiate online payment. "
+            "Please try again."
+        )
+
+        return redirect("checkout_page")
+
+
+    # --------------------------------------------------
+    # SAVE RAZORPAY ORDER ID
+    # --------------------------------------------------
+
+    order.razorpay_order_id = payment["id"]
+
+    order.save(
+        update_fields=["razorpay_order_id"]
+    )
+
+
+    # --------------------------------------------------
+    # PAYMENT PAGE
+    # --------------------------------------------------
+
     context = {
         "order": order,
         "profile": profile,
         "razorpay_key": settings.RAZORPAY_KEY_ID,
         "amount": total,
-        "payment_id": payment["id"]
+        "amount_paise": amount_paise,
+        "payment_id": payment["id"],
     }
+
 
     return render(
         request,
         "home/payment.html",
         context
-    )
-    
-    
-    
-    
-    
+    )    
     
 
     
@@ -1398,56 +1840,191 @@ def user_profile(request):
 # Initialize Razorpay client
 client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 
+# @csrf_exempt
+# def payment_success(request):
+#     if request.method == 'POST':
+#         try:
+#             # Get data sent by Razorpay
+#             razorpay_order_id = request.POST.get('razorpay_order_id')
+#             razorpay_payment_id = request.POST.get('razorpay_payment_id')
+#             razorpay_signature = request.POST.get('razorpay_signature')
+
+#             if not all([razorpay_order_id, razorpay_payment_id, razorpay_signature]):
+#                 return render(request, 'home/payment_failed.html', {'error': 'Missing payment details.'})
+
+#             # Lookup order by Razorpay order ID
+#             order = get_object_or_404(Order, razorpay_order_id=razorpay_order_id)
+
+#             # Verify signature to ensure payment is genuine
+#             params_dict = {
+#                 'razorpay_order_id': razorpay_order_id,
+#                 'razorpay_payment_id': razorpay_payment_id,
+#                 'razorpay_signature': razorpay_signature
+#             }
+
+#             try:
+#                 client.utility.verify_payment_signature(params_dict)
+#             except razorpay.errors.SignatureVerificationError:
+#                 order.payment_status = 'Failed'
+#                 order.save()
+#                 return render(request, 'home/payment_failed.html', {'error': 'Payment signature verification failed.'})
+
+#             # Signature verified, mark order as paid
+#             order.payment_id = razorpay_payment_id
+#             order.payment_status = 'Paid'
+#             order.save()
+
+#             # Clear user's cart if the order was from the cart
+#             if order.user:
+#                 CartItem.objects.filter(user=order.user).delete()
+
+#             # Success message and redirect
+#             messages.success(request, "Payment Successful! Your order has been placed.")
+#             return redirect('order_success')
+
+#         except Exception as e:
+#             print("Payment processing error:", e)
+#             return render(request, 'home/payment_failed.html', {'error': str(e)})
+
+#     # If GET request, redirect to home
+#     return redirect('home')
+
 @csrf_exempt
 def payment_success(request):
-    if request.method == 'POST':
+
+    if request.method != "POST":
+        return redirect("home")
+
+    try:
+
+        razorpay_order_id = request.POST.get(
+            "razorpay_order_id"
+        )
+
+        razorpay_payment_id = request.POST.get(
+            "razorpay_payment_id"
+        )
+
+        razorpay_signature = request.POST.get(
+            "razorpay_signature"
+        )
+
+        if not all([
+            razorpay_order_id,
+            razorpay_payment_id,
+            razorpay_signature
+        ]):
+
+            return render(
+                request,
+                "home/payment_failed.html",
+                {
+                    "error": "Missing payment details."
+                }
+            )
+
+        # Find the order
+        order = get_object_or_404(
+            Order,
+            razorpay_order_id=razorpay_order_id,
+            payment_method="online"
+        )
+
+        # Verify Razorpay signature
+        client = razorpay.Client(
+            auth=(
+                settings.RAZORPAY_KEY_ID,
+                settings.RAZORPAY_KEY_SECRET
+            )
+        )
+
+        params_dict = {
+            "razorpay_order_id": razorpay_order_id,
+            "razorpay_payment_id": razorpay_payment_id,
+            "razorpay_signature": razorpay_signature,
+        }
+
         try:
-            # Get data sent by Razorpay
-            razorpay_order_id = request.POST.get('razorpay_order_id')
-            razorpay_payment_id = request.POST.get('razorpay_payment_id')
-            razorpay_signature = request.POST.get('razorpay_signature')
 
-            if not all([razorpay_order_id, razorpay_payment_id, razorpay_signature]):
-                return render(request, 'home/payment_failed.html', {'error': 'Missing payment details.'})
+            client.utility.verify_payment_signature(
+                params_dict
+            )
 
-            # Lookup order by Razorpay order ID
-            order = get_object_or_404(Order, razorpay_order_id=razorpay_order_id)
+        except razorpay.errors.SignatureVerificationError:
 
-            # Verify signature to ensure payment is genuine
-            params_dict = {
-                'razorpay_order_id': razorpay_order_id,
-                'razorpay_payment_id': razorpay_payment_id,
-                'razorpay_signature': razorpay_signature
+            order.payment_status = "Failed"
+
+            order.save(
+                update_fields=["payment_status"]
+            )
+
+            return render(
+                request,
+                "home/payment_failed.html",
+                {
+                    "error":
+                        "Payment signature verification failed."
+                }
+            )
+
+        # Prevent duplicate processing
+        if order.payment_status == "Paid":
+
+            return redirect(
+                "order_success"
+            )
+
+        # Payment verified successfully
+        order.payment_id = razorpay_payment_id
+        order.payment_status = "Paid"
+
+        order.save(
+            update_fields=[
+                "payment_id",
+                "payment_status"
+            ]
+        )
+
+        # Clear cart only after successful payment
+        CartItem.objects.filter(
+            user=order.user
+        ).delete()
+
+        messages.success(
+            request,
+            "Payment successful! Your order has been placed."
+        )
+
+        return redirect(
+            "order_success"
+        )
+
+    except Order.DoesNotExist:
+
+        return render(
+            request,
+            "home/payment_failed.html",
+            {
+                "error": "Order not found."
             }
+        )
 
-            try:
-                client.utility.verify_payment_signature(params_dict)
-            except razorpay.errors.SignatureVerificationError:
-                order.payment_status = 'Failed'
-                order.save()
-                return render(request, 'home/payment_failed.html', {'error': 'Payment signature verification failed.'})
+    except Exception as e:
 
-            # Signature verified, mark order as paid
-            order.payment_id = razorpay_payment_id
-            order.payment_status = 'Paid'
-            order.save()
+        print(
+            "Payment processing error:",
+            e
+        )
 
-            # Clear user's cart if the order was from the cart
-            if order.user:
-                CartItem.objects.filter(user=order.user).delete()
-
-            # Success message and redirect
-            messages.success(request, "Payment Successful! Your order has been placed.")
-            return redirect('order_success')
-
-        except Exception as e:
-            print("Payment processing error:", e)
-            return render(request, 'home/payment_failed.html', {'error': str(e)})
-
-    # If GET request, redirect to home
-    return redirect('home')
-
-
+        return render(
+            request,
+            "home/payment_failed.html",
+            {
+                "error":
+                    "Unable to process the payment. "
+                    "Please contact support if money was deducted."
+            }
+        )
 
 @login_required
 def my_orders(request):
