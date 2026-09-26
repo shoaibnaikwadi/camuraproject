@@ -20,6 +20,7 @@ import requests
 import random
 from decouple import config
 from django.contrib.auth import get_user_model
+MINIMUM_ORDER = Decimal("5000.00")
 
 from .models import (
     Order, OrderItem, CartItem, ComboProduct, CustomerProfile,
@@ -451,6 +452,8 @@ from decimal import Decimal
 
 @login_required
 def cart(request):
+    
+    MINIMUM_ORDER = Decimal("5000.00")
 
     items = CartItem.objects.filter(
         user=request.user
@@ -571,15 +574,144 @@ import razorpay
 from django.conf import settings
 
 
+# @login_required
+# @require_POST
+# def cart_checkout(request):
+
+#     address_id = request.session.get(
+#         "selected_address_id"
+#     )
+
+#     if not address_id:
+#         return redirect("select_address")
+
+#     profile = get_object_or_404(
+#         CustomerProfile,
+#         id=address_id,
+#         user=request.user
+#     )
+
+#     cart_items = list(
+#         CartItem.objects.filter(
+#             user=request.user
+#         ).select_related(
+#             "combo", "camera", "bullet_camera",
+#             "dvr", "hard_disk", "cable",
+#             "power_supply", "accessory"
+#         )
+#     )
+
+#     if not cart_items:
+#         messages.error(
+#             request,
+#             "Your cart is empty!"
+#         )
+#         return redirect("cart")
+
+#     # Validate quantities and stock.
+#     for item in cart_items:
+
+#         try:
+#             item.full_clean()
+#         except ValidationError as exc:
+#             messages.error(
+#                 request,
+#                 f"{item.product_name}: "
+#                 + "; ".join(exc.messages)
+#             )
+#             return redirect("cart")
+
+#     total = sum(
+#         (item.subtotal() for item in cart_items),
+#         Decimal("0.00")
+#     )
+
+#     if total <= 0:
+#         messages.error(
+#             request,
+#             "Invalid order amount."
+#         )
+#         return redirect("cart")
+
+#     amount_paise = int(
+#         (total * 100).quantize(
+#             Decimal("1"),
+#             rounding=ROUND_HALF_UP
+#         )
+#     )
+
+#     client = razorpay.Client(
+#         auth=(
+#             settings.RAZORPAY_KEY_ID,
+#             settings.RAZORPAY_KEY_SECRET
+#         )
+#     )
+
+#     try:
+#         payment = client.order.create({
+#             "amount": amount_paise,
+#             "currency": "INR",
+#             "payment_capture": 1
+#         })
+#     except Exception:
+#         messages.error(
+#             request,
+#             "Unable to initiate payment. Please try again."
+#         )
+#         return redirect("cart")
+
+#     # Save the order and purchased item snapshots.
+#     with transaction.atomic():
+
+#         order = Order.objects.create(
+#             user=request.user,
+#             profile=profile,
+#             total_amount=total,
+#             razorpay_order_id=payment["id"],
+#             payment_status="Pending"
+#         )
+
+#         for item in cart_items:
+
+#             product_fields = {
+#                 field: getattr(item, field)
+#                 for field in CartItem.PRODUCT_FIELDS
+#             }
+
+#             OrderItem.objects.create(
+#                 order=order,
+#                 **product_fields,
+#                 product_name=item.product_name,
+#                 quantity=item.quantity,
+#                 price=item.unit_price
+#             )
+
+#     context = {
+#         "order": order,
+#         "profile": profile,
+#         "razorpay_key": settings.RAZORPAY_KEY_ID,
+#         "amount": total,
+#         "payment_id": payment["id"]
+#     }
+
+#     return render(
+#         request,
+#         "home/payment.html",
+#         context
+#     )
+
+
+
+
+
 @login_required
 @require_POST
 def cart_checkout(request):
 
-    address_id = request.session.get(
-        "selected_address_id"
-    )
+    address_id = request.session.get("selected_address_id")
 
     if not address_id:
+        messages.error(request, "Please select a delivery address.")
         return redirect("select_address")
 
     profile = get_object_or_404(
@@ -592,41 +724,44 @@ def cart_checkout(request):
         CartItem.objects.filter(
             user=request.user
         ).select_related(
-            "combo", "camera", "bullet_camera",
-            "dvr", "hard_disk", "cable",
-            "power_supply", "accessory"
+            "combo",
+            "camera",
+            "bullet_camera",
+            "dvr",
+            "hard_disk",
+            "cable",
+            "power_supply",
+            "accessory"
         )
     )
 
     if not cart_items:
-        messages.error(
-            request,
-            "Your cart is empty!"
-        )
+        messages.error(request, "Your cart is empty.")
         return redirect("cart")
 
-    # Validate quantities and stock.
+    # Validate product selection, quantities and stock.
     for item in cart_items:
-
         try:
             item.full_clean()
         except ValidationError as exc:
             messages.error(
                 request,
-                f"{item.product_name}: "
-                + "; ".join(exc.messages)
+                f"{item.product_name}: {'; '.join(exc.messages)}"
             )
             return redirect("cart")
 
+    # Calculate the current cart total on the server.
     total = sum(
         (item.subtotal() for item in cart_items),
         Decimal("0.00")
     )
 
-    if total <= 0:
+    # Orders must be strictly greater than ₹5,000.
+    if total <= MINIMUM_ORDER:
         messages.error(
             request,
-            "Invalid order amount."
+            "Minimum order value must be more than ₹5,000. "
+            "Please add more products to your cart."
         )
         return redirect("cart")
 
@@ -657,7 +792,7 @@ def cart_checkout(request):
         )
         return redirect("cart")
 
-    # Save the order and purchased item snapshots.
+    # Save the pending order and item price snapshots.
     with transaction.atomic():
 
         order = Order.objects.create(
@@ -696,6 +831,13 @@ def cart_checkout(request):
         "home/payment.html",
         context
     )
+    
+    
+    
+    
+    
+    
+
     
 @login_required
 @require_POST
@@ -1311,71 +1453,256 @@ def my_orders(request):
 
 
 
+# @login_required
+# def select_address(request):
+#     addresses = CustomerProfile.objects.filter(user=request.user)
+#     cart_items = CartItem.objects.filter(user=request.user)
+
+#     from_page = request.GET.get('from')       # 'cart' or 'buy_now'
+#     combo_id = request.GET.get('combo_id')
+
+#     # ----- Determine items -----
+#     if combo_id:
+#         request.session['buy_now_combo_id'] = combo_id
+#         combo = get_object_or_404(ComboProduct, id=combo_id)
+#         total = combo.total_price()
+#         items = [{'name': combo.name, 'qty': 1, 'subtotal': total}]
+#     else:
+#         # items = [{'name': i.combo.name, 'qty': i.quantity, 'subtotal': i.subtotal()} for i in cart_items]
+#         items = [{'name': i.product_name, 'qty': i.quantity, 'price': i.unit_price, 'subtotal': i.subtotal()}
+#     for i in cart_items
+#     ]
+#         total = sum(i['subtotal'] for i in items)
+
+#     # ----- POST Request -----
+#     if request.method == "POST":
+
+#         # ---- Selecting an address ----
+#         if 'address_id' in request.POST:
+#             request.session['selected_address_id'] = request.POST.get('address_id')
+
+#             # If Buy Now flow → redirect back to buy_now
+#             if 'buy_now_combo_id' in request.session:
+#                 combo_id = request.session['buy_now_combo_id']
+#                 return redirect('process_buy_now', combo_id=combo_id)
+
+#             # If Cart flow
+#             if from_page == 'cart' or not combo_id:
+#                 return redirect('cart_checkout')
+
+#             return redirect('product_list')
+
+#         # ---- Adding a new address ----
+#         CustomerProfile.objects.create(
+#             user=request.user,
+#             full_name=request.POST['full_name'],
+#             email=request.POST['email'],
+#             mobile=request.POST['mobile'],
+#             address=request.POST['address'],
+#             city=request.POST['city'],
+#             state=request.POST['state'],
+#             pincode=request.POST['pincode']
+#         )
+#         messages.success(request, "New address added successfully!")
+#         return redirect(request.path)
+    
+    
+
+#     context = {
+#         'addresses': addresses,
+#         'items': items,
+#         'total': total,
+#     }
+#     return render(request, 'home/select_address.html', context)
+
+
+
+
+
+
+
+
+
+
 @login_required
 def select_address(request):
-    addresses = CustomerProfile.objects.filter(user=request.user)
-    cart_items = CartItem.objects.filter(user=request.user)
 
-    from_page = request.GET.get('from')       # 'cart' or 'buy_now'
-    combo_id = request.GET.get('combo_id')
+    addresses = CustomerProfile.objects.filter(
+        user=request.user
+    )
 
-    # ----- Determine items -----
-    if combo_id:
-        request.session['buy_now_combo_id'] = combo_id
-        combo = get_object_or_404(ComboProduct, id=combo_id)
+    from_page = request.GET.get("from")
+
+    # Preserve the checkout flow during POST requests.
+    if request.method == "POST":
+        from_page = request.POST.get("from", from_page)
+
+    combo_id = request.GET.get("combo_id")
+
+    if request.method == "POST":
+        combo_id = request.POST.get("combo_id") or combo_id
+
+    # Only treat a request as Buy Now when explicitly specified.
+    is_buy_now = (
+        from_page == "buy_now"
+        and bool(combo_id)
+    )
+
+    cart_items = CartItem.objects.filter(
+        user=request.user
+    ).select_related(
+        "combo",
+        "camera",
+        "bullet_camera",
+        "dvr",
+        "hard_disk",
+        "cable",
+        "power_supply",
+        "accessory"
+    )
+
+    # Determine the products and total.
+    if is_buy_now:
+
+        combo = get_object_or_404(
+            ComboProduct,
+            pk=combo_id
+        )
+
         total = combo.total_price()
-        items = [{'name': combo.name, 'qty': 1, 'subtotal': total}]
-    else:
-        # items = [{'name': i.combo.name, 'qty': i.quantity, 'subtotal': i.subtotal()} for i in cart_items]
-        items = [{'name': i.product_name, 'qty': i.quantity, 'price': i.unit_price, 'subtotal': i.subtotal()}
-    for i in cart_items
-    ]
-        total = sum(i['subtotal'] for i in items)
 
-    # ----- POST Request -----
+        items = [{
+            "name": combo.name,
+            "qty": 1,
+            "price": total,
+            "subtotal": total
+        }]
+
+    else:
+
+        items = [
+            {
+                "name": item.product_name,
+                "qty": item.quantity,
+                "price": item.unit_price,
+                "subtotal": item.subtotal()
+            }
+            for item in cart_items
+        ]
+
+        total = sum(
+            (item["subtotal"] for item in items),
+            Decimal("0.00")
+        )
+
+    # Apply minimum order value to both checkout flows.
+    if total <= MINIMUM_ORDER:
+
+        messages.error(
+            request,
+            "Minimum order value must be more than ₹5,000."
+        )
+
+        if is_buy_now:
+            return redirect(
+                "product_detail",
+                combo.pk
+            )
+
+        return redirect("cart")
+
+    # Handle submitted forms.
     if request.method == "POST":
 
-        # ---- Selecting an address ----
-        if 'address_id' in request.POST:
-            request.session['selected_address_id'] = request.POST.get('address_id')
+        # Select an existing address.
+        if "address_id" in request.POST:
 
-            # If Buy Now flow → redirect back to buy_now
-            if 'buy_now_combo_id' in request.session:
-                combo_id = request.session['buy_now_combo_id']
-                return redirect('process_buy_now', combo_id=combo_id)
+            address = get_object_or_404(
+                CustomerProfile,
+                pk=request.POST.get("address_id"),
+                user=request.user
+            )
 
-            # If Cart flow
-            if from_page == 'cart' or not combo_id:
-                return redirect('cart_checkout')
+            request.session["selected_address_id"] = address.pk
 
-            return redirect('product_list')
+            if is_buy_now:
 
-        # ---- Adding a new address ----
+                request.session["buy_now_combo_id"] = combo.pk
+
+                return redirect(
+                    "process_buy_now",
+                    combo_id=combo.pk
+                )
+
+            # Cart checkout must be submitted via POST.
+            # Redirect to the address page to display
+            # the final confirmation form.
+            messages.success(
+                request,
+                "Address selected. Confirm your order to continue."
+            )
+
+            return redirect(
+                "select_address"
+            )
+
+        # Add a new address.
         CustomerProfile.objects.create(
             user=request.user,
-            full_name=request.POST['full_name'],
-            email=request.POST['email'],
-            mobile=request.POST['mobile'],
-            address=request.POST['address'],
-            city=request.POST['city'],
-            state=request.POST['state'],
-            pincode=request.POST['pincode']
+            full_name=request.POST["full_name"],
+            email=request.POST["email"],
+            mobile=request.POST["mobile"],
+            address=request.POST["address"],
+            city=request.POST["city"],
+            state=request.POST["state"],
+            pincode=request.POST["pincode"]
         )
-        messages.success(request, "New address added successfully!")
-        return redirect(request.path)
-    
-    
+
+        messages.success(
+            request,
+            "New address added successfully!"
+        )
+
+        # Preserve Buy Now parameters if necessary.
+        if is_buy_now:
+            from django.urls import reverse
+            from urllib.parse import urlencode
+
+            url = reverse("select_address")
+            params = urlencode({
+                "from": "buy_now",
+                "combo_id": combo.pk
+            })
+
+            return redirect(f"{url}?{params}")
+
+        return redirect("select_address")
 
     context = {
-        'addresses': addresses,
-        'items': items,
-        'total': total,
+        "addresses": addresses,
+        "items": items,
+        "total": total,
+        "from_page": "buy_now" if is_buy_now else "cart",
+        "combo_id": combo_id if is_buy_now else "",
+        "selected_address_id": request.session.get(
+            "selected_address_id"
+        )
     }
-    return render(request, 'home/select_address.html', context)
 
-
-
-
+    return render(
+        request,
+        "home/select_address.html",
+        context
+    )
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
 
 

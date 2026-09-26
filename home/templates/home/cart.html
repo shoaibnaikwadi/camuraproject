@@ -34,8 +34,52 @@
   <h5 class="text-end">Total: ₹{{ total|floatformat:2 }}</h5>
   <div class="text-end">
     <!-- <a href="{% url 'cart_checkout' %}" class="btn btn-success">Proceed to Checkout</a> -->
-    <a href="{% url 'select_address' %}?from=cart" class="btn btn-success">Proceed to Checkout</a>
-    <a href="{% url 'product_list' %}" class="btn btn-danger btn-sm">Keep Shopping</a>
+    <!-- <a href="{% url 'select_address' %}?from=cart" class="btn btn-success">Proceed to Checkout</a>
+    <a href="{% url 'product_list' %}" class="btn btn-danger btn-sm">Keep Shopping</a> -->
+    <h5 class="text-end">
+    Total: ₹{{ total|floatformat:2 }}
+</h5>
+
+{% if total >= 5000 %}
+
+    <div class="alert alert-success">
+        <i class="bi bi-check-circle"></i>
+        Your cart qualifies for checkout.
+    </div>
+
+    <div class="text-end">
+        <a href="{% url 'select_address' %}?from=cart"
+           class="btn btn-success">
+            Proceed to Checkout
+        </a>
+
+        <a href="{% url 'product_list' %}"
+           class="btn btn-outline-primary">
+            Keep Shopping
+        </a>
+    </div>
+
+{% else %}
+
+    <div class="alert alert-warning">
+        <strong>Minimum order value is ₹5,000.</strong>
+        <br>
+        Your current cart total is ₹{{ total|floatformat:2 }}.
+        Please add more products to proceed to checkout.
+    </div>
+
+    <div class="text-end">
+        <button class="btn btn-secondary" disabled>
+            Proceed to Checkout
+        </button>
+
+        <a href="{% url 'product_list' %}"
+           class="btn btn-primary">
+            Continue Shopping
+        </a>
+    </div>
+
+{% endif %}
 
   </div>
   <form method="POST" action="{% url 'clear_cart' %}">
