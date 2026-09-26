@@ -1212,6 +1212,19 @@
 
     </a>
 
+<!-- accesories  -->
+
+    <a href="{% url 'accessories' %}"
+        class="mobile-bottom-item
+        {% if request.resolver_match.url_name == 'product_list' %}
+            active
+        {% endif %}">
+
+        <i class="bi bi-bag"></i>
+
+        <span>Shop</span>
+
+    </a>    
 
     <!-- CART -->
 
