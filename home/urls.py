@@ -69,6 +69,7 @@ urlpatterns = [
     path('my-orders/', views.my_orders, name='my_orders'),
     # path('checkout/<int:combo_id>/', views.checkout, name='checkout_with_combo'),
     path('select_address/', views.select_address, name='select_address'),
+    path("delete-address/<int:address_id>/", views.delete_address, name="delete_address"),
 
     # path('select-address/', views.select_address, name='select_address'),
     path('about/', TemplateView.as_view(template_name='home/about.html'), name='about'),

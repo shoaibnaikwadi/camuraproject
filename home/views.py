@@ -2429,9 +2429,49 @@ def select_address(request):
         }
     )    
     
+from django.views.decorators.http import require_POST    
     
-    
-    
+@login_required
+@require_POST
+def delete_address(request, address_id):
+
+    address = get_object_or_404(
+        CustomerProfile,
+        id=address_id,
+        user=request.user
+    )
+
+    selected_address_id = request.session.get(
+        "selected_address_id"
+    )
+
+    address.delete()
+
+    # If the deleted address was selected,
+    # automatically select another saved address.
+    if selected_address_id == address_id:
+
+        next_address = CustomerProfile.objects.filter(
+            user=request.user
+        ).order_by("-id").first()
+
+        if next_address:
+            request.session["selected_address_id"] = next_address.id
+        else:
+            request.session.pop(
+                "selected_address_id",
+                None
+            )
+
+    messages.success(
+        request,
+        "Address deleted successfully."
+    )
+
+    return redirect(
+        f"/select-address/?from={request.POST.get('from', '')}"
+        f"&combo_id={request.POST.get('combo_id', '')}"
+    )    
     
     
     
