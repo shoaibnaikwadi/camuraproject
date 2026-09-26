@@ -1195,21 +1195,21 @@ def google_feed(request):
     # ACCESSORIES
     # ============================================================
 
-    for product in Accessory.objects.all():
+    # for product in Accessory.objects.all():
 
-        title = product.name
+    #     title = product.name
 
-        write_product(
-            product=product,
-            product_id=f"accessory-{product.id}",
-            title=title,
-            description=(
-                f"{title} CCTV accessory "
-                f"from Camura.in."
-            ),
-            product_type="CCTV Accessory",
-            mpn=f"SV-ACC-{product.id}",
-        )
+    #     write_product(
+    #         product=product,
+    #         product_id=f"accessory-{product.id}",
+    #         title=title,
+    #         description=(
+    #             f"{title} CCTV accessory "
+    #             f"from Camura.in."
+    #         ),
+    #         product_type="CCTV Accessory",
+    #         mpn=f"SV-ACC-{product.id}",
+    #     )
 
 
     return response
