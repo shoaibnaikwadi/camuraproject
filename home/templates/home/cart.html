@@ -1,97 +1,386 @@
 {% extends 'base.html' %}
+
 {% block content %}
-<div class="container mt-4">
-  <h3>🛒 Your Cart</h3>
-  {% if items %}
-  <table class="table table-bordered">
-    <thead>
-      <tr><th>Product</th><th>Qty</th><th>Price</th><th>Subtotal</th><th>Action</th></tr>
-    </thead>
-    <tbody>
-      {% for item in items %}
-      <tr>
-        <!-- <td>{{ item.combo.name }}</td>
-        <td>{{ item.quantity }}</td>
-        <td>₹{{ item.combo.total_price|floatformat:2 }}</td> -->
-        <td>{{ item.product_name }}</td>
-        <td>{{ item.quantity }}</td>
-        <td>₹{{ item.unit_price|floatformat:2 }}</td>
-        <td>₹{{ item.subtotal|floatformat:2 }}</td>
-        <td>
-          <form method="POST" action="{% url 'remove_cart_item' item.id %}">
+
+<div class="container py-4">
+
+    <!-- Page Heading -->
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <h3 class="fw-bold mb-0">
+            <i class="bi bi-cart3 text-success"></i>
+            Your Cart
+        </h3>
+
+        {% if items %}
+        <span class="badge bg-success">
+            {{ items|length }} item{{ items|length|pluralize }}
+        </span>
+        {% endif %}
+    </div>
+
+
+    {% if items %}
+
+    <!-- =====================================================
+         DESKTOP CART TABLE
+    ====================================================== -->
+
+    <div class="d-none d-md-block">
+
+        <div class="card shadow-sm border-0">
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered align-middle mb-0">
+
+                    <thead class="table-light">
+
+                        <tr>
+                            <th>Product</th>
+                            <th class="text-center" style="width: 100px;">
+                                Qty
+                            </th>
+                            <th class="text-end">
+                                Price
+                            </th>
+                            <th class="text-end">
+                                Subtotal
+                            </th>
+                            <th class="text-center" style="width: 120px;">
+                                Action
+                            </th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for item in items %}
+
+                        <tr>
+
+                            <td>
+                                <div class="fw-semibold">
+                                    {{ item.product_name }}
+                                </div>
+                            </td>
+
+                            <td class="text-center">
+                                <span class="badge bg-secondary">
+                                    {{ item.quantity }}
+                                </span>
+                            </td>
+
+                            <td class="text-end text-nowrap">
+                                ₹{{ item.unit_price|floatformat:2 }}
+                            </td>
+
+                            <td class="text-end text-nowrap fw-semibold">
+                                ₹{{ item.subtotal|floatformat:2 }}
+                            </td>
+
+                            <td class="text-center">
+
+                                <form method="POST"
+                                      action="{% url 'remove_cart_item' item.id %}">
+
+                                    {% csrf_token %}
+
+                                    <button type="submit"
+                                            class="btn btn-outline-danger btn-sm">
+
+                                        <i class="bi bi-trash"></i>
+                                        Remove
+
+                                    </button>
+
+                                </form>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         MOBILE CART
+    ====================================================== -->
+
+    <div class="d-md-none">
+
+        {% for item in items %}
+
+        <div class="card shadow-sm border-0 mb-3">
+
+            <div class="card-body">
+
+                <!-- Product name -->
+                <div class="mb-3">
+
+                    <div class="text-muted small">
+                        Product
+                    </div>
+
+                    <div class="fw-semibold">
+                        {{ item.product_name }}
+                    </div>
+
+                </div>
+
+
+                <!-- Quantity / Price -->
+                <div class="row g-3 mb-3">
+
+                    <div class="col-6">
+
+                        <div class="text-muted small">
+                            Quantity
+                        </div>
+
+                        <span class="badge bg-secondary mt-1">
+                            {{ item.quantity }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="col-6 text-end">
+
+                        <div class="text-muted small">
+                            Price
+                        </div>
+
+                        <div class="fw-semibold text-nowrap">
+                            ₹{{ item.unit_price|floatformat:2 }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Subtotal -->
+                <div class="d-flex justify-content-between
+                            align-items-center
+                            border-top
+                            pt-3">
+
+                    <span class="fw-semibold">
+                        Subtotal
+                    </span>
+
+                    <span class="fw-bold text-success text-nowrap">
+                        ₹{{ item.subtotal|floatformat:2 }}
+                    </span>
+
+                </div>
+
+
+                <!-- Remove -->
+                <div class="mt-3">
+
+                    <form method="POST"
+                          action="{% url 'remove_cart_item' item.id %}">
+
+                        {% csrf_token %}
+
+                        <button type="submit"
+                                class="btn btn-outline-danger w-100">
+
+                            <i class="bi bi-trash"></i>
+                            Remove
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- =====================================================
+         CART TOTAL
+    ====================================================== -->
+
+    <div class="card shadow-sm border-0 mt-4">
+
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between
+                        align-items-center">
+
+                <span class="fw-bold fs-5">
+                    Total
+                </span>
+
+                <span class="fw-bold fs-4 text-success text-nowrap">
+                    ₹{{ total|floatformat:2 }}
+                </span>
+
+            </div>
+
+
+            <!-- =================================================
+                 MINIMUM ORDER
+            ================================================== -->
+
+            {% if total <= 5000 %}
+
+            <div class="alert alert-warning mt-3 mb-0">
+
+                <i class="bi bi-exclamation-triangle-fill"></i>
+
+                <strong>
+                    Minimum order value is more than ₹5,000.
+                </strong>
+
+                <br>
+
+                <span class="small">
+                    Your current cart total is
+                    ₹{{ total|floatformat:2 }}.
+                    Please add more products to proceed to checkout.
+                </span>
+
+            </div>
+
+            {% else %}
+
+            <div class="alert alert-success mt-3 mb-0">
+
+                <i class="bi bi-check-circle-fill"></i>
+
+                Your cart qualifies for checkout.
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- =================================================
+                 ACTION BUTTONS
+            ================================================== -->
+
+            <div class="d-grid d-md-flex
+                        justify-content-md-end
+                        gap-2
+                        mt-3">
+
+                {% if total > 5000 %}
+
+                <a href="{% url 'select_address' %}?from=cart"
+                   class="btn btn-success">
+
+                    <i class="bi bi-arrow-right-circle"></i>
+                    Proceed to Checkout
+
+                </a>
+
+                {% else %}
+
+                <button type="button"
+                        class="btn btn-secondary"
+                        disabled>
+
+                    <i class="bi bi-lock"></i>
+                    Minimum Order Not Met
+
+                </button>
+
+                {% endif %}
+
+
+                <a href="{% url 'product_list' %}"
+                   class="btn btn-outline-primary">
+
+                    <i class="bi bi-cart-plus"></i>
+                    Continue Shopping
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         CLEAR CART
+    ====================================================== -->
+
+    <div class="text-center text-md-end mt-3">
+
+        <form method="POST"
+              action="{% url 'clear_cart' %}">
+
             {% csrf_token %}
 
             <button type="submit"
-              class="btn btn-outline-danger btn-sm">
-            <i class="bi bi-trash"></i>Remove </button>
-          </form>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
+                    class="btn btn-outline-danger btn-sm">
 
-  </table>
-  <h5 class="text-end">Total: ₹{{ total|floatformat:2 }}</h5>
-  <div class="text-end">
-    <!-- <a href="{% url 'cart_checkout' %}" class="btn btn-success">Proceed to Checkout</a> -->
-    <!-- <a href="{% url 'select_address' %}?from=cart" class="btn btn-success">Proceed to Checkout</a>
-    <a href="{% url 'product_list' %}" class="btn btn-danger btn-sm">Keep Shopping</a> -->
-    <h5 class="text-end">
-    Total: ₹{{ total|floatformat:2 }}
-</h5>
+                <i class="bi bi-trash3"></i>
+                Clear Cart
 
-{% if total >= 5000 %}
+            </button>
 
-    <div class="alert alert-success">
-        <i class="bi bi-check-circle"></i>
-        Your cart qualifies for checkout.
+        </form>
+
     </div>
 
-    <div class="text-end">
-        <a href="{% url 'select_address' %}?from=cart"
-           class="btn btn-success">
-            Proceed to Checkout
-        </a>
 
-        <a href="{% url 'product_list' %}"
-           class="btn btn-outline-primary">
-            Keep Shopping
-        </a>
+    {% else %}
+
+    <!-- =====================================================
+         EMPTY CART
+    ====================================================== -->
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body text-center py-5">
+
+            <i class="bi bi-cart-x display-4 text-muted"></i>
+
+            <h4 class="mt-3">
+                Your cart is empty
+            </h4>
+
+            <p class="text-muted">
+                Add some CCTV products to your cart to continue.
+            </p>
+
+            <a href="{% url 'product_list' %}"
+               class="btn btn-primary">
+
+                <i class="bi bi-shop"></i>
+                Continue Shopping
+
+            </a>
+
+        </div>
+
     </div>
 
-{% else %}
+    {% endif %}
 
-    <div class="alert alert-warning">
-        <strong>Minimum order value is ₹5,000.</strong>
-        <br>
-        Your current cart total is ₹{{ total|floatformat:2 }}.
-        Please add more products to proceed to checkout.
-    </div>
-
-    <div class="text-end">
-        <button class="btn btn-secondary" disabled>
-            Proceed to Checkout
-        </button>
-
-        <a href="{% url 'product_list' %}"
-           class="btn btn-primary">
-            Continue Shopping
-        </a>
-    </div>
-
-{% endif %}
-
-  </div>
-  <form method="POST" action="{% url 'clear_cart' %}">
-    {% csrf_token %}
-
-    <button type="submit"
-            class="btn btn-outline-danger">
-        Clear Cart
-    </button>
-  </form>
-  {% else %}
-  <p>Your cart is empty.</p>
-  {% endif %}
 </div>
+
 {% endblock %}
