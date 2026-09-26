@@ -748,13 +748,121 @@ from .models import ComboProduct
 
 
 
+# def google_feed(request):
+#     response = HttpResponse(content_type="text/csv; charset=utf-8")
+#     response["Content-Disposition"] = "inline; filename=google_feed.csv"
+
+#     writer = csv.writer(response)
+
+#     # -------------------- HEADERS --------------------
+#     writer.writerow([
+#         "id",
+#         "title",
+#         "description",
+#         "link",
+#         "image_link",
+#         "price",
+#         "availability",
+#         "condition",
+#         "brand",
+#         "google_product_category",
+#         "mpn",
+#         "product_type",
+#         "included_items",
+#         "identifier_exists",
+#     ])
+
+#     # -------------------- DATA ROWS --------------------
+#     for combo in ComboProduct.objects.all():
+
+#         if combo.available_stock <= 0:
+#             continue  # Skip out-of-stock combos
+
+#         availability = "in_stock"
+
+#         # Build included items
+#         components = [
+#             f"Camera: {combo.camera} x {combo.camera_qty}",
+#             f"DVR: {combo.dvr}",
+#         ]
+#         if combo.cameraBullet:
+#             components.append(f"Bullet Camera: {combo.cameraBullet} x {combo.camerabullet_qty}")
+#         if combo.hard_disk:
+#             components.append(f"Hard Disk: {combo.hard_disk} x {combo.hard_disk_qty}")
+
+#         components.extend([
+#             f"Cable: {combo.cable} x {combo.cable_qty}",
+#             f"Power Supply: {combo.power} x {combo.power_qty}",
+#             f"BNC Connector: {combo.bnc_connector} x {combo.bnc_qty}",
+#             f"DC Connector: {combo.dc_connector} x {combo.dc_qty}",
+#             f"Installation: {combo.installation} x {combo.installation_qty}",
+#         ])
+
+#         included_items = ", ".join(components)
+
+#         # Description
+#         desc = strip_tags(combo.description or "")
+#         desc = f"{desc}\n\nIncluded in Combo:\n{included_items}"
+
+#         # Links
+#         link = request.build_absolute_uri(f"/product/{combo.id}/")
+#         image = request.build_absolute_uri(combo.image.url if combo.image else "/static/no-image.jpg")
+
+#         # -------------------- WRITE ROW --------------------
+#         writer.writerow([
+#             f"combo-{combo.id}",          # id
+#             combo.name,                   # title
+#             desc[:5000],                  # description
+#             link,                         # link
+#             image,                        # image_link
+#             f"{combo.total_price():.2f} INR",  # price
+#             availability,                 # availability
+#             "new",                        # condition
+#             combo.brand or "Generic",     # brand
+#             "6720",                        # google_product_category
+#             f"SV-COMBO-{combo.id}",       # mpn
+#             "CCTV Combo Kit",             # product_type
+#             included_items,               # included_items
+#             "FALSE",                      # identifier_exists
+#         ])
+
+#     return response
+
+
+import csv
+
+from django.http import HttpResponse
+from django.utils.html import strip_tags
+
+from .models import (
+    ComboProduct,
+    Camera,
+    CameraBullet,
+    DVR,
+    HardDisk,
+    Cable,
+    PowerSupply,
+    Accessory,
+)
+
+
 def google_feed(request):
-    response = HttpResponse(content_type="text/csv; charset=utf-8")
-    response["Content-Disposition"] = "inline; filename=google_feed.csv"
+
+    response = HttpResponse(
+        content_type="text/csv; charset=utf-8"
+    )
+
+    response["Content-Disposition"] = (
+        'inline; filename="google_feed.csv"'
+    )
 
     writer = csv.writer(response)
 
-    # -------------------- HEADERS --------------------
+
+    # ============================================================
+    # HEADERS
+    # ============================================================
+
     writer.writerow([
         "id",
         "title",
@@ -772,23 +880,44 @@ def google_feed(request):
         "identifier_exists",
     ])
 
-    # -------------------- DATA ROWS --------------------
+
+    # ============================================================
+    # COMBO PRODUCTS
+    # ============================================================
+
     for combo in ComboProduct.objects.all():
 
         if combo.available_stock <= 0:
-            continue  # Skip out-of-stock combos
+            continue
 
         availability = "in_stock"
 
-        # Build included items
+
+        # Included items
+
         components = [
             f"Camera: {combo.camera} x {combo.camera_qty}",
             f"DVR: {combo.dvr}",
         ]
+
+
         if combo.cameraBullet:
-            components.append(f"Bullet Camera: {combo.cameraBullet} x {combo.camerabullet_qty}")
+
+            components.append(
+                f"Bullet Camera: "
+                f"{combo.cameraBullet} x "
+                f"{combo.camerabullet_qty}"
+            )
+
+
         if combo.hard_disk:
-            components.append(f"Hard Disk: {combo.hard_disk} x {combo.hard_disk_qty}")
+
+            components.append(
+                f"Hard Disk: "
+                f"{combo.hard_disk} x "
+                f"{combo.hard_disk_qty}"
+            )
+
 
         components.extend([
             f"Cable: {combo.cable} x {combo.cable_qty}",
@@ -798,38 +927,292 @@ def google_feed(request):
             f"Installation: {combo.installation} x {combo.installation_qty}",
         ])
 
+
         included_items = ", ".join(components)
 
+
         # Description
-        desc = strip_tags(combo.description or "")
-        desc = f"{desc}\n\nIncluded in Combo:\n{included_items}"
 
-        # Links
-        link = request.build_absolute_uri(f"/product/{combo.id}/")
-        image = request.build_absolute_uri(combo.image.url if combo.image else "/static/no-image.jpg")
+        desc = strip_tags(
+            combo.description or ""
+        )
 
-        # -------------------- WRITE ROW --------------------
+        desc = (
+            f"{desc}\n\n"
+            f"Included in Combo:\n"
+            f"{included_items}"
+        )
+
+
+        # Product URL
+
+        link = request.build_absolute_uri(
+            f"/product/{combo.id}/"
+        )
+
+
+        # Product image
+
+        if combo.image:
+
+            image = request.build_absolute_uri(
+                combo.image.url
+            )
+
+        else:
+
+            image = request.build_absolute_uri(
+                "/static/no-image.jpg"
+            )
+
+
+        # Write row
+
         writer.writerow([
-            f"combo-{combo.id}",          # id
-            combo.name,                   # title
-            desc[:5000],                  # description
-            link,                         # link
-            image,                        # image_link
-            f"{combo.total_price():.2f} INR",  # price
-            availability,                 # availability
-            "new",                        # condition
-            combo.brand or "Generic",     # brand
-            "6720",                        # google_product_category
-            f"SV-COMBO-{combo.id}",       # mpn
-            "CCTV Combo Kit",             # product_type
-            included_items,               # included_items
-            "FALSE",                      # identifier_exists
+            f"combo-{combo.id}",
+            combo.name,
+            desc[:5000],
+            link,
+            image,
+            f"{combo.total_price():.2f} INR",
+            availability,
+            "new",
+            combo.brand or "Generic",
+            "6720",
+            f"SV-COMBO-{combo.id}",
+            "CCTV Combo Kit",
+            included_items,
+            "FALSE",
         ])
 
+
+    # ============================================================
+    # HELPER FOR INDIVIDUAL PRODUCTS
+    # ============================================================
+
+    def write_product(
+        product,
+        product_id,
+        title,
+        description,
+        product_type,
+        mpn,
+        category="6720",
+    ):
+
+        if product.stock <= 0:
+            return
+
+
+        # Image
+
+        if product.image:
+
+            image = request.build_absolute_uri(
+                product.image.url
+            )
+
+        else:
+
+            image = request.build_absolute_uri(
+                "/static/no-image.jpg"
+            )
+
+
+        # Product link
+        #
+        # Currently all individual products are displayed
+        # on the Accessories page.
+        #
+        link = request.build_absolute_uri(
+            "/accessories/"
+        )
+
+
+        writer.writerow([
+            product_id,
+            title,
+            description[:5000],
+            link,
+            image,
+            f"{product.price:.2f} INR",
+            "in_stock",
+            "new",
+            "Generic",
+            category,
+            mpn,
+            product_type,
+            "",
+            "FALSE",
+        ])
+
+
+    # ============================================================
+    # CAMERAS
+    # ============================================================
+
+    for product in Camera.objects.all():
+
+        title = product.camera_type
+
+        if product.model_number:
+            title += f" - {product.model_number}"
+
+        write_product(
+            product=product,
+            product_id=f"camera-{product.id}",
+            title=title,
+            description=(
+                f"{title}. "
+                f"CCTV security camera from Camura.in."
+            ),
+            product_type="CCTV Camera",
+            mpn=(
+                product.model_number
+                or f"SV-CAMERA-{product.id}"
+            ),
+        )
+
+
+    # ============================================================
+    # BULLET CAMERAS
+    # ============================================================
+
+    for product in CameraBullet.objects.all():
+
+        title = product.bullet_camera_type
+
+        if product.bullet_model_number:
+            title += f" - {product.bullet_model_number}"
+
+        write_product(
+            product=product,
+            product_id=f"bullet-camera-{product.id}",
+            title=title,
+            description=(
+                f"{title}. "
+                f"CCTV bullet camera from Camura.in."
+            ),
+            product_type="CCTV Bullet Camera",
+            mpn=(
+                product.bullet_model_number
+                or f"SV-BULLET-{product.id}"
+            ),
+        )
+
+
+    # ============================================================
+    # DVR
+    # ============================================================
+
+    for product in DVR.objects.all():
+
+        title = product.dvr_name
+
+        if product.model_number:
+            title += f" - {product.model_number}"
+
+        write_product(
+            product=product,
+            product_id=f"dvr-{product.id}",
+            title=title,
+            description=(
+                f"{title}. "
+                f"CCTV DVR from Camura.in."
+            ),
+            product_type="CCTV DVR",
+            mpn=(
+                product.model_number
+                or f"SV-DVR-{product.id}"
+            ),
+        )
+
+
+    # ============================================================
+    # HARD DISK
+    # ============================================================
+
+    for product in HardDisk.objects.all():
+
+        title = f"CCTV Hard Disk {product.size}"
+
+        write_product(
+            product=product,
+            product_id=f"hard-disk-{product.id}",
+            title=title,
+            description=(
+                f"{title} for CCTV surveillance "
+                f"recording from Camura.in."
+            ),
+            product_type="CCTV Hard Disk",
+            mpn=f"SV-HDD-{product.id}",
+        )
+
+
+    # ============================================================
+    # CABLE
+    # ============================================================
+
+    for product in Cable.objects.all():
+
+        title = f"CCTV Cable {product.length}"
+
+        write_product(
+            product=product,
+            product_id=f"cable-{product.id}",
+            title=title,
+            description=(
+                f"{title} for CCTV installation "
+                f"from Camura.in."
+            ),
+            product_type="CCTV Cable",
+            mpn=f"SV-CABLE-{product.id}",
+        )
+
+
+    # ============================================================
+    # POWER SUPPLY
+    # ============================================================
+
+    for product in PowerSupply.objects.all():
+
+        title = f"CCTV Power Supply {product.range_slug}"
+
+        write_product(
+            product=product,
+            product_id=f"power-supply-{product.id}",
+            title=title,
+            description=(
+                f"{title} for CCTV installation "
+                f"from Camura.in."
+            ),
+            product_type="CCTV Power Supply",
+            mpn=f"SV-PS-{product.id}",
+        )
+
+
+    # ============================================================
+    # ACCESSORIES
+    # ============================================================
+
+    for product in Accessory.objects.all():
+
+        title = product.name
+
+        write_product(
+            product=product,
+            product_id=f"accessory-{product.id}",
+            title=title,
+            description=(
+                f"{title} CCTV accessory "
+                f"from Camura.in."
+            ),
+            product_type="CCTV Accessory",
+            mpn=f"SV-ACC-{product.id}",
+        )
+
+
     return response
-
-
-
 
 
 @login_required
