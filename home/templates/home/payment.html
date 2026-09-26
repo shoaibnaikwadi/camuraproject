@@ -6,133 +6,565 @@ Payment | Camura.in
 
 {% block content %}
 
-<div class="container mt-5">
+<div class="container py-4 py-md-5">
 
-    <div class="row justify-content-center">
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
 
-        <div class="col-12 col-md-8">
+    <div class="payment-header mb-4">
 
-            <!-- Shipping Details Card -->
-            <div class="card shadow-sm mb-4">
+        <div class="d-flex flex-column flex-md-row
+                    justify-content-between
+                    align-items-md-center
+                    gap-3">
 
-                <div class="card-header bg-primary text-white">
+            <div>
 
-                    <h5 class="mb-0">
-                        <i class="bi bi-truck"></i>
-                        Shipping Details
-                    </h5>
+                <div class="d-flex align-items-center mb-2">
+
+                    <span class="payment-title-icon me-2">
+                        <i class="bi bi-credit-card-fill"></i>
+                    </span>
+
+                    <h3 class="fw-bold mb-0">
+                        Complete Payment
+                    </h3>
 
                 </div>
 
+                <p class="text-muted mb-0 small">
+                    Choose your preferred payment method to complete your order.
+                </p>
+
+            </div>
+
+
+            <!-- PAYMENT STEPS -->
+
+            <div class="payment-steps">
+
+                <div class="payment-step completed">
+
+                    <span>
+                        <i class="bi bi-check"></i>
+                    </span>
+
+                    <small>
+                        Review
+                    </small>
+
+                </div>
+
+
+                <div class="payment-step-line"></div>
+
+
+                <div class="payment-step active">
+
+                    <span>
+                        2
+                    </span>
+
+                    <small>
+                        Payment
+                    </small>
+
+                </div>
+
+
+                <div class="payment-step-line"></div>
+
+
+                <div class="payment-step">
+
+                    <span>
+                        3
+                    </span>
+
+                    <small>
+                        Complete
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="row g-4">
+
+
+        <!-- =====================================================
+             LEFT SIDE
+        ====================================================== -->
+
+        <div class="col-12 col-lg-7">
+
+
+            <!-- =================================================
+                 DELIVERY DETAILS
+            ================================================== -->
+
+            <div class="card payment-card border-0 shadow-sm mb-4">
+
+                <div class="card-header payment-card-header">
+
+                    <div class="d-flex align-items-center">
+
+                        <span class="section-icon delivery-icon me-2">
+
+                            <i class="bi bi-truck"></i>
+
+                        </span>
+
+                        <div>
+
+                            <h5 class="fw-bold mb-0">
+                                Delivery Details
+                            </h5>
+
+                            <small class="text-muted">
+                                Your order will be delivered to this address
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
                 <div class="card-body">
 
-                    <p class="mb-1">
-                        <strong>{{ profile.full_name }}</strong>
-                    </p>
+                    <div class="delivery-box">
 
-                    <p class="mb-1">
-                        {{ profile.address }}
-                    </p>
+                        <div class="d-flex align-items-start">
 
-                    <p class="mb-1">
-                        {{ profile.city }},
-                        {{ profile.state }}
-                        -
-                        {{ profile.pincode }}
-                    </p>
+                            <div class="customer-icon me-3">
 
-                    <p class="mb-1">
-                        <i class="bi bi-telephone-fill"></i>
-                        {{ profile.mobile }}
-                    </p>
+                                <i class="bi bi-person-fill"></i>
 
-                    <p class="mb-0">
-                        <i class="bi bi-envelope-fill"></i>
-                        {{ profile.email }}
-                    </p>
+                            </div>
+
+
+                            <div class="flex-grow-1">
+
+                                <h6 class="fw-bold mb-1">
+
+                                    {{ profile.full_name }}
+
+                                </h6>
+
+
+                                <p class="address-text mb-2">
+
+                                    {{ profile.address }}
+
+                                </p>
+
+
+                                <p class="text-muted small mb-2">
+
+                                    <i class="bi bi-geo-alt-fill me-1"></i>
+
+                                    {{ profile.city }},
+                                    {{ profile.state }}
+                                    - {{ profile.pincode }}
+
+                                </p>
+
+
+                                <div class="contact-details">
+
+                                    <span>
+
+                                        <i class="bi bi-telephone-fill me-1"></i>
+
+                                        {{ profile.mobile }}
+
+                                    </span>
+
+
+                                    <span>
+
+                                        <i class="bi bi-envelope-fill me-1"></i>
+
+                                        {{ profile.email }}
+
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
             </div>
 
 
-            <!-- Payment Card -->
-            <div class="card shadow-sm">
 
-                <div class="card-header bg-success text-white">
+            <!-- =================================================
+                 ORDER INFORMATION
+            ================================================== -->
 
-                    <h5 class="mb-0">
-                        <i class="bi bi-credit-card-fill"></i>
-                        Complete Your Payment
-                    </h5>
+            <div class="card payment-card border-0 shadow-sm">
+
+                <div class="card-header payment-card-header">
+
+                    <div class="d-flex align-items-center">
+
+                        <span class="section-icon order-icon me-2">
+
+                            <i class="bi bi-receipt"></i>
+
+                        </span>
+
+                        <div>
+
+                            <h5 class="fw-bold mb-0">
+                                Order Information
+                            </h5>
+
+                            <small class="text-muted">
+                                Your order details
+                            </small>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
+
                 <div class="card-body">
 
-                    <p>
-                        <strong>Order ID:</strong>
+                    <div class="order-info-row">
 
-                        <span class="badge bg-info text-dark">
-                            {{ order.id }}
+                        <span class="text-muted">
+                            Order ID
                         </span>
-                    </p>
 
-                    <p>
-                        <strong>Total Amount:</strong>
+                        <span class="badge order-badge">
+                            #{{ order.id }}
+                        </span>
 
-                        <span class="h4 text-success">
+                    </div>
+
+
+                    <div class="order-info-row">
+
+                        <span class="text-muted">
+                            Payment Status
+                        </span>
+
+                        <span class="badge bg-warning text-dark">
+                            Pending
+                        </span>
+
+                    </div>
+
+
+                    <div class="order-info-row">
+
+                        <span class="text-muted">
+                            Payment Currency
+                        </span>
+
+                        <strong>
+                            INR (₹)
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             RIGHT SIDE
+        ====================================================== -->
+
+        <div class="col-12 col-lg-5">
+
+
+            <!-- =================================================
+                 PAYMENT CARD
+            ================================================== -->
+
+            <div class="card payment-method-card border-0 shadow-sm">
+
+                <div class="card-header payment-method-header">
+
+                    <div class="d-flex align-items-center">
+
+                        <span class="summary-icon me-2">
+
+                            <i class="bi bi-wallet2"></i>
+
+                        </span>
+
+                        <div>
+
+                            <h5 class="fw-bold mb-0">
+                                Payment Method
+                            </h5>
+
+                            <small>
+                                Select how you want to pay
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card-body">
+
+
+                    <!-- =================================================
+                         TOTAL AMOUNT
+                    ================================================== -->
+
+                    <div class="amount-box">
+
+                        <span>
+                            Total Amount
+                        </span>
+
+                        <h2 class="fw-bold mb-0">
+
                             ₹{{ amount|floatformat:2 }}
+
+                        </h2>
+
+                    </div>
+
+
+
+                    <!-- =================================================
+                         ONLINE PAYMENT
+                    ================================================== -->
+
+                    <div class="payment-option online-option">
+
+                        <div class="payment-option-title">
+
+                            <div class="payment-option-icon online-icon">
+
+                                <i class="bi bi-credit-card-fill"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <strong>
+                                    Pay Online
+                                </strong>
+
+                                <small>
+                                    UPI, Cards, Net Banking & more
+                                </small>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="razorpay-button-wrapper">
+
+                            <form
+                                action="{% url 'payment_success' %}"
+                                method="POST">
+
+                                {% csrf_token %}
+
+                                <script
+                                    src="https://checkout.razorpay.com/v1/checkout.js"
+                                    data-key="{{ razorpay_key }}"
+                                    data-amount="{{ amount_paise }}"
+                                    data-currency="INR"
+                                    data-order_id="{{ payment_id }}"
+                                    data-buttontext="Pay Online"
+                                    data-name="Camura Store"
+                                    data-description="Secure Payment"
+                                    data-theme.color="#198754">
+                                </script>
+
+                                <input
+                                    type="hidden"
+                                    name="order_id"
+                                    value="{{ order.id }}">
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- OR -->
+                    <div class="payment-divider">
+
+                        <span>
+                            OR
                         </span>
-                    </p>
+
+                    </div>
 
 
-                    <!-- Payment Buttons -->
-                    <div class="d-grid gap-3">
+
+                    <!-- =================================================
+                         CASH ON DELIVERY
+                    ================================================== -->
+
+                    <div class="payment-option cod-option">
+
+                        <div class="payment-option-title">
+
+                            <div class="payment-option-icon cod-icon">
+
+                                <i class="bi bi-cash-stack"></i>
+
+                            </div>
 
 
-                        <!-- Razorpay Payment -->
-                        <form action="{% url 'payment_success' %}"
-                              method="POST">
+                            <div>
+
+                                <strong>
+                                    Cash on Delivery
+                                </strong>
+
+                                <small>
+                                    Pay when your order is delivered
+                                </small>
+
+                            </div>
+
+                        </div>
+
+
+                        <form
+                            action="{% url 'cod_payment' %}"
+                            method="POST"
+                            class="mt-3">
 
                             {% csrf_token %}
-
-                            <script
-                                src="https://checkout.razorpay.com/v1/checkout.js"
-                                data-key="{{ razorpay_key }}"
-                                data-amount="{{ amount_paise }}"
-                                data-currency="INR"
-                                data-order_id="{{ payment_id }}"
-                                data-buttontext="Pay Online"
-                                data-name="Camura Store"
-                                data-description="Secure Payment"
-                                data-theme.color="#28a745">
-                            </script>
 
                             <input
                                 type="hidden"
                                 name="order_id"
                                 value="{{ order.id }}">
 
-                        </form>
 
+                            <button
+                                type="submit"
+                                class="btn btn-warning btn-lg w-100 cod-button">
 
-                        <!-- Cash on Delivery -->
-                        <form action="{% url 'cod_payment' %}" method="POST">
-                            {% csrf_token %}
+                                <i class="bi bi-cash-stack me-1"></i>
 
-                            <input type="hidden"
-                                name="order_id"
-                                value="{{ order.id }}">
+                                Place Order with COD
 
-                            <button type="submit"
-                                class="btn btn-warning btn-lg w-100">
-                            <i class="bi bi-cash-stack"></i>
-                            Cash on Delivery
+                                <i class="bi bi-arrow-right ms-1"></i>
+
                             </button>
+
                         </form>
 
                     </div>
+
+
+
+                    <!-- =================================================
+                         SECURITY
+                    ================================================== -->
+
+                    <div class="secure-payment mt-4">
+
+                        <div class="secure-icon">
+
+                            <i class="bi bi-shield-lock-fill"></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <strong>
+                                Secure Payment
+                            </strong>
+
+                            <small>
+                                Your payment information is securely processed.
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- =================================================
+                         CONTINUE SHOPPING
+                    ================================================== -->
+
+                    <a
+                        href="{% url 'product_list' %}"
+                        class="continue-shopping mt-3">
+
+                        <span class="shopping-icon">
+
+                            <i class="bi bi-arrow-left"></i>
+
+                        </span>
+
+
+                        <span>
+
+                            <strong>
+                                Continue Shopping
+                            </strong>
+
+                            <small>
+                                Add more products to your cart
+                            </small>
+
+                        </span>
+
+
+                        <i class="bi bi-chevron-right ms-auto"></i>
+
+                    </a>
+
+
+
+                    <!-- BACK TO CART -->
+
+                    <a
+                        href="{% url 'cart' %}"
+                        class="btn btn-outline-secondary w-100 mt-3">
+
+                        <i class="bi bi-cart3 me-1"></i>
+
+                        Back to Cart
+
+                    </a>
 
                 </div>
 
@@ -143,5 +575,714 @@ Payment | Camura.in
     </div>
 
 </div>
+
+
+
+<!-- =============================================================
+     PAGE CSS
+============================================================== -->
+
+<style>
+
+/* =============================================================
+   HEADER
+============================================================= */
+
+.payment-header {
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 18px;
+}
+
+
+.payment-title-icon {
+    width: 42px;
+    height: 42px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: #e8f7ef;
+
+    color: #198754;
+
+    font-size: 1.2rem;
+}
+
+
+/* =============================================================
+   PAYMENT STEPS
+============================================================= */
+
+.payment-steps {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+}
+
+
+.payment-step {
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    color: #adb5bd;
+}
+
+
+.payment-step span {
+    width: 28px;
+    height: 28px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #e9ecef;
+
+    font-size: 0.8rem;
+
+    font-weight: 700;
+}
+
+
+.payment-step.active {
+    color: #198754;
+}
+
+
+.payment-step.active span {
+    background: #198754;
+
+    color: #fff;
+}
+
+
+.payment-step.completed {
+    color: #198754;
+}
+
+
+.payment-step.completed span {
+    background: #198754;
+
+    color: #fff;
+}
+
+
+.payment-step small {
+    font-weight: 600;
+}
+
+
+.payment-step-line {
+    width: 28px;
+
+    height: 2px;
+
+    background: #dee2e6;
+}
+
+
+/* =============================================================
+   CARDS
+============================================================= */
+
+.payment-card,
+.payment-method-card {
+    border-radius: 16px;
+
+    overflow: hidden;
+}
+
+
+.payment-card-header {
+    background: #fff;
+
+    border-bottom: 1px solid #edf0f2;
+
+    padding: 16px 20px;
+}
+
+
+.section-icon {
+    width: 38px;
+    height: 38px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+}
+
+
+.delivery-icon {
+    background: #eaf2ff;
+
+    color: #0d6efd;
+}
+
+
+.order-icon {
+    background: #fff3cd;
+
+    color: #997404;
+}
+
+
+/* =============================================================
+   DELIVERY
+============================================================= */
+
+.delivery-box {
+    background: #f8fbff;
+
+    border: 1px solid #e4edf7;
+
+    border-radius: 12px;
+
+    padding: 16px;
+}
+
+
+.customer-icon {
+    width: 42px;
+    height: 42px;
+
+    min-width: 42px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #e8f1ff;
+
+    color: #0d6efd;
+
+    font-size: 1.1rem;
+}
+
+
+.address-text {
+    line-height: 1.55;
+}
+
+
+.contact-details {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 12px;
+
+    color: #6c757d;
+
+    font-size: 0.8rem;
+}
+
+
+.contact-details i {
+    color: #0d6efd;
+}
+
+
+/* =============================================================
+   ORDER INFORMATION
+============================================================= */
+
+.order-info-row {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 12px 0;
+
+    border-bottom: 1px solid #edf0f2;
+}
+
+
+.order-info-row:last-child {
+    border-bottom: 0;
+}
+
+
+.order-badge {
+    background: #e8f1ff;
+
+    color: #0d6efd;
+
+    font-size: 0.8rem;
+}
+
+
+/* =============================================================
+   PAYMENT METHOD HEADER
+============================================================= */
+
+.payment-method-header {
+    background: #212529;
+
+    color: #fff;
+
+    padding: 17px 20px;
+}
+
+
+.payment-method-header small {
+    color: rgba(255,255,255,0.65);
+}
+
+
+.summary-icon {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: rgba(255,255,255,0.12);
+
+    color: #fff;
+}
+
+
+/* =============================================================
+   AMOUNT
+============================================================= */
+
+.amount-box {
+    text-align: center;
+
+    padding: 18px;
+
+    border-radius: 13px;
+
+    background: #f8f9fa;
+
+    border: 1px solid #edf0f2;
+
+    margin-bottom: 20px;
+}
+
+
+.amount-box span {
+    display: block;
+
+    color: #6c757d;
+
+    font-size: 0.85rem;
+
+    margin-bottom: 4px;
+}
+
+
+.amount-box h2 {
+    color: #198754;
+}
+
+
+/* =============================================================
+   PAYMENT OPTIONS
+============================================================= */
+
+.payment-option {
+    border: 1px solid #dee2e6;
+
+    border-radius: 13px;
+
+    padding: 16px;
+
+    background: #fff;
+}
+
+
+.online-option {
+    border-color: #cfe8da;
+
+    background: #f8fffb;
+}
+
+
+.cod-option {
+    background: #fffdf5;
+
+    border-color: #f1df9a;
+}
+
+
+.payment-option-title {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+}
+
+
+.payment-option-title strong,
+.payment-option-title small {
+    display: block;
+}
+
+
+.payment-option-title small {
+    color: #6c757d;
+
+    font-size: 0.75rem;
+
+    margin-top: 2px;
+}
+
+
+.payment-option-icon {
+    width: 42px;
+    height: 42px;
+
+    min-width: 42px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    font-size: 1.1rem;
+}
+
+
+.online-icon {
+    background: #dff4e7;
+
+    color: #198754;
+}
+
+
+.cod-icon {
+    background: #fff0b8;
+
+    color: #856404;
+}
+
+
+/* =============================================================
+   RAZORPAY
+============================================================= */
+
+.razorpay-button-wrapper {
+    margin-top: 15px;
+}
+
+
+.razorpay-button-wrapper form {
+    margin: 0;
+}
+
+
+.razorpay-button-wrapper script + input {
+    display: none;
+}
+
+
+/*
+   Razorpay's generated button.
+*/
+
+.razorpay-payment-button {
+    width: 100% !important;
+
+    min-height: 52px !important;
+
+    border: 0 !important;
+
+    border-radius: 10px !important;
+
+    font-size: 1rem !important;
+
+    font-weight: 600 !important;
+
+    cursor: pointer !important;
+}
+
+
+/* =============================================================
+   DIVIDER
+============================================================= */
+
+.payment-divider {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin: 18px 0;
+}
+
+
+.payment-divider::before,
+.payment-divider::after {
+    content: "";
+
+    flex: 1;
+
+    height: 1px;
+
+    background: #dee2e6;
+}
+
+
+.payment-divider span {
+    font-size: 0.72rem;
+
+    font-weight: 700;
+
+    color: #adb5bd;
+}
+
+
+/* =============================================================
+   COD BUTTON
+============================================================= */
+
+.cod-button {
+    min-height: 52px;
+
+    border-radius: 10px;
+
+    font-weight: 600;
+}
+
+
+/* =============================================================
+   SECURE PAYMENT
+============================================================= */
+
+.secure-payment {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 12px;
+
+    border-radius: 10px;
+
+    background: #f8f9fa;
+}
+
+
+.secure-icon {
+    width: 34px;
+    height: 34px;
+
+    min-width: 34px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+
+    background: #e8f7ef;
+
+    color: #198754;
+}
+
+
+.secure-payment strong,
+.secure-payment small {
+    display: block;
+}
+
+
+.secure-payment strong {
+    font-size: 0.82rem;
+}
+
+
+.secure-payment small {
+    color: #6c757d;
+
+    font-size: 0.72rem;
+
+    margin-top: 2px;
+}
+
+
+/* =============================================================
+   CONTINUE SHOPPING
+============================================================= */
+
+.continue-shopping {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 14px 16px;
+
+    background: #fff;
+
+    border: 1px solid #dee2e6;
+
+    border-radius: 13px;
+
+    color: #212529;
+
+    text-decoration: none;
+
+    transition: all 0.2s ease;
+}
+
+
+.continue-shopping:hover {
+    border-color: #0d6efd;
+
+    background: #f8fbff;
+
+    color: #0d6efd;
+
+    transform: translateY(-1px);
+}
+
+
+.shopping-icon {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: #eaf2ff;
+
+    color: #0d6efd;
+}
+
+
+.continue-shopping strong,
+.continue-shopping small {
+    display: block;
+}
+
+
+.continue-shopping small {
+    color: #6c757d;
+
+    font-size: 0.72rem;
+
+    margin-top: 2px;
+}
+
+
+/* =============================================================
+   MOBILE
+============================================================= */
+
+@media (max-width: 767.98px) {
+
+    .payment-header {
+        padding-bottom: 15px;
+    }
+
+
+    .payment-steps {
+        width: 100%;
+
+        justify-content: center;
+    }
+
+
+    .payment-step small {
+        font-size: 0.7rem;
+    }
+
+
+    .payment-step-line {
+        width: 22px;
+    }
+
+
+    .payment-card-header,
+    .payment-method-header {
+        padding: 14px 15px;
+    }
+
+
+    .payment-card .card-body,
+    .payment-method-card .card-body {
+        padding: 15px;
+    }
+
+
+    .delivery-box {
+        padding: 13px;
+    }
+
+
+    .contact-details {
+        flex-direction: column;
+
+        gap: 5px;
+    }
+
+
+    .amount-box {
+        padding: 15px;
+    }
+
+}
+
+
+@media (max-width: 420px) {
+
+    .payment-step small {
+        display: none;
+    }
+
+
+    .payment-step-line {
+        width: 30px;
+    }
+
+
+    .customer-icon {
+        width: 36px;
+        height: 36px;
+
+        min-width: 36px;
+    }
+
+}
+
+</style>
 
 {% endblock %}

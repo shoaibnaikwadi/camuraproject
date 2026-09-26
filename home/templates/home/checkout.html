@@ -8,243 +8,58 @@ Checkout | Camura.in
 
 <div class="container py-4 py-md-5">
 
-    <h3 class="fw-bold mb-4">
-        <i class="bi bi-cart-check text-success"></i>
-        Checkout
-    </h3>
+    <!-- =====================================================
+         CHECKOUT HEADER
+    ====================================================== -->
 
-    <div class="row g-4">
+    <div class="checkout-header mb-4">
 
-        <!-- LEFT SIDE -->
-        <div class="col-lg-7">
+        <div class="d-flex flex-column flex-md-row
+                    justify-content-between
+                    align-items-md-center
+                    gap-3">
 
-            <!-- Shipping Details -->
-            <div class="card shadow-sm border-0 mb-4">
+            <div>
 
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">
-                        <i class="bi bi-truck"></i>
-                        Shipping Details
-                    </h5>
-                </div>
+                <div class="d-flex align-items-center mb-2">
 
-                <div class="card-body">
+                    <span class="checkout-icon me-2">
+                        <i class="bi bi-cart-check-fill"></i>
+                    </span>
 
-                    <p class="mb-1">
-                        <strong>{{ profile.full_name }}</strong>
-                    </p>
-
-                    <p class="mb-1">
-                        {{ profile.address }}
-                    </p>
-
-                    <p class="mb-1">
-                        {{ profile.city }},
-                        {{ profile.state }}
-                        -
-                        {{ profile.pincode }}
-                    </p>
-
-                    <p class="mb-1">
-                        <i class="bi bi-telephone-fill"></i>
-                        {{ profile.mobile }}
-                    </p>
-
-                    <p class="mb-0">
-                        <i class="bi bi-envelope-fill"></i>
-                        {{ profile.email }}
-                    </p>
-
-                    <div class="mt-3">
-
-                        <a href="{% url 'select_address' %}?from=cart"
-                           class="btn btn-outline-primary btn-sm">
-
-                            <i class="bi bi-pencil"></i>
-                            Change Address
-
-                        </a>
-
-                    </div>
+                    <h3 class="fw-bold mb-0">
+                        Checkout
+                    </h3>
 
                 </div>
+
+                <p class="text-muted mb-0 small">
+                    Review your order and delivery details before payment.
+                </p>
 
             </div>
 
+            <!-- Checkout steps -->
 
-            <!-- Order Summary -->
-            <div class="card shadow-sm border-0">
+            <div class="checkout-steps">
 
-                <div class="card-header bg-dark text-white">
-
-                    <h5 class="mb-0">
-                        <i class="bi bi-receipt"></i>
-                        Order Summary
-                    </h5>
-
+                <div class="checkout-step active">
+                    <span>1</span>
+                    <small>Review</small>
                 </div>
 
-                <div class="card-body">
+                <div class="step-line"></div>
 
-                    {% for item in cart_items %}
-
-                    <div class="d-flex justify-content-between align-items-start border-bottom py-3">
-
-                        <div>
-
-                            <div class="fw-semibold">
-                                {{ item.product_name }}
-                            </div>
-
-                            <div class="text-muted small">
-                                Quantity: {{ item.quantity }}
-                            </div>
-
-                            <div class="text-muted small">
-                                Price:
-                                ₹{{ item.unit_price|floatformat:2 }}
-                            </div>
-
-                        </div>
-
-                        <div class="fw-semibold text-nowrap">
-                            ₹{{ item.subtotal|floatformat:2 }}
-                        </div>
-
-                    </div>
-
-                    {% empty %}
-
-                    <div class="text-center text-muted py-4">
-
-                        <i class="bi bi-cart-x fs-1"></i>
-
-                        <p class="mb-0">
-                            Your cart is empty.
-                        </p>
-
-                    </div>
-
-                    {% endfor %}
-
-
-                    <!-- Total -->
-                    <div class="d-flex justify-content-between mt-4">
-
-                        <span class="fw-bold fs-5">
-                            Total
-                        </span>
-
-                        <span class="fw-bold fs-4 text-success">
-                            ₹{{ total|floatformat:2 }}
-                        </span>
-
-                    </div>
-
-
-                    {% if total <= 5000 %}
-
-                    <div class="alert alert-warning mt-3 mb-0">
-
-                        <i class="bi bi-exclamation-triangle"></i>
-
-                        Minimum order value must be
-                        <strong>more than ₹5,000</strong>.
-
-                        Please add more products to continue.
-
-                    </div>
-
-                    {% else %}
-
-                    <div class="alert alert-success mt-3 mb-0">
-
-                        <i class="bi bi-check-circle"></i>
-
-                        Your order meets the minimum order value.
-
-                    </div>
-
-                    {% endif %}
-
+                <div class="checkout-step">
+                    <span>2</span>
+                    <small>Payment</small>
                 </div>
 
-            </div>
+                <div class="step-line"></div>
 
-        </div>
-
-
-        <!-- RIGHT SIDE -->
-        <div class="col-lg-5">
-
-            <div class="card shadow-sm border-0">
-<!--  -->
-
-                <div class="card-body">
-
-                    <p class="text-muted">
-
-                        Review your delivery address and order details
-                        before continuing to payment.
-
-                    </p>
-
-
-                    <div class="d-flex justify-content-between mb-3">
-
-                        <span>
-                            Order Total
-                        </span>
-
-                        <strong class="text-success">
-
-                            ₹{{ total|floatformat:2 }}
-
-                        </strong>
-
-                    </div>
-
-
-                    {% if total > 5000 %}
-
-                    <form method="post"
-                          action="{% url 'cart_checkout' %}">
-
-                        {% csrf_token %}
-
-                        <button type="submit"
-                                class="btn btn-success btn-lg w-100">
-
-                            <i class="bi bi-arrow-right-circle"></i>
-
-                            Continue to Payment
-
-                        </button>
-
-                    </form>
-
-                    {% else %}
-
-                    <button type="button"
-                            class="btn btn-secondary btn-lg w-100"
-                            disabled>
-
-                        Minimum Order Not Met
-
-                    </button>
-
-                    {% endif %}
-
-
-                    <a href="{% url 'cart' %}"
-                       class="btn btn-outline-secondary w-100 mt-3">
-
-                        <i class="bi bi-arrow-left"></i>
-
-                        Back to Cart
-
-                    </a>
-
+                <div class="checkout-step">
+                    <span>3</span>
+                    <small>Complete</small>
                 </div>
 
             </div>
@@ -253,6 +68,1236 @@ Checkout | Camura.in
 
     </div>
 
+
+    <div class="row g-4">
+
+
+        <!-- =====================================================
+             LEFT SIDE
+        ====================================================== -->
+
+        <div class="col-12 col-lg-7">
+
+
+            <!-- =================================================
+                 DELIVERY ADDRESS
+            ================================================== -->
+
+            <div class="card checkout-card border-0 shadow-sm mb-4">
+
+                <div class="card-header checkout-card-header">
+
+                    <div class="d-flex justify-content-between
+                                align-items-center">
+
+                        <div class="d-flex align-items-center">
+
+                            <span class="section-icon address-icon me-2">
+                                <i class="bi bi-geo-alt-fill"></i>
+                            </span>
+
+                            <div>
+
+                                <h5 class="fw-bold mb-0">
+                                    Delivery Address
+                                </h5>
+
+                                <small class="text-muted">
+                                    Your order will be delivered here
+                                </small>
+
+                            </div>
+
+                        </div>
+
+
+                        <a
+                            href="{% url 'select_address' %}?from=cart"
+                            class="btn btn-outline-primary btn-sm">
+
+                            <i class="bi bi-pencil me-1"></i>
+
+                            Change
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <div class="delivery-address">
+
+                        <div class="d-flex align-items-start">
+
+                            <div class="address-person-icon me-3">
+
+                                <i class="bi bi-person-fill"></i>
+
+                            </div>
+
+
+                            <div class="flex-grow-1">
+
+                                <h6 class="fw-bold mb-1">
+
+                                    {{ profile.full_name }}
+
+                                </h6>
+
+
+                                <p class="mb-2 address-main">
+
+                                    {{ profile.address }}
+
+                                </p>
+
+
+                                <p class="text-muted small mb-2">
+
+                                    <i class="bi bi-geo-alt me-1"></i>
+
+                                    {{ profile.city }},
+                                    {{ profile.state }}
+                                    - {{ profile.pincode }}
+
+                                </p>
+
+
+                                <div class="address-contact">
+
+                                    <span class="me-3">
+
+                                        <i class="bi bi-telephone-fill me-1"></i>
+
+                                        {{ profile.mobile }}
+
+                                    </span>
+
+
+                                    <span>
+
+                                        <i class="bi bi-envelope-fill me-1"></i>
+
+                                        {{ profile.email }}
+
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 ORDER ITEMS
+            ================================================== -->
+
+            <div class="card checkout-card border-0 shadow-sm mb-4">
+
+                <div class="card-header checkout-card-header">
+
+                    <div class="d-flex align-items-center">
+
+                        <span class="section-icon order-icon me-2">
+
+                            <i class="bi bi-bag-check-fill"></i>
+
+                        </span>
+
+                        <div>
+
+                            <h5 class="fw-bold mb-0">
+                                Your Order
+                            </h5>
+
+                            <small class="text-muted">
+                                Review the products in your cart
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card-body p-0">
+
+                    {% for item in cart_items %}
+
+                    <div class="checkout-product">
+
+                        <div class="product-number">
+
+                            {{ forloop.counter }}
+
+                        </div>
+
+
+                        <div class="product-details">
+
+                            <div class="fw-semibold product-name">
+
+                                {{ item.product_name }}
+
+                            </div>
+
+
+                            <div class="product-meta">
+
+                                <span>
+                                    Qty: {{ item.quantity }}
+                                </span>
+
+                                <span class="mx-2">•</span>
+
+                                <span>
+                                    ₹{{ item.unit_price|floatformat:2 }}
+                                    each
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="product-price">
+
+                            ₹{{ item.subtotal|floatformat:2 }}
+
+                        </div>
+
+                    </div>
+
+                    {% empty %}
+
+                    <div class="empty-cart text-center py-5">
+
+                        <i class="bi bi-cart-x"></i>
+
+                        <h6 class="fw-bold mt-3">
+                            Your cart is empty
+                        </h6>
+
+                        <p class="text-muted small">
+                            Add products to your cart before checkout.
+                        </p>
+
+                        <a
+                            href="{% url 'productlist' %}"
+                            class="btn btn-primary">
+
+                            <i class="bi bi-shop me-1"></i>
+
+                            Continue Shopping
+
+                        </a>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 CONTINUE SHOPPING
+            ================================================== -->
+
+            <a
+                href="{% url 'productlist' %}"
+                class="continue-shopping">
+
+                <span class="shopping-icon">
+
+                    <i class="bi bi-arrow-left"></i>
+
+                </span>
+
+                <span>
+
+                    <strong>
+                        Continue Shopping
+                    </strong>
+
+                    <small>
+                        Add more products to your order
+                    </small>
+
+                </span>
+
+                <i class="bi bi-chevron-right ms-auto"></i>
+
+            </a>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             RIGHT SIDE
+        ====================================================== -->
+
+        <div class="col-12 col-lg-5">
+
+
+            <!-- =================================================
+                 PRICE SUMMARY
+            ================================================== -->
+
+            <div class="card summary-card border-0 shadow-sm">
+
+                <div class="card-header summary-header">
+
+                    <div class="d-flex align-items-center">
+
+                        <span class="summary-icon me-2">
+
+                            <i class="bi bi-receipt"></i>
+
+                        </span>
+
+                        <div>
+
+                            <h5 class="fw-bold mb-0">
+                                Order Summary
+                            </h5>
+
+                            <small>
+                                Payment details
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card-body">
+
+
+                    <!-- ORDER TOTAL -->
+
+                    <div class="summary-row">
+
+                        <span>
+                            Order Total
+                        </span>
+
+                        <strong>
+                            ₹{{ total|floatformat:2 }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-row">
+
+                        <span>
+                            Delivery
+                        </span>
+
+                        <span class="text-success fw-semibold">
+                            To be confirmed
+                        </span>
+
+                    </div>
+
+
+                    <hr>
+
+
+                    <!-- FINAL TOTAL -->
+
+                    <div class="final-total">
+
+                        <div>
+
+                            <span class="text-muted small">
+                                Total Amount
+                            </span>
+
+                            <h4 class="fw-bold mb-0">
+                                ₹{{ total|floatformat:2 }}
+                            </h4>
+
+                        </div>
+
+                        <span class="total-check">
+
+                            <i class="bi bi-check-lg"></i>
+
+                        </span>
+
+                    </div>
+
+
+                    <!-- MINIMUM ORDER -->
+
+                    {% if total <= 5000 %}
+
+                        <div class="alert alert-warning
+                                    minimum-alert mt-4 mb-3">
+
+                            <div class="d-flex align-items-start">
+
+                                <i class="bi bi-exclamation-triangle-fill
+                                          me-2 mt-1"></i>
+
+                                <div>
+
+                                    <strong>
+                                        Minimum order not met
+                                    </strong>
+
+                                    <div class="small mt-1">
+
+                                        Your order must be
+                                        <strong>more than ₹5,000</strong>
+                                        to continue.
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            class="btn btn-secondary
+                                   btn-lg w-100 payment-button"
+                            disabled>
+
+                            <i class="bi bi-lock-fill me-1"></i>
+
+                            Minimum Order Not Met
+
+                        </button>
+
+                    {% else %}
+
+                        <div class="alert alert-success
+                                    minimum-alert mt-4 mb-3">
+
+                            <div class="d-flex align-items-center">
+
+                                <i class="bi bi-check-circle-fill me-2"></i>
+
+                                <div>
+
+                                    <strong>
+                                        Order qualifies for checkout
+                                    </strong>
+
+                                    <div class="small">
+                                        Minimum order requirement satisfied.
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- CONTINUE TO PAYMENT -->
+
+                        <form
+                            method="POST"
+                            action="{% url 'cart_checkout' %}">
+
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="btn btn-success
+                                       btn-lg w-100 payment-button">
+
+                                <span>
+
+                                    <i class="bi bi-shield-lock-fill me-1"></i>
+
+                                    Continue to Payment
+
+                                </span>
+
+                                <i class="bi bi-arrow-right"></i>
+
+                            </button>
+
+                        </form>
+
+                    {% endif %}
+
+
+                    <!-- BACK TO CART -->
+
+                    <a
+                        href="{% url 'cart' %}"
+                        class="btn btn-outline-secondary
+                               w-100 mt-3">
+
+                        <i class="bi bi-cart3 me-1"></i>
+
+                        Back to Cart
+
+                    </a>
+
+
+                    <!-- SECURE PAYMENT NOTE -->
+
+                    <div class="secure-payment mt-4">
+
+                        <div class="secure-icon">
+
+                            <i class="bi bi-shield-check"></i>
+
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Secure Checkout
+                            </strong>
+
+                            <small>
+                                Your payment is processed securely.
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 SHOPPING NOTE
+            ================================================== -->
+
+            <div class="checkout-note mt-3">
+
+                <i class="bi bi-info-circle-fill"></i>
+
+                <span>
+                    You can change your delivery address before
+                    proceeding to payment.
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
+
+
+
+<!-- =============================================================
+     PAGE CSS
+============================================================== -->
+
+<style>
+
+/* =============================================================
+   GENERAL
+============================================================= */
+
+.checkout-header {
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 18px;
+}
+
+
+.checkout-icon {
+    width: 42px;
+    height: 42px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: #e8f7ef;
+    color: #198754;
+
+    font-size: 1.25rem;
+}
+
+
+/* =============================================================
+   CHECKOUT STEPS
+============================================================= */
+
+.checkout-steps {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+
+.checkout-step {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    color: #adb5bd;
+}
+
+
+.checkout-step span {
+    width: 28px;
+    height: 28px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #e9ecef;
+
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+
+.checkout-step.active {
+    color: #198754;
+}
+
+
+.checkout-step.active span {
+    background: #198754;
+    color: #fff;
+}
+
+
+.checkout-step small {
+    font-weight: 600;
+}
+
+
+.step-line {
+    width: 28px;
+    height: 2px;
+    background: #dee2e6;
+}
+
+
+/* =============================================================
+   CARDS
+============================================================= */
+
+.checkout-card,
+.summary-card {
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+
+.checkout-card-header {
+    background: #fff;
+    border-bottom: 1px solid #edf0f2;
+
+    padding: 16px 20px;
+}
+
+
+.section-icon {
+    width: 38px;
+    height: 38px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+}
+
+
+.address-icon {
+    background: #eaf2ff;
+    color: #0d6efd;
+}
+
+
+.order-icon {
+    background: #fff3cd;
+    color: #997404;
+}
+
+
+/* =============================================================
+   ADDRESS
+============================================================= */
+
+.delivery-address {
+    background: #f8fbff;
+
+    border: 1px solid #e4edf7;
+
+    border-radius: 12px;
+
+    padding: 16px;
+}
+
+
+.address-person-icon {
+    width: 42px;
+    height: 42px;
+
+    min-width: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #e8f1ff;
+    color: #0d6efd;
+
+    font-size: 1.1rem;
+}
+
+
+.address-main {
+    line-height: 1.55;
+}
+
+
+.address-contact {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 4px;
+
+    font-size: 0.82rem;
+
+    color: #6c757d;
+}
+
+
+.address-contact i {
+    color: #0d6efd;
+}
+
+
+/* =============================================================
+   PRODUCTS
+============================================================= */
+
+.checkout-product {
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    padding: 17px 20px;
+
+    border-bottom: 1px solid #edf0f2;
+}
+
+
+.checkout-product:last-child {
+    border-bottom: 0;
+}
+
+
+.product-number {
+    width: 32px;
+    height: 32px;
+
+    min-width: 32px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+
+    background: #f1f3f5;
+
+    color: #495057;
+
+    font-size: 0.8rem;
+
+    font-weight: 700;
+}
+
+
+.product-details {
+    min-width: 0;
+
+    flex: 1;
+}
+
+
+.product-name {
+    overflow-wrap: anywhere;
+
+    line-height: 1.4;
+}
+
+
+.product-meta {
+    color: #6c757d;
+
+    font-size: 0.78rem;
+
+    margin-top: 4px;
+}
+
+
+.product-price {
+    font-weight: 700;
+
+    color: #198754;
+
+    white-space: nowrap;
+}
+
+
+/* =============================================================
+   CONTINUE SHOPPING
+============================================================= */
+
+.continue-shopping {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 15px 18px;
+
+    background: #fff;
+
+    border: 1px solid #dee2e6;
+
+    border-radius: 14px;
+
+    color: #212529;
+
+    text-decoration: none;
+
+    transition: all 0.2s ease;
+}
+
+
+.continue-shopping:hover {
+    border-color: #0d6efd;
+
+    background: #f8fbff;
+
+    transform: translateY(-1px);
+
+    color: #0d6efd;
+}
+
+
+.shopping-icon {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: #eaf2ff;
+
+    color: #0d6efd;
+}
+
+
+.continue-shopping strong,
+.continue-shopping small {
+    display: block;
+}
+
+
+.continue-shopping small {
+    color: #6c757d;
+
+    margin-top: 2px;
+
+    font-size: 0.75rem;
+}
+
+
+/* =============================================================
+   SUMMARY
+============================================================= */
+
+.summary-header {
+    background: #212529;
+
+    color: #fff;
+
+    padding: 17px 20px;
+}
+
+
+.summary-header small {
+    color: rgba(255,255,255,0.65);
+}
+
+
+.summary-icon {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: rgba(255,255,255,0.12);
+
+    color: #fff;
+}
+
+
+.summary-row {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 7px 0;
+
+    color: #495057;
+}
+
+
+.summary-row strong {
+    color: #212529;
+}
+
+
+.final-total {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 8px 0;
+}
+
+
+.final-total h4 {
+    color: #198754;
+
+    margin-top: 3px;
+}
+
+
+.total-check {
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #e8f7ef;
+
+    color: #198754;
+
+    font-size: 1.1rem;
+}
+
+
+/* =============================================================
+   MINIMUM ORDER ALERT
+============================================================= */
+
+.minimum-alert {
+    border-radius: 12px;
+
+    font-size: 0.85rem;
+}
+
+
+/* =============================================================
+   PAYMENT BUTTON
+============================================================= */
+
+.payment-button {
+    min-height: 56px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding-left: 18px;
+
+    padding-right: 18px;
+
+    border-radius: 12px;
+
+    font-weight: 600;
+}
+
+
+.payment-button:not(:disabled):hover {
+    transform: translateY(-1px);
+}
+
+
+/* =============================================================
+   SECURE PAYMENT
+============================================================= */
+
+.secure-payment {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 12px;
+
+    border-radius: 10px;
+
+    background: #f8f9fa;
+}
+
+
+.secure-icon {
+    width: 34px;
+    height: 34px;
+
+    min-width: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+
+    background: #e8f7ef;
+
+    color: #198754;
+}
+
+
+.secure-payment strong,
+.secure-payment small {
+    display: block;
+}
+
+
+.secure-payment strong {
+    font-size: 0.82rem;
+}
+
+
+.secure-payment small {
+    color: #6c757d;
+
+    font-size: 0.72rem;
+
+    margin-top: 2px;
+}
+
+
+/* =============================================================
+   CHECKOUT NOTE
+============================================================= */
+
+.checkout-note {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 8px;
+
+    padding: 12px 14px;
+
+    border-radius: 10px;
+
+    background: #f8f9fa;
+
+    color: #6c757d;
+
+    font-size: 0.78rem;
+}
+
+
+.checkout-note i {
+    color: #0d6efd;
+
+    margin-top: 2px;
+}
+
+
+/* =============================================================
+   EMPTY CART
+============================================================= */
+
+.empty-cart i {
+    font-size: 3rem;
+
+    color: #adb5bd;
+}
+
+
+/* =============================================================
+   MOBILE
+============================================================= */
+
+@media (max-width: 767.98px) {
+
+    .checkout-header {
+        padding-bottom: 15px;
+    }
+
+
+    .checkout-steps {
+        width: 100%;
+
+        justify-content: center;
+
+        margin-top: 5px;
+    }
+
+
+    .checkout-step small {
+        font-size: 0.7rem;
+    }
+
+
+    .step-line {
+        width: 22px;
+    }
+
+
+    .checkout-card-header {
+        padding: 14px 15px;
+    }
+
+
+    .checkout-card .card-body {
+        padding: 15px;
+    }
+
+
+    .delivery-address {
+        padding: 13px;
+    }
+
+
+    .address-contact {
+        flex-direction: column;
+
+        gap: 5px;
+    }
+
+
+    .checkout-product {
+        padding: 15px;
+
+        gap: 10px;
+
+        align-items: flex-start;
+    }
+
+
+    .product-number {
+        width: 28px;
+        height: 28px;
+
+        min-width: 28px;
+    }
+
+
+    .product-price {
+        font-size: 0.9rem;
+    }
+
+
+    .summary-card {
+        border-radius: 14px;
+    }
+
+
+    .continue-shopping {
+        padding: 14px;
+    }
+
+}
+
+
+@media (max-width: 420px) {
+
+    .checkout-step small {
+        display: none;
+    }
+
+
+    .step-line {
+        width: 30px;
+    }
+
+
+    .address-person-icon {
+        width: 36px;
+        height: 36px;
+
+        min-width: 36px;
+    }
+
+
+    .checkout-product {
+        flex-wrap: wrap;
+    }
+
+
+    .product-price {
+        margin-left: 42px;
+
+        width: calc(100% - 42px);
+
+        text-align: right;
+    }
+
+}
+
+</style>
 
 {% endblock %}

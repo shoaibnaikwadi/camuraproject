@@ -1248,7 +1248,7 @@ def cart_checkout(request):
             "Please try again."
         )
 
-        return redirect("checkout_page")
+        return redirect("cart")
 
 
     # --------------------------------------------------
