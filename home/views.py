@@ -20,6 +20,9 @@ import requests
 import random
 from decouple import config
 from django.contrib.auth import get_user_model
+
+from decimal import Decimal, ROUND_HALF_UP
+
 MINIMUM_ORDER = Decimal("5000.00")
 
 from .models import (
