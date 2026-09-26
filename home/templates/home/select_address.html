@@ -1,144 +1,538 @@
 {% extends 'base.html' %}
+
+{% block title %}
+Select Delivery Address | Camura.in
+{% endblock %}
+
 {% block content %}
-<div class="container mt-5">
-    <h3 class="mb-4 text-center">🏠 Select Delivery Address</h3>
 
-    <div class="row">
-        <!-- Address Selection Section -->
+<div class="container py-4 py-md-5">
+
+    <h3 class="fw-bold mb-4 text-center">
+        <i class="bi bi-geo-alt-fill text-primary"></i>
+        Select Delivery Address
+    </h3>
+
+    <div class="row g-4">
+
+        <!-- ADDRESS SELECTION -->
         <div class="col-lg-7">
-            {% if addresses %}
-            <form method="POST">
-                {% csrf_token %}
-                <div class="row">
-                    {% for address in addresses %}
-                    <div class="col-md-6 mb-3">
-                        <div class="card border-0 shadow-sm address-card">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ address.full_name }}</h5>
-                                <p class="mb-1">{{ address.address }}</p>
-                                <p class="text-muted small mb-1">
-                                    {{ address.city }}, {{ address.state }} - {{ address.pincode }}
-                                </p>
-                                <p class="small">📞 {{ address.mobile }}</p>
 
-                                <button type="submit" name="address_id" value="{{ address.id }}"
-                                    class="btn btn-primary w-100 mt-2">
-                                    Deliver to this address
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </form>
-            {% else %}
-            <div class="alert alert-info text-center">
-                No saved addresses yet. Please add one below 👇
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold mb-0">
+                    Your Saved Addresses
+                </h5>
+
+                <span class="badge bg-secondary">
+                    {{ addresses|length }} Saved
+                </span>
             </div>
+
+            {% if addresses %}
+
+            <form method="POST"
+                  action="{% url 'select_address' %}">
+
+                {% csrf_token %}
+
+                <!-- Preserve checkout flow -->
+                <input type="hidden"
+                       name="from"
+                       value="{{ from_page }}">
+
+                <input type="hidden"
+                       name="combo_id"
+                       value="{{ combo_id }}">
+
+                <div class="row g-3">
+
+                    {% for address in addresses %}
+
+                    <div class="col-md-6">
+
+                        <div class="card h-100 shadow-sm address-card
+                            {% if selected_address_id == address.id %}
+                                border-primary
+                            {% else %}
+                                border-light
+                            {% endif %}">
+
+                            <div class="card-body d-flex flex-column">
+
+                                {% if selected_address_id == address.id %}
+
+                                <span class="badge bg-success align-self-start mb-2">
+                                    <i class="bi bi-check-circle me-1"></i>
+                                    Selected
+                                </span>
+
+                                {% endif %}
+
+                                <h5 class="card-title fw-bold">
+                                    {{ address.full_name }}
+                                </h5>
+
+                                <p class="mb-1">
+                                    {{ address.address }}
+                                </p>
+
+                                <p class="text-muted small mb-2">
+                                    {{ address.city }},
+                                    {{ address.state }} -
+                                    {{ address.pincode }}
+                                </p>
+
+                                <p class="small mb-3">
+                                    <i class="bi bi-telephone me-1"></i>
+                                    {{ address.mobile }}
+                                </p>
+
+                                <button
+                                    type="submit"
+                                    name="address_id"
+                                    value="{{ address.id }}"
+                                    class="btn mt-auto w-100
+                                        {% if selected_address_id == address.id %}
+                                            btn-outline-success
+                                        {% else %}
+                                            btn-primary
+                                        {% endif %}">
+
+                                    {% if selected_address_id == address.id %}
+
+                                        <i class="bi bi-check-circle me-1"></i>
+                                        Selected Address
+
+                                    {% else %}
+
+                                        Deliver to This Address
+
+                                    {% endif %}
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </form>
+
+            {% else %}
+
+            <div class="alert alert-info text-center">
+                <i class="bi bi-info-circle me-1"></i>
+                You don't have any saved addresses.
+                Please add one below.
+            </div>
+
             {% endif %}
 
-            <!-- Add New Address Button -->
-            <button class="btn btn-success w-100 mt-3" data-bs-toggle="modal" data-bs-target="#addAddressModal">
-                + Add New Address
+
+            <!-- ADD NEW ADDRESS BUTTON -->
+            <button
+                type="button"
+                class="btn btn-outline-success w-100 mt-3 py-2"
+                data-bs-toggle="modal"
+                data-bs-target="#addAddressModal">
+
+                <i class="bi bi-plus-circle me-1"></i>
+                Add New Address
+
             </button>
+
+
+            <!-- CART CHECKOUT CONFIRMATION -->
+            {% if from_page == "cart" and selected_address_id %}
+
+            <div class="card border-success shadow-sm mt-4">
+
+                <div class="card-body">
+
+                    <h5 class="fw-bold mb-2">
+                        <i class="bi bi-check-circle text-success me-1"></i>
+                        Ready to Checkout
+                    </h5>
+
+                    <p class="text-muted small">
+                        Your delivery address has been selected.
+                        Review your order summary before proceeding.
+                    </p>
+
+                    <form method="POST"
+                          action="{% url 'cart_checkout' %}">
+
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="btn btn-success btn-lg w-100">
+
+                            <i class="bi bi-shield-lock me-1"></i>
+                            Proceed to Payment
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
         </div>
 
-        <!-- Order Summary Section -->
-        <div class="col-lg-5 mt-4 mt-lg-0">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">🧾 Order Summary</h5>
+
+        <!-- ORDER SUMMARY -->
+        <div class="col-lg-5">
+
+            <div class="card shadow-sm border-0 order-summary">
+
+                <div class="card-header bg-primary text-white py-3">
+
+                    <h5 class="mb-0">
+                        <i class="bi bi-receipt me-1"></i>
+                        Order Summary
+                    </h5>
+
                 </div>
+
                 <div class="card-body">
-                    <ul class="list-group list-group-flush">
+
+                    <ul class="list-group list-group-flush mb-3">
+
                         {% for item in items %}
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span>{{ item.name }} × {{ item.qty }}</span>
-                            <strong>₹{{ item.subtotal|floatformat:2 }}</strong>
+
+                        <li class="list-group-item px-0">
+
+                            <div class="d-flex justify-content-between gap-3">
+
+                                <div>
+
+                                    <div class="fw-semibold">
+                                        {{ item.name }}
+                                    </div>
+
+                                    <div class="small text-muted">
+                                        Qty: {{ item.qty }}
+                                    </div>
+
+                                </div>
+
+                                <strong class="text-nowrap">
+                                    ₹{{ item.subtotal|floatformat:2 }}
+                                </strong>
+
+                            </div>
+
                         </li>
+
+                        {% empty %}
+
+                        <li class="list-group-item text-muted text-center">
+                            No products selected.
+                        </li>
+
                         {% endfor %}
+
                     </ul>
-                    <hr>
-                    <div class="d-flex justify-content-between">
-                        <h5>Total:</h5>
-                        <h5 class="text-success">₹{{ total|floatformat:2 }}</h5>
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <h5 class="fw-bold mb-0">
+                            Total
+                        </h5>
+
+                        <h4 class="fw-bold text-success mb-0">
+                            ₹{{ total|floatformat:2 }}
+                        </h4>
+
                     </div>
-                    <p class="text-muted small mt-2 mb-0">
-                        * Prices include GST and standard delivery.
+
+                    {% if total <= 5000 %}
+
+                    <div class="alert alert-warning mt-3 mb-0 small">
+
+                        <i class="bi bi-exclamation-triangle me-1"></i>
+
+                        Minimum order value must be more than ₹5,000.
+
+                    </div>
+
+                    {% endif %}
+
+                    <p class="text-muted small mt-3 mb-0">
+                        Final amount and applicable delivery charges
+                        will be confirmed during checkout.
                     </p>
+
                 </div>
+
             </div>
+
+
+            <!-- BACK TO CART -->
+            {% if from_page == "cart" %}
+
+            <a href="{% url 'cart' %}"
+               class="btn btn-outline-secondary w-100 mt-3">
+
+                <i class="bi bi-arrow-left me-1"></i>
+                Back to Cart
+
+            </a>
+
+            {% endif %}
+
         </div>
+
     </div>
+
 </div>
 
-<!-- Add Address Modal -->
-<div class="modal fade" id="addAddressModal" tabindex="-1" aria-labelledby="addAddressModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+
+<!-- ==========================================================
+     ADD NEW ADDRESS MODAL
+========================================================== -->
+
+<div class="modal fade"
+     id="addAddressModal"
+     tabindex="-1"
+     aria-labelledby="addAddressModalLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+
         <div class="modal-content">
+
             <div class="modal-header">
-                <h5 class="modal-title" id="addAddressModalLabel">Add New Address</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                <h5 class="modal-title fw-bold"
+                    id="addAddressModalLabel">
+
+                    <i class="bi bi-geo-alt me-1"></i>
+                    Add New Address
+
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close">
+                </button>
+
             </div>
 
-            <form method="POST">
+
+            <form method="POST"
+                  action="{% url 'select_address' %}">
+
                 {% csrf_token %}
+
+                <!-- Preserve Buy Now / Cart flow -->
+                <input type="hidden"
+                       name="from"
+                       value="{{ from_page }}">
+
+                <input type="hidden"
+                       name="combo_id"
+                       value="{{ combo_id }}">
+
                 <div class="modal-body">
 
                     <div class="mb-3">
-                        <input name="full_name" class="form-control" placeholder="Full Name" required>
+
+                        <label class="form-label">
+                            Full Name
+                        </label>
+
+                        <input
+                            type="text"
+                            name="full_name"
+                            class="form-control"
+                            placeholder="Enter your full name"
+                            required>
+
                     </div>
 
-                    <div class="mb-3">
-                        <input name="email" type="email" class="form-control" placeholder="Email" required>
-                    </div>
 
                     <div class="mb-3">
-                        <input name="mobile" class="form-control" placeholder="Mobile Number" required>
+
+                        <label class="form-label">
+                            Email
+                        </label>
+
+                        <input
+                            type="email"
+                            name="email"
+                            class="form-control"
+                            placeholder="Enter email address"
+                            required>
+
                     </div>
 
-                    <div class="mb-3">
-                        <input name="pincode" class="form-control" placeholder="Pincode" required>
-                    </div>
 
                     <div class="mb-3">
-                        <textarea name="address" class="form-control" placeholder="Full Address" required></textarea>
+
+                        <label class="form-label">
+                            Mobile Number
+                        </label>
+
+                        <input
+                            type="tel"
+                            name="mobile"
+                            class="form-control"
+                            placeholder="10-digit mobile number"
+                            pattern="[0-9]{10}"
+                            maxlength="10"
+                            inputmode="numeric"
+                            required>
+
                     </div>
 
-                    <div class="mb-3">
-                        <input name="city" class="form-control" placeholder="City" required>
-                    </div>
 
                     <div class="mb-3">
-                        <input name="state" class="form-control" placeholder="State" required>
+
+                        <label class="form-label">
+                            PIN Code
+                        </label>
+
+                        <input
+                            type="text"
+                            name="pincode"
+                            class="form-control"
+                            placeholder="6-digit PIN code"
+                            pattern="[0-9]{6}"
+                            maxlength="6"
+                            inputmode="numeric"
+                            required>
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Full Address
+                        </label>
+
+                        <textarea
+                            name="address"
+                            class="form-control"
+                            rows="3"
+                            placeholder="House number, street, area and landmark"
+                            required></textarea>
+
+                    </div>
+
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+                                City
+                            </label>
+
+                            <input
+                                type="text"
+                                name="city"
+                                class="form-control"
+                                placeholder="City"
+                                required>
+
+                        </div>
+
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+                                State
+                            </label>
+
+                            <input
+                                type="text"
+                                name="state"
+                                class="form-control"
+                                placeholder="State"
+                                required>
+
+                        </div>
+
                     </div>
 
                 </div>
+
 
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-success w-100">Save Address</button>
+
+                    <button
+                        type="button"
+                        class="btn btn-outline-secondary"
+                        data-bs-dismiss="modal">
+
+                        Cancel
+
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn btn-success">
+
+                        <i class="bi bi-check-circle me-1"></i>
+                        Save Address
+
+                    </button>
+
                 </div>
+
             </form>
 
         </div>
+
     </div>
+
 </div>
 
+
 <style>
+
+.address-card {
+    border-radius: 12px;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.address-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.10) !important;
+}
+
+.order-summary {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+@media (max-width: 576px) {
+
     .address-card {
-        transition: transform 0.2s, box-shadow 0.2s;
+        font-size: 14px;
     }
 
-    .address-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+    .address-card .card-title {
+        font-size: 1rem;
     }
 
-    @media (max-width: 576px) {
-        .address-card {
-            font-size: 14px;
-        }
-    }
+}
+
 </style>
 
 {% endblock %}
