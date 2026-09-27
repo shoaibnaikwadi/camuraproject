@@ -2992,9 +2992,9 @@ Team Camura.in
                 sms_message = (
                     f"Hi {engineer.full_name}, "
                     "your registration as CCTV "
-                    "Installation Engineer is received. "
+                    "Instalation Engineer is received. "
                     "Our team will contact you to verify "
-                    "your details. Thanks, Camura.in"
+                    "your details. Thanks regards camura.in"
                 )
 
                 payload = {
