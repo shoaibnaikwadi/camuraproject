@@ -1,0 +1,511 @@
+{% extends "base.html" %}
+
+{% block title %}
+Registered Engineers | Camura.in
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <!-- PAGE HEADER -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                <i class="bi bi-person-badge text-primary"></i>
+                Registered CCTV Engineers
+            </h2>
+
+            <p class="text-muted mb-0">
+                Manage engineer registrations and verification
+            </p>
+        </div>
+
+        <div class="mt-3 mt-md-0">
+            <span class="badge bg-dark fs-6 px-3 py-2">
+                {{ status_counts.all }} Total Engineers
+            </span>
+        </div>
+
+    </div>
+
+
+    <!-- STATUS DASHBOARD -->
+    <div class="row g-3 mb-4">
+
+        <!-- ALL -->
+        <div class="col-6 col-lg-3">
+            <a href="{% url 'registered_engineers' %}"
+               class="text-decoration-none">
+
+                <div class="card engineer-status-card shadow-sm h-100
+                    {% if status == 'all' %}active-all{% endif %}">
+
+                    <div class="card-body text-center py-4">
+
+                        <i class="bi bi-people fs-1 text-dark"></i>
+
+                        <h6 class="mt-2 text-dark">
+                            All Engineers
+                        </h6>
+
+                        <div class="display-5 fw-bold text-dark">
+                            {{ status_counts.all }}
+                        </div>
+
+                    </div>
+
+                </div>
+            </a>
+        </div>
+
+
+        <!-- PENDING -->
+        <div class="col-6 col-lg-3">
+            <a href="{% url 'registered_engineers' %}?status=pending"
+               class="text-decoration-none">
+
+                <div class="card engineer-status-card shadow-sm h-100
+                    {% if status == 'pending' %}active-pending{% endif %}">
+
+                    <div class="card-body text-center py-4">
+
+                        <i class="bi bi-hourglass-split fs-1 text-warning"></i>
+
+                        <h6 class="mt-2 text-dark">
+                            Pending
+                        </h6>
+
+                        <div class="display-5 fw-bold text-warning">
+                            {{ status_counts.pending }}
+                        </div>
+
+                    </div>
+
+                </div>
+            </a>
+        </div>
+
+
+        <!-- VERIFIED -->
+        <div class="col-6 col-lg-3">
+            <a href="{% url 'registered_engineers' %}?status=verified"
+               class="text-decoration-none">
+
+                <div class="card engineer-status-card shadow-sm h-100
+                    {% if status == 'verified' %}active-verified{% endif %}">
+
+                    <div class="card-body text-center py-4">
+
+                        <i class="bi bi-patch-check fs-1 text-success"></i>
+
+                        <h6 class="mt-2 text-dark">
+                            Verified
+                        </h6>
+
+                        <div class="display-5 fw-bold text-success">
+                            {{ status_counts.verified }}
+                        </div>
+
+                    </div>
+
+                </div>
+            </a>
+        </div>
+
+
+        <!-- HOLD -->
+        <div class="col-6 col-lg-3">
+            <a href="{% url 'registered_engineers' %}?status=hold"
+               class="text-decoration-none">
+
+                <div class="card engineer-status-card shadow-sm h-100
+                    {% if status == 'hold' %}active-hold{% endif %}">
+
+                    <div class="card-body text-center py-4">
+
+                        <i class="bi bi-pause-circle fs-1 text-danger"></i>
+
+                        <h6 class="mt-2 text-dark">
+                            On Hold
+                        </h6>
+
+                        <div class="display-5 fw-bold text-danger">
+                            {{ status_counts.hold }}
+                        </div>
+
+                    </div>
+
+                </div>
+            </a>
+        </div>
+
+    </div>
+
+
+    <!-- MESSAGES -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                {{ message }}
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert">
+                </button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+
+    <!-- CURRENT FILTER -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <h5 class="fw-bold mb-0">
+
+            {% if status == "all" %}
+                All Engineers
+            {% elif status == "pending" %}
+                Pending Verification
+            {% elif status == "verified" %}
+                Verified Engineers
+            {% else %}
+                Engineers On Hold
+            {% endif %}
+
+        </h5>
+
+        <span class="text-muted">
+            {{ engineers|length }} engineer{{ engineers|length|pluralize }}
+        </span>
+
+    </div>
+
+
+    <!-- ENGINEER LIST -->
+    <div class="row g-4">
+
+        {% for engineer in engineers %}
+
+            <div class="col-12 col-xl-6">
+
+                <div class="card engineer-card shadow-sm h-100">
+
+                    <!-- CARD HEADER -->
+                    <div class="card-header bg-white py-3">
+
+                        <div class="d-flex justify-content-between align-items-start gap-2">
+
+                            <div>
+                                <h5 class="fw-bold mb-1">
+                                    <i class="bi bi-person-circle text-primary"></i>
+                                    {{ engineer.full_name }}
+                                </h5>
+
+                                <small class="text-muted">
+                                    ID #{{ engineer.id }}
+                                    |
+                                    {{ engineer.date_registered|date:"d M Y, h:i A" }}
+                                </small>
+                            </div>
+
+                            <div>
+                                {% if engineer.status == "verified" %}
+
+                                    <span class="badge bg-success">
+                                        <i class="bi bi-patch-check"></i>
+                                        Verified
+                                    </span>
+
+                                {% elif engineer.status == "pending" %}
+
+                                    <span class="badge bg-warning text-dark">
+                                        <i class="bi bi-clock"></i>
+                                        Pending
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-danger">
+                                        <i class="bi bi-pause-circle"></i>
+                                        Hold
+                                    </span>
+
+                                {% endif %}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- CARD BODY -->
+                    <div class="card-body">
+
+                        <!-- CONTACT -->
+                        <h6 class="fw-bold mb-3">
+                            <i class="bi bi-person-lines-fill text-primary"></i>
+                            Contact Information
+                        </h6>
+
+                        <div class="row g-3 mb-4">
+
+                            <div class="col-12 col-sm-6">
+                                <small class="text-muted d-block">
+                                    Mobile
+                                </small>
+
+                                <a href="tel:{{ engineer.mobile }}"
+                                   class="fw-semibold text-decoration-none">
+                                    {{ engineer.mobile }}
+                                </a>
+                            </div>
+
+                            <div class="col-12 col-sm-6">
+                                <small class="text-muted d-block">
+                                    Email
+                                </small>
+
+                                <a href="mailto:{{ engineer.email }}"
+                                   class="text-decoration-none text-break">
+                                    {{ engineer.email }}
+                                </a>
+                            </div>
+
+                            <div class="col-12 col-sm-6">
+                                <small class="text-muted d-block">
+                                    Experience
+                                </small>
+
+                                <strong>
+                                    {{ engineer.experience }}
+                                </strong>
+                            </div>
+
+                            <div class="col-12 col-sm-6">
+                                <small class="text-muted d-block">
+                                    City
+                                </small>
+
+                                <strong>
+                                    {{ engineer.city }}
+                                </strong>
+                            </div>
+
+                        </div>
+
+
+                        <!-- ADDRESS -->
+                        <div class="border rounded p-3 mb-3">
+
+                            <h6 class="fw-bold">
+                                <i class="bi bi-geo-alt text-danger"></i>
+                                Address
+                            </h6>
+
+                            <p class="mb-0 text-muted">
+                                {{ engineer.address|linebreaksbr }}
+                            </p>
+
+                        </div>
+
+
+                        <!-- CERTIFICATION -->
+                        <div class="d-flex justify-content-between align-items-center border rounded p-3 mb-3">
+
+                            <div>
+                                <i class="bi bi-award text-primary"></i>
+                                <strong>Certification</strong>
+                            </div>
+
+                            {% if engineer.certified %}
+
+                                <span class="badge bg-success">
+                                    Certified
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-secondary">
+                                    Not Certified
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- GOVERNMENT ID -->
+                        <div class="border rounded p-3 mb-4">
+
+                            <h6 class="fw-bold mb-3">
+                                <i class="bi bi-file-earmark-person text-primary"></i>
+                                Government ID
+                            </h6>
+
+                            {% if engineer.government_id %}
+
+                                <a href="{{ engineer.government_id.url }}"
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   class="btn btn-outline-primary">
+
+                                    <i class="bi bi-eye"></i>
+                                    View Government ID
+
+                                </a>
+
+                            {% else %}
+
+                                <span class="text-muted">
+                                    No document uploaded
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- UPDATE STATUS -->
+                        <div class="bg-light border rounded p-3">
+
+                            <h6 class="fw-bold mb-3">
+                                <i class="bi bi-arrow-repeat"></i>
+                                Update Verification Status
+                            </h6>
+
+                            <form method="post"
+                                  action="{% url 'update_engineer_status' engineer.id %}">
+
+                                {% csrf_token %}
+
+                                <div class="row g-2">
+
+                                    <div class="col-12 col-sm-7">
+
+                                        <select name="status"
+                                                class="form-select">
+
+                                            {% for value, label in status_choices %}
+
+                                                <option value="{{ value }}"
+                                                    {% if engineer.status == value %}selected{% endif %}>
+                                                    {{ label }}
+                                                </option>
+
+                                            {% endfor %}
+
+                                        </select>
+
+                                    </div>
+
+                                    <div class="col-12 col-sm-5">
+
+                                        <button type="submit"
+                                                class="btn btn-primary w-100">
+
+                                            <i class="bi bi-check-lg"></i>
+                                            Update Status
+
+                                        </button>
+
+                                    </div>
+
+                                </div>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% empty %}
+
+            <div class="col-12">
+
+                <div class="card shadow-sm border-0">
+
+                    <div class="card-body text-center py-5">
+
+                        <i class="bi bi-people display-3 text-muted"></i>
+
+                        <h4 class="fw-bold mt-3">
+                            No Engineers Found
+                        </h4>
+
+                        <p class="text-muted">
+                            No engineers are registered under this status.
+                        </p>
+
+                        <a href="{% url 'registered_engineers' %}"
+                           class="btn btn-primary">
+                            View All Engineers
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+
+<style>
+
+    .engineer-status-card {
+        border: 2px solid transparent;
+        border-radius: 14px;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .engineer-status-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1) !important;
+    }
+
+    .active-all {
+        border-color: #212529;
+    }
+
+    .active-pending {
+        border-color: #ffc107;
+    }
+
+    .active-verified {
+        border-color: #198754;
+    }
+
+    .active-hold {
+        border-color: #dc3545;
+    }
+
+    .engineer-card {
+        border: 0;
+        border-radius: 14px;
+        overflow: hidden;
+    }
+
+    @media (max-width: 576px) {
+
+        .engineer-status-card .card-body {
+            padding: 18px 8px !important;
+        }
+
+        .engineer-status-card .display-5 {
+            font-size: 2rem;
+        }
+
+    }
+
+</style>
+
+{% endblock %}
