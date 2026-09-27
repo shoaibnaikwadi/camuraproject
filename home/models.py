@@ -1160,3 +1160,37 @@ class CCTVEngineer(models.Model):
 
     def __str__(self):
         return self.full_name
+
+
+
+
+
+
+class JobOpening(models.Model):
+
+    JOB_TYPE_CHOICES = [
+        ("Full Time", "Full Time"),
+        ("Part Time", "Part Time"),
+        ("Contract", "Contract"),
+        ("Internship", "Internship"),
+    ]
+
+    title = models.CharField(max_length=150)
+    location = models.CharField(max_length=100)
+    job_type = models.CharField(max_length=20, choices=JOB_TYPE_CHOICES, default="Full Time")
+    experience = models.CharField(max_length=100)
+    qualification = models.CharField(max_length=200)
+    salary = models.CharField(max_length=100, blank=True)
+    description = models.TextField()
+    responsibilities = models.TextField()
+    requirements = models.TextField()
+    vacancies = models.PositiveIntegerField(default=1)
+    last_date = models.DateField(blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return self.title

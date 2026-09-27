@@ -3223,3 +3223,18 @@ def update_order_status(request, order_id):
     )
 
     return redirect("admin_orders")
+
+
+
+
+
+
+
+from django.shortcuts import render
+from .models import JobOpening
+
+
+def careers(request):
+    jobs = JobOpening.objects.filter(is_active=True).order_by("-created_at")
+
+    return render(request, "home/careers.html", {"jobs": jobs})

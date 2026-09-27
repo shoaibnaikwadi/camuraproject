@@ -10,7 +10,7 @@ from .models import (
     Accessory,
     InstallationCharge,
     ComboProduct,
-    CartItem, Order, CustomerProfile, HardDisk
+    CartItem, Order, CustomerProfile, HardDisk, JobOpening
 )
 from django.db import models
 from django.forms import TextInput
@@ -772,3 +772,14 @@ class CCTVEngineerAdmin(admin.ModelAdmin):
         return "No preview available"
     
     preview_government_id.short_description = "Preview ID"
+
+
+
+
+
+@admin.register(JobOpening)
+class JobOpeningAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title', 'location', 'job_type', 'vacancies', 'last_date', 'is_active')
+    list_filter = ('job_type', 'is_active', 'location')
+    search_fields = ('title', 'location', 'qualification')
+    list_editable = ('is_active',)

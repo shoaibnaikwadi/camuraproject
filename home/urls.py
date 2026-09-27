@@ -328,6 +328,9 @@ urlpatterns = [
         views.update_engineer_status,
         name="update_engineer_status",
     ),
+    
+    
+    path("careers/", views.careers, name="careers"),
 ]
 
 
