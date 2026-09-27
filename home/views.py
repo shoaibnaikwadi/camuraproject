@@ -3044,12 +3044,38 @@ from django.shortcuts import render, get_object_or_404
 from .models import Order
 
 
+# @login_required
+# def admin_orders(request):
+
+#     # Only superuser can access
+#     if not request.user.is_superuser:
+#         return redirect("home")
+
+#     orders = (
+#         Order.objects
+#         .select_related("user", "profile")
+#         .prefetch_related("items")
+#         .order_by("-created_at")
+#     )
+
+#     return render(
+#         request,
+#         "home/admin_orders.html",
+#         {
+#             "orders": orders,
+#             "order_status_choices": Order.ORDER_STATUS_CHOICES,
+
+#         }
+#     )
+    
+    
+    
 @login_required
 def admin_orders(request):
-
-    # Only superuser can access
     if not request.user.is_superuser:
         return redirect("home")
+
+    status = request.GET.get("status", "all")
 
     orders = (
         Order.objects
@@ -3058,19 +3084,28 @@ def admin_orders(request):
         .order_by("-created_at")
     )
 
+    if status != "all":
+        orders = orders.filter(order_status=status)
+
+    status_counts = {
+        "all": Order.objects.count(),
+        "Received": Order.objects.filter(order_status="Received").count(),
+        "Processing": Order.objects.filter(order_status="Processing").count(),
+        "Shipped": Order.objects.filter(order_status="Shipped").count(),
+        "Delivered": Order.objects.filter(order_status="Delivered").count(),
+        "Cancelled": Order.objects.filter(order_status="Cancelled").count(),
+    }
+
     return render(
         request,
         "home/admin_orders.html",
         {
             "orders": orders,
             "order_status_choices": Order.ORDER_STATUS_CHOICES,
-
+            "status": status,
+            "status_counts": status_counts,
         }
-    )
-    
-    
-    
-    
+    )    
 
 
 @login_required
