@@ -96,7 +96,7 @@ var options = {
         var form = document.createElement("form");
 
         form.method = "POST";
-        form.action = "{% url 'payment_success' booking.id %}";
+        form.action = "{% url 'booking_payment_success' booking.id %}";
 
         var csrf = document.createElement("input");
         csrf.type = "hidden";
