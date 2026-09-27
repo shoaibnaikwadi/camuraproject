@@ -1392,6 +1392,16 @@
                     </a>
 
                 </p>
+                {% if request.user.is_authenticated and request.user.is_superuser %}
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'registered_engineers' %}">
+                        <i class="bi bi-person-badge"></i>
+                        Registered Engineers
+                    </a>
+                </li>
+
+                {% endif %}
 
             </div>
 

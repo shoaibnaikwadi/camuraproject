@@ -3044,6 +3044,84 @@ from django.shortcuts import render, get_object_or_404
 from .models import Order
 
 
+
+
+
+
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views.decorators.http import require_POST
+
+from .models import CCTVEngineer
+
+
+@login_required
+def registered_engineers(request):
+    if not request.user.is_superuser:
+        return redirect("home")
+
+    status = request.GET.get("status", "all")
+
+    valid_statuses = dict(CCTVEngineer.STATUS_CHOICES)
+
+    if status != "all" and status not in valid_statuses:
+        status = "all"
+
+    engineers = CCTVEngineer.objects.all().order_by("-date_registered")
+
+    if status != "all":
+        engineers = engineers.filter(status=status)
+
+    status_counts = {
+        "all": CCTVEngineer.objects.count(),
+        "pending": CCTVEngineer.objects.filter(status="pending").count(),
+        "verified": CCTVEngineer.objects.filter(status="verified").count(),
+        "hold": CCTVEngineer.objects.filter(status="hold").count(),
+    }
+
+    return render(
+        request,
+        "home/registered_engineers.html",
+        {
+            "engineers": engineers,
+            "status": status,
+            "status_counts": status_counts,
+            "status_choices": CCTVEngineer.STATUS_CHOICES,
+        },
+    )
+
+
+@login_required
+@require_POST
+def update_engineer_status(request, engineer_id):
+    if not request.user.is_superuser:
+        return redirect("home")
+
+    engineer = get_object_or_404(CCTVEngineer, id=engineer_id)
+
+    new_status = request.POST.get("status")
+    valid_statuses = dict(CCTVEngineer.STATUS_CHOICES)
+
+    if new_status not in valid_statuses:
+        messages.error(request, "Invalid engineer status.")
+        return redirect("registered_engineers")
+
+    engineer.status = new_status
+    engineer.save(update_fields=["status"])
+
+    messages.success(
+        request,
+        f"{engineer.full_name}'s status updated to {valid_statuses[new_status]}."
+    )
+
+    return redirect("registered_engineers")
+
+
+
+
+
+
 # @login_required
 # def admin_orders(request):
 

@@ -316,6 +316,18 @@ urlpatterns = [
         views.update_order_status,
         name="update_order_status",
     ),
+    
+    path(
+        "registered-engineers/",
+        views.registered_engineers,
+        name="registered_engineers",
+    ),
+
+    path(
+        "registered-engineers/<int:engineer_id>/status/",
+        views.update_engineer_status,
+        name="update_engineer_status",
+    ),
 ]
 
 
