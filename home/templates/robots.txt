@@ -4,10 +4,28 @@ Disallow: /cart/
 Disallow: /checkout/
 Disallow: /accounts/
 Disallow: /media/private/
+Disallow: /cart-checkout/
+Disallow: /buy-now/
+Disallow: /process-buy-now/
+Disallow: /cod-payment/
+Disallow: /payment-success/
+Disallow: /my-orders/
+Disallow: /profile/
+Disallow: /addresses/
+Disallow: /select-address/
+Disallow: /address/delete/
+Disallow: /booking-payment/
+Disallow: /booking-payment-success/
+Disallow: /my-bookings/
+Disallow: /admin-orders/
+Disallow: /registered-engineers/
+
 
 Allow: /staticfiles/
 Allow: /media/
 Allow: /google-feed/
+Allow: /engineer/register/
+
 
 Sitemap: https://www.camura.in/sitemap.xml
 
