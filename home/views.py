@@ -3036,3 +3036,77 @@ Team Camura.in
             "message": message,
         },
     )
+
+
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, get_object_or_404
+from .models import Order
+
+
+@login_required
+def admin_orders(request):
+
+    # Only superuser can access
+    if not request.user.is_superuser:
+        return redirect("home")
+
+    orders = (
+        Order.objects
+        .select_related("user", "profile")
+        .prefetch_related("items")
+        .order_by("-created_at")
+    )
+
+    return render(
+        request,
+        "home/admin_orders.html",
+        {
+            "orders": orders,
+            "order_status_choices": Order.ORDER_STATUS_CHOICES,
+
+        }
+    )
+    
+    
+    
+    
+
+
+@login_required
+@require_POST
+def update_order_status(request, order_id):
+
+    if not request.user.is_superuser:
+        return redirect("home")
+
+    order = get_object_or_404(
+        Order,
+        id=order_id
+    )
+
+    new_status = request.POST.get("order_status")
+
+    valid_statuses = dict(
+        Order.ORDER_STATUS_CHOICES
+    )
+
+    if new_status not in valid_statuses:
+        messages.error(
+            request,
+            "Invalid order status."
+        )
+
+        return redirect("admin_orders")
+
+    order.order_status = new_status
+    order.save(
+        update_fields=["order_status"]
+    )
+
+    messages.success(
+        request,
+        f"Order #{order.id} status updated to {new_status}."
+    )
+
+    return redirect("admin_orders")

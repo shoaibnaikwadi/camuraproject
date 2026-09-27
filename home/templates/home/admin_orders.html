@@ -1,0 +1,893 @@
+{% extends "base.html" %}
+
+{% block title %}
+Received Orders | Camura.in
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-4 py-md-5">
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+    <div class="d-flex flex-column flex-md-row
+                justify-content-between
+                align-items-md-center
+                gap-3 mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                <i class="bi bi-bag-check me-2"></i>
+                Received Orders
+            </h2>
+
+            <p class="text-muted mb-0">
+                Manage customer orders and update order status.
+            </p>
+        </div>
+
+        <div>
+            <span class="badge bg-dark fs-6 px-3 py-2">
+                <i class="bi bi-box-seam me-1"></i>
+                {{ orders|length }} Orders
+            </span>
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         DJANGO MESSAGES
+    ====================================================== -->
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <div class="alert
+                {% if message.tags == 'error' %}
+                    alert-danger
+                {% elif message.tags == 'success' %}
+                    alert-success
+                {% elif message.tags == 'warning' %}
+                    alert-warning
+                {% else %}
+                    alert-info
+                {% endif %}
+                alert-dismissible fade show"
+                role="alert">
+
+                {{ message }}
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert">
+                </button>
+
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         ORDERS
+    ====================================================== -->
+    {% if orders %}
+
+        {% for order in orders %}
+
+        <div class="card shadow-sm border-0 mb-4 order-card">
+
+            <!-- =================================================
+                 ORDER HEADER
+            ================================================== -->
+            <div class="card-header bg-white border-bottom">
+
+                <div class="row g-3 align-items-center">
+
+                    <!-- ORDER ID -->
+                    <div class="col-6 col-md-2">
+
+                        <small class="text-muted d-block">
+                            Order ID
+                        </small>
+
+                        <strong class="order-id">
+                            #{{ order.id }}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- CUSTOMER -->
+                    <div class="col-6 col-md-3">
+
+                        <small class="text-muted d-block">
+                            Customer
+                        </small>
+
+                        <strong class="text-break">
+
+                            {% if order.user.get_full_name %}
+                                {{ order.user.get_full_name }}
+                            {% else %}
+                                {{ order.user.username }}
+                            {% endif %}
+
+                        </strong>
+
+                    </div>
+
+
+                    <!-- DATE -->
+                    <div class="col-6 col-md-2">
+
+                        <small class="text-muted d-block">
+                            Date
+                        </small>
+
+                        <strong>
+                            {{ order.created_at|date:"d M Y" }}
+                        </strong>
+
+                        <small class="text-muted d-block">
+                            {{ order.created_at|date:"h:i A" }}
+                        </small>
+
+                    </div>
+
+
+                    <!-- PAYMENT METHOD -->
+                    <div class="col-6 col-md-2">
+
+                        <small class="text-muted d-block">
+                            Payment
+                        </small>
+
+                        {% if order.payment_method == "online" %}
+
+                            <span class="badge bg-primary">
+                                <i class="bi bi-credit-card me-1"></i>
+                                Online
+                            </span>
+
+                        {% elif order.payment_method == "cod" %}
+
+                            <span class="badge bg-warning text-dark">
+                                <i class="bi bi-cash-stack me-1"></i>
+                                COD
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-secondary">
+                                {{ order.get_payment_method_display }}
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- PAYMENT STATUS -->
+                    <div class="col-6 col-md-3 text-md-end">
+
+                        <small class="text-muted d-block">
+                            Payment Status
+                        </small>
+
+                        {% if order.payment_status == "Paid" %}
+
+                            <span class="badge bg-success">
+                                <i class="bi bi-check-circle-fill me-1"></i>
+                                Paid
+                            </span>
+
+                        {% elif order.payment_status == "Failed" %}
+
+                            <span class="badge bg-danger">
+                                <i class="bi bi-x-circle-fill me-1"></i>
+                                Failed
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-warning text-dark">
+                                <i class="bi bi-clock-fill me-1"></i>
+                                Pending
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ORDER BODY
+            ================================================== -->
+            <div class="card-body">
+
+                <div class="row g-4">
+
+                    <!-- =============================================
+                         CUSTOMER DETAILS
+                    ============================================== -->
+                    <div class="col-12 col-lg-4">
+
+                        <div class="info-section">
+
+                            <h6 class="fw-bold mb-3">
+
+                                <i class="bi bi-person-circle me-2"></i>
+                                Customer Details
+
+                            </h6>
+
+
+                            <div class="small">
+
+                                <div class="info-row">
+
+                                    <span class="info-label">
+                                        Name
+                                    </span>
+
+                                    <span class="info-value">
+
+                                        {% if order.user.get_full_name %}
+                                            {{ order.user.get_full_name }}
+                                        {% else %}
+                                            {{ order.user.username }}
+                                        {% endif %}
+
+                                    </span>
+
+                                </div>
+
+
+                                <div class="info-row">
+
+                                    <span class="info-label">
+                                        Email
+                                    </span>
+
+                                    <span class="info-value text-break">
+
+                                        {{ order.user.email|default:"—" }}
+
+                                    </span>
+
+                                </div>
+
+
+                                {% if order.profile %}
+
+                                    <div class="info-row">
+
+                                        <span class="info-label">
+                                            Mobile
+                                        </span>
+
+                                        <span class="info-value">
+
+                                            {{ order.profile.mobile|default:"—" }}
+
+                                        </span>
+
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =============================================
+                         DELIVERY ADDRESS
+                    ============================================== -->
+                    <div class="col-12 col-lg-4">
+
+                        <div class="info-section">
+
+                            <h6 class="fw-bold mb-3">
+
+                                <i class="bi bi-geo-alt-fill me-2"></i>
+                                Delivery Address
+
+                            </h6>
+
+
+                            {% if order.profile %}
+
+                                <div class="small address-box">
+
+                                    <strong>
+                                        {{ order.profile.full_name }}
+                                    </strong>
+
+                                    <div class="mt-2">
+                                        {{ order.profile.address }}
+                                    </div>
+
+                                    <div>
+                                        {{ order.profile.city }},
+                                        {{ order.profile.state }}
+                                    </div>
+
+                                    <div>
+                                        {{ order.profile.pincode }}
+                                    </div>
+
+                                    <div class="mt-2">
+
+                                        <i class="bi bi-telephone me-1"></i>
+
+                                        {{ order.profile.mobile }}
+
+                                    </div>
+
+                                </div>
+
+                            {% else %}
+
+                                <div class="text-muted small">
+                                    Delivery address not available.
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =============================================
+                         PAYMENT DETAILS
+                    ============================================== -->
+                    <div class="col-12 col-lg-4">
+
+                        <div class="info-section">
+
+                            <h6 class="fw-bold mb-3">
+
+                                <i class="bi bi-credit-card-2-front me-2"></i>
+                                Payment Details
+
+                            </h6>
+
+
+                            <div class="small">
+
+                                <div class="info-row">
+
+                                    <span class="info-label">
+                                        Method
+                                    </span>
+
+                                    <span class="info-value">
+
+                                        {{ order.get_payment_method_display }}
+
+                                    </span>
+
+                                </div>
+
+
+                                <div class="info-row">
+
+                                    <span class="info-label">
+                                        Status
+                                    </span>
+
+                                    <span class="info-value">
+
+                                        {% if order.payment_status == "Paid" %}
+
+                                            <span class="text-success fw-semibold">
+                                                Paid
+                                            </span>
+
+                                        {% elif order.payment_status == "Failed" %}
+
+                                            <span class="text-danger fw-semibold">
+                                                Failed
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="text-warning fw-semibold">
+                                                Pending
+                                            </span>
+
+                                        {% endif %}
+
+                                    </span>
+
+                                </div>
+
+
+                                {% if order.razorpay_order_id %}
+
+                                    <div class="mt-3">
+
+                                        <small class="text-muted d-block">
+                                            Razorpay Order ID
+                                        </small>
+
+                                        <code class="small text-break">
+                                            {{ order.razorpay_order_id }}
+                                        </code>
+
+                                    </div>
+
+                                {% endif %}
+
+
+                                {% if order.payment_id %}
+
+                                    <div class="mt-2">
+
+                                        <small class="text-muted d-block">
+                                            Payment ID
+                                        </small>
+
+                                        <code class="small text-break">
+                                            {{ order.payment_id }}
+                                        </code>
+
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <hr class="my-4">
+
+
+                <!-- =================================================
+                     ORDER STATUS
+                ================================================== -->
+                <div class="status-section mb-4">
+
+                    <div class="row align-items-center g-3">
+
+                        <div class="col-12 col-md-4">
+
+                            <h6 class="fw-bold mb-1">
+
+                                <i class="bi bi-truck me-2"></i>
+                                Order Status
+
+                            </h6>
+
+                            <small class="text-muted">
+                                Update the current order progress.
+                            </small>
+
+                        </div>
+
+
+                        <div class="col-12 col-md-8">
+
+                            <form method="post"
+                                  action="{% url 'update_order_status' order.id %}"
+                                  class="d-flex flex-column flex-sm-row gap-2">
+
+                                {% csrf_token %}
+
+                                <select name="order_status"
+                                        class="form-select order-status-select">
+
+                                    {% for value, label in order_status_choices %}
+
+                                        <option value="{{ value }}"
+                                            {% if order.order_status == value %}
+                                                selected
+                                            {% endif %}>
+                                            {{ label }}
+                                        </option>
+
+                                    {% endfor %}
+
+                                </select>
+
+
+                                <button type="submit"
+                                        class="btn btn-primary update-status-btn">
+
+                                    <i class="bi bi-check2-circle me-1"></i>
+                                    Update Status
+
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     CURRENT ORDER STATUS
+                ================================================== -->
+                <div class="mb-4">
+
+                    <span class="text-muted small me-2">
+                        Current Status:
+                    </span>
+
+
+                    {% if order.order_status == "Received" %}
+
+                        <span class="badge bg-secondary">
+                            <i class="bi bi-inbox me-1"></i>
+                            Received
+                        </span>
+
+                    {% elif order.order_status == "Processing" %}
+
+                        <span class="badge bg-primary">
+                            <i class="bi bi-gear me-1"></i>
+                            Processing
+                        </span>
+
+                    {% elif order.order_status == "Shipped" %}
+
+                        <span class="badge bg-info text-dark">
+                            <i class="bi bi-truck me-1"></i>
+                            Shipped
+                        </span>
+
+                    {% elif order.order_status == "Delivered" %}
+
+                        <span class="badge bg-success">
+                            <i class="bi bi-check-circle-fill me-1"></i>
+                            Delivered
+                        </span>
+
+                    {% elif order.order_status == "Cancelled" %}
+
+                        <span class="badge bg-danger">
+                            <i class="bi bi-x-circle-fill me-1"></i>
+                            Cancelled
+                        </span>
+
+                    {% else %}
+
+                        <span class="badge bg-secondary">
+                            {{ order.order_status }}
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+
+                <hr class="my-4">
+
+
+                <!-- =================================================
+                     ORDER ITEMS
+                ================================================== -->
+                <h6 class="fw-bold mb-3">
+
+                    <i class="bi bi-box-seam me-2"></i>
+                    Ordered Products
+
+                </h6>
+
+
+                <div class="table-responsive">
+
+                    <table class="table table-sm align-middle mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th>
+                                    Product
+                                </th>
+
+                                <th class="text-center">
+                                    Qty
+                                </th>
+
+                                <th class="text-end">
+                                    Price
+                                </th>
+
+                                <th class="text-end">
+                                    Subtotal
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for item in order.items.all %}
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="fw-semibold product-name">
+
+                                        {{ item.product_name }}
+
+                                    </div>
+
+                                </td>
+
+
+                                <td class="text-center">
+
+                                    {{ item.quantity }}
+
+                                </td>
+
+
+                                <td class="text-end">
+
+                                    ₹{{ item.price|floatformat:2 }}
+
+                                </td>
+
+
+                                <td class="text-end fw-semibold">
+
+                                    ₹{{ item.subtotal|floatformat:2 }}
+
+                                </td>
+
+                            </tr>
+
+                            {% empty %}
+
+                            <tr>
+
+                                <td colspan="4"
+                                    class="text-center text-muted py-3">
+
+                                    No products found for this order.
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+
+                        <tfoot>
+
+                            <tr>
+
+                                <td colspan="3"
+                                    class="text-end fw-bold">
+
+                                    Order Total
+
+                                </td>
+
+                                <td class="text-end">
+
+                                    <strong class="fs-5">
+
+                                        ₹{{ order.total_amount|floatformat:2 }}
+
+                                    </strong>
+
+                                </td>
+
+                            </tr>
+
+                        </tfoot>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+
+    {% else %}
+
+        <!-- =====================================================
+             EMPTY ORDERS
+        ====================================================== -->
+        <div class="card border-0 shadow-sm">
+
+            <div class="card-body text-center py-5">
+
+                <i class="bi bi-bag-x display-4 text-muted"></i>
+
+                <h5 class="mt-3 fw-bold">
+                    No Orders Found
+                </h5>
+
+                <p class="text-muted mb-0">
+                    Customer orders will appear here when they place an order.
+                </p>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+<!-- =========================================================
+     PAGE CSS
+========================================================== -->
+
+<style>
+
+.order-card {
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.order-card .card-header {
+    padding: 1rem 1.25rem;
+}
+
+.order-card .card-body {
+    padding: 1.25rem;
+}
+
+.order-id {
+    font-size: 1.1rem;
+}
+
+.info-section {
+    height: 100%;
+    padding: 1rem;
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    background: #fafafa;
+}
+
+.info-row {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0.75rem;
+}
+
+.info-row:last-child {
+    margin-bottom: 0;
+}
+
+.info-label {
+    color: #6c757d;
+    font-size: 0.8rem;
+    margin-bottom: 2px;
+}
+
+.info-value {
+    font-weight: 500;
+    overflow-wrap: anywhere;
+}
+
+.address-box {
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.status-section {
+    padding: 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    background: #f8f9fa;
+}
+
+.order-status-select {
+    max-width: 300px;
+}
+
+.update-status-btn {
+    white-space: nowrap;
+}
+
+.product-name {
+    overflow-wrap: anywhere;
+}
+
+.table th {
+    white-space: nowrap;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 767.98px) {
+
+    .order-card .card-header {
+        padding: 1rem;
+    }
+
+    .order-card .card-body {
+        padding: 1rem;
+    }
+
+    .order-status-select {
+        max-width: 100%;
+    }
+
+    .update-status-btn {
+        width: 100%;
+    }
+
+    .table {
+        font-size: 0.875rem;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 575.98px) {
+
+    .order-card {
+        border-radius: 10px;
+    }
+
+    .order-card .card-body {
+        padding: 0.85rem;
+    }
+
+    .info-section {
+        padding: 0.85rem;
+    }
+
+    .status-section {
+        padding: 0.85rem;
+    }
+
+    .table th,
+    .table td {
+        padding: 0.55rem;
+    }
+
+}
+
+</style>
+
+{% endblock %}

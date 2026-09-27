@@ -303,6 +303,19 @@ urlpatterns = [
         "ckeditor5/",
         include("django_ckeditor_5.urls"),
     ),
+    
+    
+    path(
+            "admin-orders/",
+            views.admin_orders,
+            name="admin_orders",
+        ),
+    
+    path(
+        "admin-orders/<int:order_id>/status/",
+        views.update_order_status,
+        name="update_order_status",
+    ),
 ]
 
 
@@ -315,3 +328,8 @@ if settings.DEBUG:
         settings.MEDIA_URL,
         document_root=settings.MEDIA_ROOT,
     )
+
+
+
+
+    

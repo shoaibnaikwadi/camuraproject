@@ -599,12 +599,23 @@ class OrderItemInline(admin.TabularInline):
     model = OrderItem
     extra = 0  # No extra blank rows
 
-class OrderAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'profile', 'total_amount', 'payment_status', 'created_at')
-    list_filter = ('payment_status', 'created_at')
-    search_fields = ('user__username', 'profile__full_name', 'razorpay_order_id', 'payment_id')
-    inlines = [OrderItemInline]
+# class OrderAdmin(admin.ModelAdmin):
+#     list_display = ('id', 'user', 'profile', 'total_amount', 'payment_status', 'created_at')
+#     list_filter = ('payment_status', 'created_at')
+#     search_fields = ('user__username', 'profile__full_name', 'razorpay_order_id', 'payment_id')
+#     inlines = [OrderItemInline]
 
+
+
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'profile', 'total_amount', 'payment_method', 'payment_status', 'order_status', 'created_at')
+    list_filter = ('payment_method', 'payment_status', 'order_status', 'created_at')
+    search_fields = ('user__username', 'profile__full_name', 'profile__mobile', 'razorpay_order_id', 'payment_id')
+    readonly_fields = ('razorpay_order_id', 'payment_id', 'created_at')
+    inlines = [OrderItemInline]
+    
+    
+    
 admin.site.register(Order, OrderAdmin)
 admin.site.register(OrderItem)  # Optional: You can register separately if needed
 
