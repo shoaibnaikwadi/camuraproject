@@ -13,11 +13,15 @@ from home.sitemaps import (
     ProductSitemap,
     JobOpeningSitemap,
 )
+from blog.sitemaps import BlogSitemap
+
 
 sitemaps = {
     "static": StaticViewSitemap,
     "products": ProductSitemap,
     "jobs": JobOpeningSitemap,
+    "blog": BlogSitemap,
+
 }
 
 
