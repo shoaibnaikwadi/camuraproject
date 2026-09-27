@@ -9,7 +9,10 @@ Received Orders | Camura.in
 <div class="container py-4">
 
 ```
-<!-- PAGE HEADER -->
+<!-- =====================================================
+     PAGE HEADER
+====================================================== -->
+
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
 
     <div>
@@ -32,92 +35,199 @@ Received Orders | Camura.in
 </div>
 
 
-<!-- STATUS FILTER -->
-<div class="card shadow-sm border-0 mb-4">
+<!-- =====================================================
+     STATUS DASHBOARD
+====================================================== -->
 
-    <div class="card-body">
-
-        <div class="d-flex flex-wrap gap-2">
-
-            <!-- ALL -->
-            <a href="{% url 'admin_orders' %}"
-               class="btn {% if status == 'all' %}btn-dark{% else %}btn-outline-dark{% endif %}">
-                <i class="bi bi-grid"></i>
-                All
-
-                <span class="badge bg-light text-dark ms-1">
-                    {{ status_counts.all }}
-                </span>
-            </a>
+<div class="row g-3 mb-4">
 
 
-            <!-- RECEIVED -->
-            <a href="{% url 'admin_orders' %}?status=Received"
-               class="btn {% if status == 'Received' %}btn-primary{% else %}btn-outline-primary{% endif %}">
-                <i class="bi bi-inbox"></i>
-                Received
+    <!-- ALL ORDERS -->
+    <div class="col-6 col-md-4 col-lg-2">
 
-                <span class="badge bg-light text-dark ms-1">
-                    {{ status_counts.Received }}
-                </span>
-            </a>
+        <a href="{% url 'admin_orders' %}"
+           class="text-decoration-none">
 
+            <div class="card status-card h-100 shadow-sm border-0
+                {% if status == 'all' %}active-status-all{% endif %}">
 
-            <!-- PROCESSING -->
-            <a href="{% url 'admin_orders' %}?status=Processing"
-               class="btn {% if status == 'Processing' %}btn-warning{% else %}btn-outline-warning{% endif %}">
-                <i class="bi bi-gear"></i>
-                Processing
+                <div class="card-body text-center py-4">
 
-                <span class="badge bg-light text-dark ms-1">
-                    {{ status_counts.Processing }}
-                </span>
-            </a>
+                    <i class="bi bi-grid fs-2 text-dark"></i>
 
+                    <div class="fw-semibold mt-2 text-dark">
+                        All Orders
+                    </div>
 
-            <!-- SHIPPED -->
-            <a href="{% url 'admin_orders' %}?status=Shipped"
-               class="btn {% if status == 'Shipped' %}btn-info{% else %}btn-outline-info{% endif %}">
-                <i class="bi bi-truck"></i>
-                Shipped
+                    <div class="display-6 fw-bold text-dark">
+                        {{ status_counts.all }}
+                    </div>
 
-                <span class="badge bg-light text-dark ms-1">
-                    {{ status_counts.Shipped }}
-                </span>
-            </a>
+                </div>
+
+            </div>
+
+        </a>
+
+    </div>
 
 
-            <!-- COMPLETED -->
-            <a href="{% url 'admin_orders' %}?status=Delivered"
-               class="btn {% if status == 'Delivered' %}btn-success{% else %}btn-outline-success{% endif %}">
-                <i class="bi bi-check-circle"></i>
-                Completed
+    <!-- RECEIVED -->
+    <div class="col-6 col-md-4 col-lg-2">
 
-                <span class="badge bg-light text-dark ms-1">
-                    {{ status_counts.Delivered }}
-                </span>
-            </a>
+        <a href="{% url 'admin_orders' %}?status=Received"
+           class="text-decoration-none">
+
+            <div class="card status-card h-100 shadow-sm border-0
+                {% if status == 'Received' %}active-status-primary{% endif %}">
+
+                <div class="card-body text-center py-4">
+
+                    <i class="bi bi-inbox fs-2 text-primary"></i>
+
+                    <div class="fw-semibold mt-2 text-dark">
+                        Received
+                    </div>
+
+                    <div class="display-6 fw-bold text-primary">
+                        {{ status_counts.Received }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </a>
+
+    </div>
 
 
-            <!-- CANCELLED -->
-            <a href="{% url 'admin_orders' %}?status=Cancelled"
-               class="btn {% if status == 'Cancelled' %}btn-danger{% else %}btn-outline-danger{% endif %}">
-                <i class="bi bi-x-circle"></i>
-                Cancelled
+    <!-- PROCESSING -->
+    <div class="col-6 col-md-4 col-lg-2">
 
-                <span class="badge bg-light text-dark ms-1">
-                    {{ status_counts.Cancelled }}
-                </span>
-            </a>
+        <a href="{% url 'admin_orders' %}?status=Processing"
+           class="text-decoration-none">
 
-        </div>
+            <div class="card status-card h-100 shadow-sm border-0
+                {% if status == 'Processing' %}active-status-warning{% endif %}">
+
+                <div class="card-body text-center py-4">
+
+                    <i class="bi bi-gear fs-2 text-warning"></i>
+
+                    <div class="fw-semibold mt-2 text-dark">
+                        Processing
+                    </div>
+
+                    <div class="display-6 fw-bold text-warning">
+                        {{ status_counts.Processing }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </a>
+
+    </div>
+
+
+    <!-- SHIPPED -->
+    <div class="col-6 col-md-4 col-lg-2">
+
+        <a href="{% url 'admin_orders' %}?status=Shipped"
+           class="text-decoration-none">
+
+            <div class="card status-card h-100 shadow-sm border-0
+                {% if status == 'Shipped' %}active-status-info{% endif %}">
+
+                <div class="card-body text-center py-4">
+
+                    <i class="bi bi-truck fs-2 text-info"></i>
+
+                    <div class="fw-semibold mt-2 text-dark">
+                        Shipped
+                    </div>
+
+                    <div class="display-6 fw-bold text-info">
+                        {{ status_counts.Shipped }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </a>
+
+    </div>
+
+
+    <!-- COMPLETED -->
+    <div class="col-6 col-md-4 col-lg-2">
+
+        <a href="{% url 'admin_orders' %}?status=Delivered"
+           class="text-decoration-none">
+
+            <div class="card status-card h-100 shadow-sm border-0
+                {% if status == 'Delivered' %}active-status-success{% endif %}">
+
+                <div class="card-body text-center py-4">
+
+                    <i class="bi bi-check-circle fs-2 text-success"></i>
+
+                    <div class="fw-semibold mt-2 text-dark">
+                        Completed
+                    </div>
+
+                    <div class="display-6 fw-bold text-success">
+                        {{ status_counts.Delivered }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </a>
+
+    </div>
+
+
+    <!-- CANCELLED -->
+    <div class="col-6 col-md-4 col-lg-2">
+
+        <a href="{% url 'admin_orders' %}?status=Cancelled"
+           class="text-decoration-none">
+
+            <div class="card status-card h-100 shadow-sm border-0
+                {% if status == 'Cancelled' %}active-status-danger{% endif %}">
+
+                <div class="card-body text-center py-4">
+
+                    <i class="bi bi-x-circle fs-2 text-danger"></i>
+
+                    <div class="fw-semibold mt-2 text-dark">
+                        Cancelled
+                    </div>
+
+                    <div class="display-6 fw-bold text-danger">
+                        {{ status_counts.Cancelled }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </a>
 
     </div>
 
 </div>
 
 
-<!-- DJANGO MESSAGES -->
+<!-- =====================================================
+     MESSAGES
+====================================================== -->
+
 {% if messages %}
 
     {% for message in messages %}
@@ -139,17 +249,23 @@ Received Orders | Camura.in
 {% endif %}
 
 
-<!-- CURRENT FILTER -->
+<!-- =====================================================
+     CURRENT FILTER
+====================================================== -->
+
 <div class="d-flex justify-content-between align-items-center mb-3">
 
     <h5 class="fw-bold mb-0">
 
         {% if status == "all" %}
             All Orders
+
         {% elif status == "Delivered" %}
             Completed Orders
+
         {% else %}
             {{ status }} Orders
+
         {% endif %}
 
     </h5>
@@ -161,19 +277,23 @@ Received Orders | Camura.in
 </div>
 
 
-<!-- ORDERS -->
+<!-- =====================================================
+     ORDERS
+====================================================== -->
+
 {% if orders %}
 
     {% for order in orders %}
 
-        <div class="card shadow-sm border-0 mb-4">
+        <div class="card shadow-sm border-0 mb-4 order-card">
+
 
             <!-- ORDER HEADER -->
-            <div class="card-header bg-white border-bottom">
+            <div class="card-header bg-white border-bottom py-3">
 
                 <div class="row align-items-center">
 
-                    <div class="col-md-6">
+                    <div class="col-12 col-md-6">
 
                         <h5 class="fw-bold mb-1">
 
@@ -192,40 +312,40 @@ Received Orders | Camura.in
                     </div>
 
 
-                    <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                    <!-- CURRENT STATUS -->
+                    <div class="col-12 col-md-6 text-md-end mt-3 mt-md-0">
 
-                        <!-- ORDER STATUS -->
                         {% if order.order_status == "Received" %}
 
-                            <span class="badge bg-primary px-3 py-2">
+                            <span class="badge bg-primary px-3 py-2 fs-6">
                                 <i class="bi bi-inbox"></i>
                                 Received
                             </span>
 
                         {% elif order.order_status == "Processing" %}
 
-                            <span class="badge bg-warning text-dark px-3 py-2">
+                            <span class="badge bg-warning text-dark px-3 py-2 fs-6">
                                 <i class="bi bi-gear"></i>
                                 Processing
                             </span>
 
                         {% elif order.order_status == "Shipped" %}
 
-                            <span class="badge bg-info text-dark px-3 py-2">
+                            <span class="badge bg-info text-dark px-3 py-2 fs-6">
                                 <i class="bi bi-truck"></i>
                                 Shipped
                             </span>
 
                         {% elif order.order_status == "Delivered" %}
 
-                            <span class="badge bg-success px-3 py-2">
+                            <span class="badge bg-success px-3 py-2 fs-6">
                                 <i class="bi bi-check-circle"></i>
                                 Completed
                             </span>
 
                         {% elif order.order_status == "Cancelled" %}
 
-                            <span class="badge bg-danger px-3 py-2">
+                            <span class="badge bg-danger px-3 py-2 fs-6">
                                 <i class="bi bi-x-circle"></i>
                                 Cancelled
                             </span>
@@ -242,11 +362,15 @@ Received Orders | Camura.in
             <!-- ORDER BODY -->
             <div class="card-body">
 
-                <!-- CUSTOMER + PAYMENT -->
+
+                <!-- =================================================
+                     CUSTOMER + PAYMENT
+                ================================================== -->
+
                 <div class="row g-4">
 
 
-                    <!-- CUSTOMER DETAILS -->
+                    <!-- CUSTOMER -->
                     <div class="col-12 col-lg-6">
 
                         <div class="border rounded p-3 h-100">
@@ -258,37 +382,56 @@ Received Orders | Camura.in
 
                             </h6>
 
-                            <p class="mb-2">
-                                <strong>Name:</strong>
-                                {{ order.profile.full_name|default:order.user.get_full_name }}
-                            </p>
 
                             <p class="mb-2">
-                                <strong>Username:</strong>
-                                {{ order.user.username }}
+
+                                <strong>Name:</strong>
+
+                                {{ order.profile.full_name|default:order.user.get_full_name }}
+
                             </p>
+
+
+                            <p class="mb-2">
+
+                                <strong>Username:</strong>
+
+                                {{ order.user.username }}
+
+                            </p>
+
 
                             {% if order.profile.mobile %}
 
                                 <p class="mb-2">
+
                                     <strong>Mobile:</strong>
+
                                     {{ order.profile.mobile }}
+
                                 </p>
 
                             {% endif %}
 
+
                             {% if order.profile.email %}
 
                                 <p class="mb-0">
+
                                     <strong>Email:</strong>
+
                                     {{ order.profile.email }}
+
                                 </p>
 
                             {% else %}
 
                                 <p class="mb-0">
+
                                     <strong>Email:</strong>
+
                                     {{ order.user.email|default:"Not available" }}
+
                                 </p>
 
                             {% endif %}
@@ -298,7 +441,7 @@ Received Orders | Camura.in
                     </div>
 
 
-                    <!-- PAYMENT DETAILS -->
+                    <!-- PAYMENT -->
                     <div class="col-12 col-lg-6">
 
                         <div class="border rounded p-3 h-100">
@@ -388,7 +531,6 @@ Received Orders | Camura.in
 
                             {% endif %}
 
-
                         </div>
 
                     </div>
@@ -396,7 +538,10 @@ Received Orders | Camura.in
                 </div>
 
 
-                <!-- DELIVERY ADDRESS -->
+                <!-- =================================================
+                     DELIVERY ADDRESS
+                ================================================== -->
+
                 {% if order.profile %}
 
                     <div class="border rounded p-3 mt-4">
@@ -431,69 +576,77 @@ Received Orders | Camura.in
                 {% endif %}
 
 
-                <!-- UPDATE ORDER STATUS -->
+                <!-- =================================================
+                     UPDATE STATUS
+                ================================================== -->
+
                 <div class="border rounded p-3 mt-4">
 
-                    <div class="row align-items-end">
+                    <h6 class="fw-bold mb-3">
 
-                        <div class="col-12 col-md-8">
+                        <i class="bi bi-arrow-repeat"></i>
+                        Update Order Status
 
-                            <label class="form-label fw-bold">
+                    </h6>
 
-                                <i class="bi bi-arrow-repeat"></i>
-                                Update Order Status
 
-                            </label>
+                    <form method="post"
+                          action="{% url 'update_order_status' order.id %}">
 
-                            <form method="post"
-                                  action="{% url 'update_order_status' order.id %}">
+                        {% csrf_token %}
 
-                                {% csrf_token %}
+                        <div class="row g-2">
 
-                                <div class="input-group">
+                            <div class="col-12 col-md-8">
 
-                                    <select name="order_status"
-                                            class="form-select">
+                                <select name="order_status"
+                                        class="form-select form-select-lg">
 
-                                        {% for value, label in order_status_choices %}
+                                    {% for value, label in order_status_choices %}
 
-                                            <option value="{{ value }}"
-                                                {% if order.order_status == value %}
-                                                    selected
-                                                {% endif %}>
+                                        <option value="{{ value }}"
+                                            {% if order.order_status == value %}
+                                                selected
+                                            {% endif %}>
 
-                                                {% if value == "Delivered" %}
-                                                    Completed
-                                                {% else %}
-                                                    {{ label }}
-                                                {% endif %}
+                                            {% if value == "Delivered" %}
+                                                Completed
+                                            {% else %}
+                                                {{ label }}
+                                            {% endif %}
 
-                                            </option>
+                                        </option>
 
-                                        {% endfor %}
+                                    {% endfor %}
 
-                                    </select>
+                                </select>
 
-                                    <button type="submit"
-                                            class="btn btn-primary">
+                            </div>
 
-                                        <i class="bi bi-check-lg"></i>
-                                        Update
 
-                                    </button>
+                            <div class="col-12 col-md-4">
 
-                                </div>
+                                <button type="submit"
+                                        class="btn btn-primary btn-lg w-100">
 
-                            </form>
+                                    <i class="bi bi-check-lg"></i>
+                                    Update Status
+
+                                </button>
+
+                            </div>
 
                         </div>
 
-                    </div>
+                    </form>
 
                 </div>
 
 
-                <!-- ORDER ITEMS -->
+                <!-- =================================================
+                     ORDER ITEMS
+                ================================================== -->
+
                 <div class="mt-4">
 
                     <h6 class="fw-bold mb-3">
@@ -512,7 +665,9 @@ Received Orders | Camura.in
 
                                 <tr>
 
-                                    <th>Product</th>
+                                    <th>
+                                        Product
+                                    </th>
 
                                     <th class="text-center">
                                         Qty
@@ -545,17 +700,20 @@ Received Orders | Camura.in
 
                                         </td>
 
+
                                         <td class="text-center">
 
                                             {{ item.quantity }}
 
                                         </td>
 
+
                                         <td class="text-end">
 
                                             ₹{{ item.price|floatformat:2 }}
 
                                         </td>
+
 
                                         <td class="text-end fw-semibold">
 
@@ -606,7 +764,10 @@ Received Orders | Camura.in
 
 {% else %}
 
-    <!-- NO ORDERS -->
+    <!-- =====================================================
+         NO ORDERS
+    ====================================================== -->
+
     <div class="card shadow-sm border-0">
 
         <div class="card-body text-center py-5">
@@ -614,15 +775,11 @@ Received Orders | Camura.in
             <i class="bi bi-inbox display-3 text-muted"></i>
 
             <h4 class="fw-bold mt-3">
-
                 No Orders Found
-
             </h4>
 
             <p class="text-muted mb-3">
-
                 There are no orders in this status.
-
             </p>
 
             <a href="{% url 'admin_orders' %}"
@@ -642,21 +799,82 @@ Received Orders | Camura.in
 
 </div>
 
-<!-- MOBILE / TABLE RESPONSIVE -->
+<!-- =====================================================
+     PAGE CSS
+====================================================== -->
 
 <style>
 
-    .card {
-        border-radius: 12px;
+    .status-card {
+        border-radius: 14px;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        min-height: 150px;
     }
+
+
+    .status-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.10) !important;
+    }
+
+
+    .status-card .display-6 {
+        line-height: 1.2;
+        margin-top: 4px;
+    }
+
+
+    .active-status-all {
+        border: 2px solid #212529 !important;
+    }
+
+
+    .active-status-primary {
+        border: 2px solid #0d6efd !important;
+    }
+
+
+    .active-status-warning {
+        border: 2px solid #ffc107 !important;
+    }
+
+
+    .active-status-info {
+        border: 2px solid #0dcaf0 !important;
+    }
+
+
+    .active-status-success {
+        border: 2px solid #198754 !important;
+    }
+
+
+    .active-status-danger {
+        border: 2px solid #dc3545 !important;
+    }
+
+
+    .order-card {
+        border-radius: 14px;
+        overflow: hidden;
+    }
+
+
+    .order-card .card-header {
+        background: #ffffff;
+    }
+
 
     .btn {
         border-radius: 8px;
     }
 
+
     .badge {
         font-weight: 500;
     }
+
 
     @media (max-width: 576px) {
 
@@ -665,9 +883,36 @@ Received Orders | Camura.in
             padding-right: 12px;
         }
 
-        .status-filter .btn {
-            width: 100%;
+
+        .status-card {
+            min-height: 135px;
         }
+
+
+        .status-card .card-body {
+            padding: 18px 6px !important;
+        }
+
+
+        .status-card .display-6 {
+            font-size: 2rem;
+        }
+
+
+        .status-card .fw-semibold {
+            font-size: 14px;
+        }
+
+
+        .status-card i {
+            font-size: 1.7rem !important;
+        }
+
+
+        .order-card .card-body {
+            padding: 15px;
+        }
+
 
         table {
             font-size: 14px;
