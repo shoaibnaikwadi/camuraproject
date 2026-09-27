@@ -281,6 +281,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
     'widget_tweaks',
+    # "django.contrib.sites",
     'django.contrib.sitemaps',
     'home.apps.HomeConfig',  # profile after signup
     'blog',

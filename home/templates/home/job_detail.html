@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ job.title }} | Careers at Camura
+{% endblock %}
+
+{% block content %}
+
+{% if job_schema %}
+<script type="application/ld+json">
+{{ job_schema|safe }}
+</script>
+{% endif %}
+
+<div class="container py-5">
+
+    <a href="{% url 'careers' %}"
+       class="btn btn-outline-secondary mb-4">
+        <i class="bi bi-arrow-left"></i>
+        All Job Openings
+    </a>
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body p-4">
+
+            <h1 class="fw-bold mb-3">
+                {{ job.title }}
+            </h1>
+
+            <div class="d-flex flex-wrap gap-2 mb-4">
+
+                <span class="badge bg-primary">
+                    {{ job.job_type }}
+                </span>
+
+                <span class="badge bg-light text-dark border">
+                    {{ job.location }}
+                </span>
+
+                <span class="badge bg-light text-dark border">
+                    {{ job.experience }}
+                </span>
+
+            </div>
+
+            <p>
+                <strong>Posted:</strong>
+                {{ job.created_at|date:"d M Y" }}
+            </p>
+
+            <p>
+                <strong>Vacancies:</strong>
+                {{ job.vacancies }}
+            </p>
+
+            <h5 class="fw-bold mt-4">Job Description</h5>
+            <p>{{ job.description|linebreaksbr }}</p>
+
+            <h5 class="fw-bold mt-4">Responsibilities</h5>
+            <p>{{ job.responsibilities|linebreaksbr }}</p>
+
+            <h5 class="fw-bold mt-4">Requirements</h5>
+            <p>{{ job.requirements|linebreaksbr }}</p>
+
+            <h5 class="fw-bold mt-4">Qualification</h5>
+            <p>{{ job.qualification }}</p>
+
+            {% if job.salary %}
+            <p>
+                <strong>Salary:</strong>
+                {{ job.salary }}
+            </p>
+            {% endif %}
+
+            {% if job.last_date %}
+            <p>
+                <strong>Last Date:</strong>
+                {{ job.last_date|date:"d M Y" }}
+            </p>
+            {% endif %}
+
+            {% if job_schema %}
+            <a href="/engineer/register/"
+               class="btn btn-primary btn-lg mt-3">
+                Apply Now
+                <i class="bi bi-arrow-right"></i>
+            </a>
+            {% else %}
+            <div class="alert alert-secondary mt-3">
+                Applications for this vacancy are closed.
+            </div>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

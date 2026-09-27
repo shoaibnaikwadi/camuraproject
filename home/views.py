@@ -3238,3 +3238,79 @@ def careers(request):
     jobs = JobOpening.objects.filter(is_active=True).order_by("-created_at")
 
     return render(request, "home/careers.html", {"jobs": jobs})
+
+
+
+
+import json
+from html import escape
+
+from django.shortcuts import get_object_or_404, render
+from django.utils import timezone
+
+from .models import JobOpening
+
+
+def job_detail(request, job_id):
+
+    job = get_object_or_404(
+        JobOpening,
+        id=job_id,
+        is_active=True
+    )
+
+    if job.last_date and job.last_date < timezone.localdate():
+        job_schema = None
+
+    else:
+        description = (
+            f"<p>{escape(job.description)}</p>"
+            f"<p>Responsibilities: {escape(job.responsibilities)}</p>"
+            f"<p>Requirements: {escape(job.requirements)}</p>"
+            f"<p>Qualification: {escape(job.qualification)}</p>"
+            f"<p>Experience: {escape(job.experience)}</p>"
+        )
+
+        schema = {
+            "@context": "https://schema.org",
+            "@type": "JobPosting",
+            "title": job.title,
+            "description": description,
+            "identifier": {
+                "@type": "PropertyValue",
+                "name": "Camura",
+                "value": str(job.id)
+            },
+            "datePosted": job.created_at.date().isoformat(),
+            "employmentType": job.job_type.upper().replace(" ", "_"),
+            "hiringOrganization": {
+                "@type": "Organization",
+                "name": "N S Corporation",
+                "sameAs": "https://camura.in"
+            },
+            "jobLocation": {
+                "@type": "Place",
+                "address": {
+                    "@type": "PostalAddress",
+                    "addressLocality": job.location,
+                    "addressRegion": "Maharashtra",
+                    "addressCountry": "IN"
+                }
+            }
+        }
+
+        if job.last_date:
+            schema["validThrough"] = (
+                job.last_date.isoformat() + "T23:59:59+05:30"
+            )
+
+        job_schema = json.dumps(schema)
+
+    return render(
+        request,
+        "home/job_detail.html",
+        {
+            "job": job,
+            "job_schema": job_schema
+        }
+    )

@@ -185,11 +185,17 @@
 
                         <div class="mt-auto pt-3 border-top">
 
-                            <a href="http://127.0.0.1:8000/engineer/register/"
+                            <a href="https://camura.in/engineer/register/"
                                class="btn btn-primary w-100">
 
                                 Apply Now
                                 <i class="bi bi-arrow-right ms-1"></i>
+
+                            </a>
+                            <a href="{% url 'job_detail' job.id %}"
+                                class="btn btn-outline-primary w-100 mt-2">
+
+                                View Job Details
 
                             </a>
 

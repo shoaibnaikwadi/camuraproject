@@ -6,6 +6,19 @@ from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
 
 from . import views
+from django.contrib.sitemaps.views import sitemap
+
+from home.sitemaps import (
+    StaticViewSitemap,
+    ProductSitemap,
+    JobOpeningSitemap,
+)
+
+sitemaps = {
+    "static": StaticViewSitemap,
+    "products": ProductSitemap,
+    "jobs": JobOpeningSitemap,
+}
 
 
 urlpatterns = [
@@ -331,6 +344,10 @@ urlpatterns = [
     
     
     path("careers/", views.careers, name="careers"),
+    
+    path("careers/<int:job_id>/", views.job_detail, name="job_detail"),
+    
+    path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="django_sitemap",),
 ]
 
 
