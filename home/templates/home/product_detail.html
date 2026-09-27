@@ -45,7 +45,7 @@
       </div>
 
       <!-- QUANTITY SELECTOR & ACTION BUTTONS -->
-      <form action="{% url 'add_to_cart' combo.id %}" method="post" class="mb-2 d-flex gap-2 align-items-center">
+      <form action="{% url 'add_to_cart' 'combo' combo.id %}" method="post" class="mb-2 d-flex gap-2 align-items-center">
         {% csrf_token %}
         <label class="mb-0 me-2">Quantity:</label>
         <div class="input-group" style="max-width:120px;">
