@@ -762,6 +762,45 @@
 
         }
 
+        /* Bajaj Finance Blinking Banner */
+
+.bajaj-finance-banner {
+    background: linear-gradient(90deg, #0033a0, #007bff);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    border-bottom: 2px solid #ffc107;
+}
+
+.finance-blink {
+    display: inline-block;
+    animation: financeFlash 1.5s ease-in-out infinite;
+}
+
+@keyframes financeFlash {
+    0%, 100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.3;
+    }
+}
+
+/* Mobile Responsive */
+@media (max-width: 576px) {
+    .bajaj-finance-banner {
+        font-size: 12px;
+    }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .finance-blink {
+        animation: none;
+    }
+}
+
     </style>
 
 
@@ -1313,6 +1352,15 @@
 
 </nav>
 
+
+<!-- Bajaj Finance Offer Banner -->
+<div class="bajaj-finance-banner text-center py-2 px-2">
+    <span class="finance-blink">
+        💳 Bajaj Finance Available!
+        Easy EMI on All CCTV Products Above ₹10,000
+        🎉
+    </span>
+</div>
 
 
 <!-- =========================================================
