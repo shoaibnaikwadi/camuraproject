@@ -1,9 +1,10 @@
+
 from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
 from django.utils import timezone
 from django.db.models import Q
 
-from .models import ComboProduct, JobOpening
+from .models import Product, JobOpening
 
 
 class StaticViewSitemap(Sitemap):
@@ -35,19 +36,18 @@ class ProductSitemap(Sitemap):
     changefreq = "daily"
 
     def items(self):
-        return ComboProduct.objects.all()
+        # Include active products only
+        return Product.objects.filter(is_active=True)
 
     def location(self, obj):
         return reverse(
             "product_detail",
-            args=[obj.pk]
+            args=[obj.pk],
         )
 
     def lastmod(self, obj):
-        if hasattr(obj, "updated_at"):
-            return obj.updated_at
-
-        return None
+        # Use updated_at when the model provides it
+        return getattr(obj, "updated_at", None)
 
 
 class JobOpeningSitemap(Sitemap):
@@ -67,7 +67,7 @@ class JobOpeningSitemap(Sitemap):
     def location(self, obj):
         return reverse(
             "job_detail",
-            args=[obj.pk]
+            args=[obj.pk],
         )
 
     def lastmod(self, obj):

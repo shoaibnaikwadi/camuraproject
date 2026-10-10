@@ -1,429 +1,758 @@
+
 {% extends 'base.html' %}
 {% load static %}
 
-{% block content %}
+{% block title %}CCTV Camera Packages & Security Products | Camura{% endblock %}
 
 {% block meta %}
-{{ block.super }}
-
-<meta name="description"
-  content="Shop CCTV combo packages with camera, DVR, hard disk and installation. Best CCTV deals online.">
+    {{ block.super }}
+    <meta name="description"
+          content="Explore CCTV camera packages from Hikvision, Dahua and other brands. Filter HD and IP CCTV kits by camera quantity and price at Camura.">
+    <meta name="robots" content="index, follow">
 {% endblock %}
 
+{% block content %}
 
-<div class="container mt-5">
+<div class="container py-4 py-md-5">
 
-  <h1 class="text-center mb-4">Best CCTV Packages</h1>
-
-  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-
-    {% for combo in combos %}
-
-    <div class="col">
-
-      <div class="card h-100 shadow-sm product-card position-relative">
-
-        <!-- BADGE -->
-        {% if combo.is_best_seller %}
-
-        <span class="badge bg-danger position-absolute top-0 start-0 m-2">
-          Best Seller
+    <!-- PAGE HEADER -->
+    <header class="text-center mb-4">
+        <span class="text-primary fw-semibold small text-uppercase">
+            Camura CCTV Store
         </span>
 
-        {% elif combo.is_new %}
+        <h1 class="fw-bold mt-2 mb-2">
+            CCTV Camera Packages
+        </h1>
 
-        <span class="badge bg-success position-absolute top-0 start-0 m-2">
-          New
+        <p class="text-muted mb-0">
+            Find the right security package for your home, shop or office.
+        </p>
+    </header>
+
+    <!-- SEARCH BAR AND FILTERS -->
+    <section class="search-filter-panel mb-4 mb-md-5"
+             aria-label="Search and filter CCTV packages">
+
+        <form id="product-filter-form"
+              method="get"
+              action="{% url 'product_list' %}">
+
+            <!-- SEARCH BAR -->
+            <label for="product-search" class="form-label fw-semibold">
+                Search CCTV Packages
+            </label>
+
+            <div class="input-group search-input-group">
+                <span class="input-group-text bg-white">
+                    <i class="bi bi-search" aria-hidden="true"></i>
+                </span>
+
+                <input
+                    type="search"
+                    id="product-search"
+                    name="q"
+                    class="form-control"
+                    placeholder="Search by product name, brand or SKU..."
+                    value="{{ selected_query }}"
+                    aria-label="Search CCTV packages"
+                >
+
+                <button type="submit" class="btn btn-primary px-4">
+                    Search
+                </button>
+            </div>
+
+            <!-- FILTERS -->
+            <div class="filter-heading d-flex align-items-center gap-2 mt-4 mb-3">
+                <i class="bi bi-sliders2-vertical text-primary"
+                   aria-hidden="true"></i>
+
+                <h2 class="h6 fw-bold mb-0">Filter Packages</h2>
+            </div>
+
+            <div class="row g-3">
+
+                <!-- BRAND -->
+                <div class="col-6 col-lg-3">
+                    <label for="brand-filter" class="form-label">
+                        Brand
+                    </label>
+
+                    <select name="brand"
+                            id="brand-filter"
+                            class="form-select auto-filter">
+                        <option value="">All Brands</option>
+
+                        {% for item_brand in brands %}
+                            <option value="{{ item_brand }}"
+                                {% if selected_brand == item_brand %}selected{% endif %}>
+                                {{ item_brand }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- CAMERA TYPE -->
+                <div class="col-6 col-lg-3">
+                    <label for="camera-type-filter" class="form-label">
+                        Camera Type
+                    </label>
+
+                    <select name="camera_type"
+                            id="camera-type-filter"
+                            class="form-select auto-filter">
+                        <option value="">All Types</option>
+
+                        {% for value, label in camera_type_choices %}
+                            <option value="{{ value }}"
+                                {% if selected_camera_type == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- CAMERA QUANTITY -->
+                <div class="col-6 col-lg-3">
+                    <label for="quantity-filter" class="form-label">
+                        Number of Cameras
+                    </label>
+
+                    <select name="camera_quantity"
+                            id="quantity-filter"
+                            class="form-select auto-filter">
+                        <option value="">All Quantities</option>
+
+                        {% for qty in camera_quantities %}
+                            <option value="{{ qty }}"
+                                {% if selected_camera_quantity == qty|stringformat:"s" %}selected{% endif %}>
+                                {{ qty }} Cameras
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- SORT -->
+                <div class="col-6 col-lg-3">
+                    <label for="sort-filter" class="form-label">
+                        Sort By
+                    </label>
+
+                    <select name="sort"
+                            id="sort-filter"
+                            class="form-select auto-filter">
+                        <option value="newest"
+                            {% if selected_sort == "newest" %}selected{% endif %}>
+                            Newest First
+                        </option>
+
+                        <option value="quantity_low"
+                            {% if selected_sort == "quantity_low" %}selected{% endif %}>
+                            Cameras: Low to High
+                        </option>
+
+                        <option value="quantity_high"
+                            {% if selected_sort == "quantity_high" %}selected{% endif %}>
+                            Cameras: High to Low
+                        </option>
+
+                        <option value="brand_asc"
+                            {% if selected_sort == "brand_asc" %}selected{% endif %}>
+                            Brand: A to Z
+                        </option>
+
+                        <option value="brand_desc"
+                            {% if selected_sort == "brand_desc" %}selected{% endif %}>
+                            Brand: Z to A
+                        </option>
+
+                        <option value="price_low"
+                            {% if selected_sort == "price_low" %}selected{% endif %}>
+                            Price: Low to High
+                        </option>
+
+                        <option value="price_high"
+                            {% if selected_sort == "price_high" %}selected{% endif %}>
+                            Price: High to Low
+                        </option>
+
+                        <option value="name_asc"
+                            {% if selected_sort == "name_asc" %}selected{% endif %}>
+                            Name: A to Z
+                        </option>
+                    </select>
+                </div>
+
+                <!-- FILTER INFORMATION AND RESET -->
+                <div class="col-12 d-flex flex-wrap align-items-center justify-content-between gap-2">
+                    <small class="text-muted">
+                        <i class="bi bi-lightning-charge me-1"
+                           aria-hidden="true"></i>
+                        Filters update automatically when changed.
+                    </small>
+
+                    <a href="{% url 'product_list' %}"
+                       class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-arrow-counterclockwise me-1"
+                           aria-hidden="true"></i>
+                        Clear Search &amp; Filters
+                    </a>
+                </div>
+
+            </div>
+        </form>
+    </section>
+
+    <!-- RESULTS HEADING -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <h2 class="h5 fw-bold mb-0">
+            Available CCTV Packages
+        </h2>
+
+        <span class="text-muted small">
+            {{ combos|length }}
+            package{{ combos|length|pluralize }} found
         </span>
+    </div>
 
-        {% endif %}
+    <!-- PRODUCT GRID -->
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
 
+        {% for combo in combos %}
+        <div class="col">
 
-        <!-- PRODUCT IMAGE -->
-        <a href="{% url 'product_detail' combo.id %}">
+            <article class="card h-100 border-0 shadow-sm product-card">
 
-          <div class="product-img-wrap">
+                <!-- PRODUCT IMAGE -->
+                <a href="{% url 'product_detail' combo.pk %}"
+                   class="product-image-link"
+                   aria-label="View {{ combo.name }}">
 
-            <img
-              src="{% if combo.image %}{{ combo.image.url }}{% else %}{% static 'img/default-product.jpg' %}{% endif %}"
-              alt="{{ combo.name }}"
-              loading="lazy">
+                    <div class="product-img-wrap">
+                        {% if combo.main_image %}
+                            <img
+                                src="{{ combo.main_image.url }}"
+                                alt="{{ combo.name }} CCTV camera package"
+                                loading="lazy"
+                                width="400"
+                                height="300"
+                            >
+                        {% else %}
+                            <img
+                                src="{% static 'img/no-image.png' %}"
+                                alt="Image unavailable for {{ combo.name }}"
+                                loading="lazy"
+                                width="400"
+                                height="300"
+                            >
+                        {% endif %}
+                    </div>
+                </a>
 
-          </div>
+                <!-- PRODUCT DETAILS -->
+                <div class="card-body d-flex flex-column p-3">
 
-        </a>
+                    <h3 class="product-title">
+                        <a href="{% url 'product_detail' combo.pk %}"
+                           class="text-decoration-none text-dark">
+                            {{ combo.name }}
+                        </a>
+                    </h3>
 
+                    {% if combo.sku %}
+                        <p class="text-muted small mb-2">
+                            SKU: {{ combo.sku }}
+                        </p>
+                    {% endif %}
 
-        <div class="card-body d-flex flex-column">
+                    <!-- PRODUCT ATTRIBUTE BADGES -->
+                    <div class="d-flex flex-wrap gap-1 mb-3">
 
-          <!-- PRODUCT NAME -->
-          <h6 class="card-title">
+                        {% if combo.brand %}
+                            <span class="product-badge brand-badge">
+                                <i class="bi bi-patch-check me-1"
+                                   aria-hidden="true"></i>
+                                {{ combo.brand }}
+                            </span>
+                        {% endif %}
 
-            <a href="{% url 'product_detail' combo.id %}"
-               class="text-decoration-none text-dark">
+                        {% if combo.camera_type %}
+                            <span class="product-badge technology-badge">
+                                {{ combo.get_camera_type_display }}
+                            </span>
+                        {% endif %}
 
-              {{ combo.name }}
+                        {% if combo.camera_quantity > 0 %}
+                            <span class="product-badge quantity-badge">
+                                <i class="bi bi-camera-video me-1"
+                                   aria-hidden="true"></i>
+                                {{ combo.camera_quantity }} Cameras
+                            </span>
+                        {% endif %}
 
-            </a>
+                    </div>
 
-          </h6>
+                    <!-- DESCRIPTION -->
+                    {% if combo.description %}
+                        <p class="product-description text-muted small">
+                            {{ combo.description|striptags|truncatechars:100 }}
+                        </p>
+                    {% endif %}
 
+                    <!-- PRICE -->
+                    <div class="product-price mt-auto mb-3">
+                        <span class="text-success fw-bold fs-4">
+                            ₹{{ combo.price|floatformat:2 }}
+                        </span>
+                    </div>
 
-          <!-- PRICE -->
-          {% if combo.mrp %}
+                    <!-- STOCK STATUS -->
+                    {% if combo.available_stock > 0 %}
+                        <p class="small text-success mb-3">
+                            <i class="bi bi-check-circle-fill me-1"
+                               aria-hidden="true"></i>
+                            In stock
+                        </p>
+                    {% else %}
+                        <p class="small text-danger mb-3">
+                            <i class="bi bi-x-circle-fill me-1"
+                               aria-hidden="true"></i>
+                            Currently unavailable
+                        </p>
+                    {% endif %}
 
-          <div class="mt-auto mb-2">
+                    <!-- ADD TO CART AND SHARE -->
+                    <div class="d-flex align-items-center gap-2">
 
-            <span class="text-muted text-decoration-line-through small">
-              ₹{{ combo.mrp }}
-            </span>
+                        <form
+                            method="post"
+                            action="{% url 'add_to_cart' product_type=combo.product_type product_id=combo.pk %}"
+                            class="flex-grow-1"
+                        >
+                            {% csrf_token %}
 
-            <br>
+                            <input type="hidden"
+                                   name="quantity"
+                                   value="1">
 
-            <span class="text-success fw-bold fs-5">
-              ₹{{ combo.total_price }}
-            </span>
+                            <button
+                                type="submit"
+                                class="btn btn-primary btn-sm w-100"
+                                {% if combo.available_stock < 1 %}disabled{% endif %}
+                            >
+                                <i class="bi bi-cart-plus me-1"
+                                   aria-hidden="true"></i>
+                                Add to Cart
+                            </button>
+                        </form>
 
-            {% if combo.discount_percentage %}
+                        <button
+                            type="button"
+                            class="btn btn-outline-primary btn-sm share-btn"
+                            data-product-name="{{ combo.name }}"
+                            data-product-url="{% url 'product_detail' combo.pk %}"
+                            onclick="shareProductFromButton(this)"
+                            title="Share product"
+                            aria-label="Share {{ combo.name }}"
+                        >
+                            <i class="bi bi-share"
+                               aria-hidden="true"></i>
+                        </button>
 
-            <span class="text-danger small ms-1">
-              {{ combo.discount_percentage }}% OFF
-            </span>
+                    </div>
 
-            {% endif %}
+                    <!-- BUY NOW -->
+                    <form
+                        method="post"
+                        action="{% url 'buy_now' combo.pk %}"
+                        class="mt-2"
+                    >
+                        {% csrf_token %}
 
-          </div>
+                        <input type="hidden"
+                               name="qty"
+                               value="1">
 
-          {% else %}
+                        <button
+                            type="submit"
+                            class="btn btn-warning btn-sm w-100"
+                            {% if combo.available_stock < 1 %}disabled{% endif %}
+                        >
+                            <i class="bi bi-lightning-charge-fill me-1"
+                               aria-hidden="true"></i>
+                            Buy Now
+                        </button>
+                    </form>
 
-          <div class="mt-auto mb-2">
+                    <!-- VIEW DETAILS -->
+                    <a
+                        href="{% url 'product_detail' combo.pk %}"
+                        class="btn btn-outline-secondary btn-sm w-100 mt-2"
+                    >
+                        View Details
+                        <i class="bi bi-arrow-right ms-1"
+                           aria-hidden="true"></i>
+                    </a>
 
-            <span class="text-success fw-bold fs-5">
-              ₹{{ combo.total_price }}
-            </span>
-
-          </div>
-
-          {% endif %}
-
-
-          <!-- ACTION BUTTONS -->
-          <div class="d-flex gap-2 mt-2">
-
-            <!-- ADD TO CART -->
-            <form
-              action="{% url 'add_to_cart' 'combo' combo.id %}"
-              method="post"
-              class="flex-fill">
-
-              {% csrf_token %}
-
-              <input
-                type="hidden"
-                name="qty"
-                value="1">
-
-              <button
-                type="submit"
-                class="btn btn-success btn-sm w-100">
-
-                Add to Cart
-
-              </button>
-
-            </form>
-
-
-            <!-- SHARE BUTTON -->
-            <button
-              type="button"
-              class="btn btn-outline-primary btn-sm share-btn"
-              onclick="shareProduct(
-                '{{ combo.name|escapejs }}',
-                '{% url 'product_detail' combo.id %}'
-              )"
-              title="Share product"
-              aria-label="Share {{ combo.name }}">
-
-              <i class="bi bi-share"></i>
-
-            </button>
-
-          </div>
-
+                </div>
+            </article>
         </div>
 
-      </div>
+        {% empty %}
+        <!-- NO RESULTS -->
+        <div class="col-12">
+            <div class="empty-products text-center p-4 p-md-5 rounded-4">
+
+                <i class="bi bi-camera-video display-4 text-secondary"
+                   aria-hidden="true"></i>
+
+                <h2 class="h5 fw-bold mt-3">
+                    No matching CCTV packages found
+                </h2>
+
+                <p class="text-muted mb-3">
+                    Try another brand, camera type or camera quantity.
+                </p>
+
+                <a href="{% url 'product_list' %}"
+                   class="btn btn-outline-primary">
+                    View All Packages
+                </a>
+
+            </div>
+        </div>
+        {% endfor %}
 
     </div>
-
-    {% empty %}
-
-    <!-- NO PRODUCTS -->
-    <div class="col-12">
-
-      <div class="alert alert-info text-center">
-        No CCTV packages available at the moment.
-      </div>
-
-    </div>
-
-    {% endfor %}
-
-  </div>
-
 </div>
 
-
+<!-- PAGE CSS -->
 <style>
+    .search-filter-panel {
+        padding: 22px;
+        background: #fff;
+        border: 1px solid #e8edf3;
+        border-radius: 16px;
+        box-shadow: 0 5px 22px rgba(20, 40, 70, .06);
+    }
 
-/* ================================
-   PRODUCT CARD
-================================ */
+    .search-input-group .form-control,
+    .search-input-group .input-group-text,
+    .search-input-group .btn {
+        min-height: 48px;
+    }
 
-.product-card {
-  transition:
-    transform .3s ease,
-    box-shadow .3s ease;
-}
+    .search-input-group .input-group-text {
+        color: #6c757d;
+        border-right: 0;
+    }
 
-.product-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 25px rgba(0, 0, 0, .15);
-}
+    .search-input-group .form-control {
+        border-left: 0;
+        box-shadow: none;
+    }
 
+    .search-input-group .form-control:focus {
+        border-color: #dee2e6;
+        box-shadow: none;
+    }
 
-/* ================================
-   PRODUCT IMAGE
-================================ */
+    .filter-heading {
+        padding-top: 18px;
+        border-top: 1px solid #edf0f4;
+    }
 
-.product-img-wrap {
-  height: 180px;
-  width: 100%;
-  background: #f8f9fa;
+    .search-filter-panel .form-label {
+        margin-bottom: 7px;
+        color: #344054;
+        font-size: .875rem;
+        font-weight: 600;
+    }
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    .search-filter-panel .form-select {
+        min-height: 43px;
+        border-color: #dfe4ea;
+        border-radius: 8px;
+        font-size: .9rem;
+    }
 
-  overflow: hidden;
-}
+    .search-filter-panel .btn {
+        min-height: 38px;
+        border-radius: 8px;
+        font-weight: 600;
+    }
 
-.product-img-wrap img {
-  max-height: 100%;
-  max-width: 100%;
+    .product-card {
+        overflow: hidden;
+        border-radius: 14px;
+        transition: transform .25s ease, box-shadow .25s ease;
+    }
 
-  width: auto;
-  height: auto;
+    .product-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, .12) !important;
+    }
 
-  object-fit: contain;
+    .product-image-link {
+        display: block;
+        text-decoration: none;
+    }
 
-  transition: transform .3s ease;
-}
+    .product-img-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 190px;
+        padding: 15px;
+        overflow: hidden;
+        background: #f8f9fa;
+    }
 
-.product-card:hover .product-img-wrap img {
-  transform: scale(1.05);
-}
+    .product-img-wrap img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        transition: transform .3s ease;
+    }
 
+    .product-card:hover .product-img-wrap img {
+        transform: scale(1.04);
+    }
 
-/* ================================
-   SHARE BUTTON
-================================ */
+    .product-title {
+        display: -webkit-box;
+        overflow: hidden;
+        margin-bottom: .4rem;
+        font-size: 1rem;
+        font-weight: 700;
+        line-height: 1.5;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+    }
 
-.share-btn {
-  width: 42px;
-  min-width: 42px;
-  height: 31px;
+    .product-title a:hover {
+        color: #0d6efd !important;
+    }
 
-  padding: 0;
+    .product-description {
+        min-height: 3em;
+        overflow-wrap: anywhere;
+        line-height: 1.5;
+    }
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+    .product-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 8px;
+        border-radius: 6px;
+        font-size: .72rem;
+        font-weight: 600;
+        line-height: 1.25;
+    }
 
+    .brand-badge {
+        color: #344054;
+        background: #f1f4f8;
+    }
 
-/* Share icon */
+    .technology-badge {
+        color: #075985;
+        background: #e0f2fe;
+    }
 
-.share-btn i {
-  font-size: 15px;
-}
+    .quantity-badge {
+        color: #166534;
+        background: #dcfce7;
+    }
 
+    .product-price {
+        padding-top: 12px;
+        border-top: 1px solid #f0f0f0;
+    }
 
-/* Mobile */
+    .product-card .btn {
+        border-radius: 7px;
+        font-weight: 600;
+    }
 
-@media (max-width: 576px) {
+    .share-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 40px;
+        width: 40px;
+        height: 32px;
+        padding: 0;
+    }
 
-  .product-img-wrap {
-    height: 200px;
-  }
+    .product-card button:disabled {
+        cursor: not-allowed;
+        opacity: .6;
+    }
 
-  .share-btn {
-    width: 44px;
-    min-width: 44px;
-  }
+    .empty-products {
+        border: 1px dashed #ced4da;
+        background: #f8f9fa;
+    }
 
-}
+    @media (max-width: 575.98px) {
+        .search-filter-panel {
+            padding: 15px;
+            border-radius: 12px;
+        }
 
+        .search-input-group .btn {
+            padding-right: 13px !important;
+            padding-left: 13px !important;
+        }
+
+        .product-img-wrap {
+            height: 210px;
+        }
+
+        .product-card {
+            border-radius: 12px;
+        }
+
+        .product-title {
+            font-size: .95rem;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .product-card,
+        .product-img-wrap img {
+            transition: none;
+        }
+
+        .product-card:hover {
+            transform: none;
+        }
+    }
 </style>
 
-
-<!-- ================================
-     SHARE PRODUCT JAVASCRIPT
-================================ -->
-
+<!-- AUTOMATIC FILTERING -->
 <script>
+document.addEventListener("DOMContentLoaded", function () {
+    const filterForm = document.getElementById("product-filter-form");
 
-function shareProduct(name, productUrl) {
+    if (!filterForm) {
+        return;
+    }
 
-  // Convert Django relative URL into absolute URL
-  const url = new URL(
-    productUrl,
-    window.location.origin
-  ).href;
+    const filterFields = filterForm.querySelectorAll(".auto-filter");
 
-
-  /* --------------------------------
-     NATIVE MOBILE SHARE
-  -------------------------------- */
-
-  if (navigator.share) {
-
-    navigator.share({
-
-      title: name,
-
-      text: 'Check out this CCTV package: ' + name,
-
-      url: url
-
-    }).catch(function(error) {
-
-      // User cancelled the share dialog
-      console.log('Share cancelled');
-
+    filterFields.forEach(function (field) {
+        field.addEventListener("change", function () {
+            if (typeof filterForm.requestSubmit === "function") {
+                filterForm.requestSubmit();
+            } else {
+                filterForm.submit();
+            }
+        });
     });
+});
+</script>
 
-    return;
-  }
+<!-- PRODUCT SHARING -->
+<script>
+function shareProductFromButton(button) {
+    const name = button.dataset.productName || "CCTV product";
+    const relativeUrl = button.dataset.productUrl;
 
+    if (!relativeUrl) {
+        alert("The product link is unavailable.");
+        return;
+    }
 
-  /* --------------------------------
-     COPY LINK FALLBACK
-  -------------------------------- */
+    const productUrl = new URL(
+        relativeUrl,
+        window.location.origin
+    ).href;
 
-  if (navigator.clipboard) {
-
-    navigator.clipboard.writeText(url)
-
-      .then(function() {
-
-        showShareMessage(
-          'Product link copied!'
-        );
-
-      })
-
-      .catch(function() {
-
-        fallbackCopy(url);
-
-      });
-
-  } else {
-
-    fallbackCopy(url);
-
-  }
-
+    if (navigator.share) {
+        navigator.share({
+            title: name,
+            text: "Check out this CCTV product from Camura: " + name,
+            url: productUrl
+        }).catch(function (error) {
+            if (error.name !== "AbortError") {
+                copyProductLink(productUrl);
+            }
+        });
+    } else {
+        copyProductLink(productUrl);
+    }
 }
 
-
-/* --------------------------------
-   FALLBACK COPY METHOD
--------------------------------- */
-
-function fallbackCopy(url) {
-
-  const textarea = document.createElement('textarea');
-
-  textarea.value = url;
-
-  textarea.style.position = 'fixed';
-  textarea.style.left = '-9999px';
-
-  document.body.appendChild(textarea);
-
-  textarea.select();
-
-  try {
-
-    document.execCommand('copy');
-
-    showShareMessage(
-      'Product link copied!'
-    );
-
-  } catch (error) {
-
-    alert(
-      'Unable to copy product link. Please copy the URL manually.'
-    );
-
-  }
-
-  document.body.removeChild(textarea);
+function copyProductLink(url) {
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(url)
+            .then(function () {
+                showShareMessage("Product link copied!");
+            })
+            .catch(function () {
+                fallbackCopyProductLink(url);
+            });
+    } else {
+        fallbackCopyProductLink(url);
+    }
 }
 
+function fallbackCopyProductLink(url) {
+    const textarea = document.createElement("textarea");
+    textarea.value = url;
+    textarea.style.position = "fixed";
+    textarea.style.left = "-9999px";
 
-/* --------------------------------
-   SHARE SUCCESS MESSAGE
--------------------------------- */
+    document.body.appendChild(textarea);
+    textarea.select();
+
+    let copied = false;
+
+    try {
+        copied = document.execCommand("copy");
+    } catch (error) {
+        copied = false;
+    }
+
+    textarea.remove();
+
+    if (copied) {
+        showShareMessage("Product link copied!");
+    } else {
+        window.prompt("Copy this product link:", url);
+    }
+}
 
 function showShareMessage(message) {
+    const toast = document.createElement("div");
+    toast.textContent = message;
+    toast.setAttribute("role", "status");
 
-  const toast = document.createElement('div');
+    Object.assign(toast.style, {
+        position: "fixed",
+        bottom: "25px",
+        left: "50%",
+        transform: "translateX(-50%)",
+        background: "#212529",
+        color: "#fff",
+        padding: "11px 18px",
+        borderRadius: "8px",
+        fontSize: "14px",
+        zIndex: "9999",
+        boxShadow: "0 4px 12px rgba(0,0,0,.2)"
+    });
 
-  toast.innerText = message;
+    document.body.appendChild(toast);
 
-  toast.style.position = 'fixed';
-  toast.style.bottom = '25px';
-  toast.style.left = '50%';
-  toast.style.transform = 'translateX(-50%)';
-
-  toast.style.background = '#212529';
-  toast.style.color = '#fff';
-
-  toast.style.padding = '10px 18px';
-
-  toast.style.borderRadius = '6px';
-
-  toast.style.fontSize = '14px';
-
-  toast.style.zIndex = '9999';
-
-  toast.style.boxShadow =
-    '0 4px 12px rgba(0,0,0,.25)';
-
-  document.body.appendChild(toast);
-
-
-  setTimeout(function() {
-
-    toast.style.opacity = '0';
-
-    toast.style.transition = 'opacity .3s';
-
-    setTimeout(function() {
-
-      toast.remove();
-
-    }, 300);
-
-  }, 1800);
-
+    window.setTimeout(function () {
+        toast.remove();
+    }, 2200);
 }
-
 </script>
 
 {% endblock %}

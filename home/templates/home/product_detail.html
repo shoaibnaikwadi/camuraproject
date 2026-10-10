@@ -1,302 +1,1053 @@
+
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{{ combo.name }} - Camura.in{% endblock %}
+{% block title %}{{ product.name }} | CCTV Products | Camura.in{% endblock %}
 
 {% block meta %}
-<meta name="description" content="{{ combo.description|truncatechars:160 }}">
-<meta name="keywords" content="CCTV, Security, {{ combo.name }}">
+<meta name="description"
+      content="{{ product.description|striptags|truncatechars:155 }}">
+
+<meta name="keywords"
+      content="CCTV camera, security camera, CCTV products, {{ product.name }}">
+
+<meta name="robots" content="index, follow">
+
+<meta property="og:title" content="{{ product.name }} | Camura.in">
+<meta property="og:description"
+      content="{{ product.description|striptags|truncatechars:155 }}">
+<meta property="og:type" content="product">
+<meta property="og:url" content="{{ request.build_absolute_uri }}">
+
+{% if product.main_image %}
+<meta property="og:image"
+      content="{{ request.scheme }}://{{ request.get_host }}{{ product.main_image.url }}">
+{% endif %}
 {% endblock %}
 
+
 {% block content %}
-<div class="container mt-5">
 
-  <div class="row">
-    <!-- PRODUCT IMAGE -->
-    <div class="col-lg-5">
-      <div class="product-image-box shadow-sm p-3 rounded">
-        {% if combo.image %}
-        <img src="{{ combo.image.url }}" class="main-product-image" alt="{{ combo.name }}" loading="lazy">
-        {% else %}
-        <img src="{% static 'img/no-image.png' %}" class="main-product-image" alt="No Image" loading="lazy">
-        {% endif %}
-      </div>
-    </div>
+<div class="container py-4 py-lg-5">
 
-    <!-- PRODUCT DETAILS -->
-    <div class="col-lg-7">
-      <h1 class="fw-bold">{{ combo.name }}</h1>
+    <!-- BREADCRUMB -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb small mb-0">
+            <li class="breadcrumb-item">
+                <a href="/" class="text-decoration-none">Home</a>
+            </li>
 
-      {% if combo.is_best_seller %}
-      <span class="badge bg-danger mb-2">Best Seller</span>
-      {% endif %}
+            <li class="breadcrumb-item">
+                <a href="{% url 'product_list' %}"
+                   class="text-decoration-none">
+                    Products
+                </a>
+            </li>
 
-      <!-- PRICE & MRP -->
-      <div class="d-flex align-items-center gap-2 my-2">
-        {% if combo.mrp %}
-        <span class="text-muted text-decoration-line-through">₹{{ combo.mrp }}</span>
-        <span class="text-success h4">₹{{ combo.total_price }}</span>
-        {% if discount %}
-        <span class="text-danger">{{ discount }}% OFF</span>
-        {% endif %}
-        {% else %}
-        <span class="text-success h4">₹{{ combo.total_price }}</span>
-        {% endif %}
-      </div>
-
-      <!-- QUANTITY SELECTOR & ACTION BUTTONS -->
-      <form action="{% url 'add_to_cart' 'combo' combo.id %}" method="post" class="mb-2 d-flex gap-2 align-items-center">
-        {% csrf_token %}
-        <label class="mb-0 me-2">Quantity:</label>
-        <div class="input-group" style="max-width:120px;">
-          <button type="button" class="btn btn-outline-secondary qty-btn" data-action="minus">-</button>
-          <input type="number" name="qty" value="1" min="1" class="form-control text-center">
-          <button type="button" class="btn btn-outline-secondary qty-btn" data-action="plus">+</button>
-        </div>
-        <button class="btn btn-primary action-btn" type="submit">Add to Cart</button>
-      </form>
-      
-      <form action="{% url 'buy_now' combo.id %}" method="post" class="mb-4">
-        {% csrf_token %}
-        <input type="hidden" name="qty" value="1" class="buy-now-qty">
-        <button class="btn btn-warning action-btn" type="submit">Buy Now</button>
-      </form>
-
-
-      <!-- WHAT'S INCLUDED -->
-      
-
-
-      <hr>
-      <h5 class="fw-bold mb-3">📦 What's Included</h5>
-      <ul class="spec-list">
-        <li>
-          <b>Camera Dome:</b> {{ combo.camera_qty }} × {{ combo.camera.get_camera_type_display }}
-          (₹{{ combo.camera.price }} each)
-        </li>
-      
-        {% if combo.cameraBullet %}
-        <li>
-          <b>Camera Bullet:</b> {{ combo.camerabullet_qty }} × {{ combo.cameraBullet.get_camera_type_display }}
-          (₹{{ combo.cameraBullet.price }} each)
-        </li>
-        {% endif %}
-      
-        <li>
-          <b>DVR:</b> {{ combo.dvr.get_resolution_display }} {{ combo.dvr.get_channels_display }}
-          — ₹{{ combo.dvr.price }}
-        </li>
-      
-        {% if combo.hard_disk %}
-        <li>
-          <b>Hard Disk:</b> {{ combo.hard_disk_qty }} × {{ combo.hard_disk.brand }} {{ combo.hard_disk.size }} HDD
-          (₹{{ combo.hard_disk.price }} each)
-        </li>
-        {% endif %}
-      
-        <li>
-          <b>Cable:</b> {{ combo.cable_qty }} × {{ combo.cable.get_length_display }}
-          (₹{{ combo.cable.price }} each)
-        </li>
-      
-        <li>
-          <b>Power Supply:</b> {{ combo.power_qty }} × {{ combo.power.get_range_slug_display }}
-          (₹{{ combo.power.price }} each)
-        </li>
-      
-        <li>
-          <b>BNC Connector:</b> ₹{{ combo.bnc_connector.price }},
-          <b>DC Connector:</b> ₹{{ combo.dc_connector.price }}
-        </li>
-      
-        <li>
-          <b>Installation Charges:</b> ₹{{ combo.installation.price }} (Per Camera)
-        </li>
-      </ul>
-
-
-
-      <!-- BADGES -->
-      <hr>
-      <div class="d-flex gap-3 mb-3">
-        <span class="badge-icon"><i class="fas fa-truck"></i> Free Delivery</span>
-        <span class="badge-icon"><i class="fas fa-money-bill-wave"></i> Pay on Delivery</span>
-        <span class="badge-icon"><i class="fas fa-sync-alt"></i> 10 Day Replacement</span>
-        <span class="badge-icon"><i class="fas fa-shield-alt"></i> 1 Year Warranty</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- REVIEWS ROW -->
-  <div class="row mt-4">
-    <div class="col-12">
-      <hr>
-      <h5>Customer Reviews ({{ combo.reviews.count }})</h5>
-      {% for review in combo.reviews.all %}
-      <div class="border p-2 mb-2 rounded">
-        <div>
-          {% for i in "12345" %}
-          {% if forloop.counter <= review.rating %} <span class="text-warning">★</span>
-            {% else %}
-            <span class="text-secondary">★</span>
+            {% if product.category %}
+            <li class="breadcrumb-item">
+                {{ product.category.name }}
+            </li>
             {% endif %}
+
+            <li class="breadcrumb-item active" aria-current="page">
+                {{ product.name }}
+            </li>
+        </ol>
+    </nav>
+
+
+    <!-- PRODUCT OVERVIEW -->
+    <div class="row g-4 g-lg-5">
+
+        <!-- PRODUCT IMAGE -->
+        <div class="col-12 col-lg-5">
+
+            <div class="product-image-box shadow-sm">
+
+                {% if product.main_image %}
+                <img
+                    src="{{ product.main_image.url }}"
+                    class="main-product-image"
+                    alt="{{ product.name }} CCTV product"
+                    width="600"
+                    height="400"
+                    fetchpriority="high"
+                >
+                {% else %}
+                <img
+                    src="{% static 'img/no-image.png' %}"
+                    class="main-product-image"
+                    alt="{{ product.name }} image unavailable"
+                    width="600"
+                    height="400"
+                    fetchpriority="high"
+                >
+                {% endif %}
+
+            </div>
+
+            <!-- TRUST INFORMATION -->
+            <div class="row g-2 mt-2">
+
+                <div class="col-6">
+                    <div class="trust-item">
+                        <i class="bi bi-shield-check text-success"></i>
+                        <span>Secure Shopping</span>
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <div class="trust-item">
+                        <i class="bi bi-headset text-primary"></i>
+                        <span>Customer Support</span>
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <div class="trust-item">
+                        <i class="bi bi-credit-card text-success"></i>
+                        <span>Online Payment</span>
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <div class="trust-item">
+                        <i class="bi bi-box-seam text-primary"></i>
+                        <span>
+                            {% if product.product_type == "combo" %}
+                                Combo Kit
+                            {% else %}
+                                Individual Product
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PRODUCT DETAILS -->
+        <div class="col-12 col-lg-7">
+
+            {% if product.category %}
+            <div class="small text-muted mb-2">
+                {{ product.category.name }}
+            </div>
+            {% endif %}
+
+            <h1 class="product-title fw-bold mb-3">
+                {{ product.name }}
+            </h1>
+
+            {% if product.sku %}
+            <p class="small text-muted mb-3">
+                SKU: {{ product.sku }}
+            </p>
+            {% endif %}
+
+            {% if product.description %}
+            <div class="text-muted product-description mb-3">
+                {{ product.description|linebreaksbr }}
+            </div>
+            {% endif %}
+
+
+            <!-- PRICE -->
+            <div class="price-panel mb-4">
+                <div class="current-price">
+                    ₹{{ product.price|floatformat:2 }}
+                </div>
+
+                <p class="small text-muted mb-0 mt-2">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Price shown in Indian Rupees (INR).
+                </p>
+            </div>
+
+
+            <!-- STOCK STATUS -->
+            {% if product.available_stock > 0 %}
+
+            <div class="stock-status stock-available mb-3">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                In Stock
+
+                {% if user.is_authenticated and user.is_staff %}
+                  <span class="text-muted small">
+                      ({{ product.available_stock }} available)
+                  </span>
+                {% endif %}
+            </div>
+
+            {% else %}
+
+            <div class="stock-status stock-unavailable mb-3">
+                <i class="bi bi-x-circle-fill me-2"></i>
+                Currently Out of Stock
+            </div>
+
+            {% endif %}
+
+
+            <!-- ADD TO CART -->
+            <div class="purchase-panel mb-3">
+
+                <form
+                    action="{% url 'add_to_cart' product_type=product.product_type product_id=product.pk %}"
+                    method="post"
+                    id="addToCartForm"
+                >
+                    {% csrf_token %}
+
+                    <label for="productQty" class="form-label fw-semibold">
+                        Select Quantity
+                    </label>
+
+                    <div class="d-flex flex-wrap align-items-center gap-3">
+
+                        <div class="quantity-control">
+
+                            <button
+                                type="button"
+                                class="qty-btn"
+                                data-action="minus"
+                                aria-label="Decrease quantity"
+                                {% if product.available_stock < 1 %}disabled{% endif %}
+                            >
+                                <i class="bi bi-dash-lg"></i>
+                            </button>
+
+                            <input
+                                type="number"
+                                id="productQty"
+                                name="qty"
+                                value="1"
+                                min="1"
+                                max="{{ product.available_stock }}"
+                                step="1"
+                                inputmode="numeric"
+                                class="quantity-input"
+                                aria-label="Product quantity"
+                                required
+                                {% if product.available_stock < 1 %}disabled{% endif %}
+                            >
+
+                            <button
+                                type="button"
+                                class="qty-btn"
+                                data-action="plus"
+                                aria-label="Increase quantity"
+                                {% if product.available_stock < 1 %}disabled{% endif %}
+                            >
+                                <i class="bi bi-plus-lg"></i>
+                            </button>
+
+                        </div>
+
+                        <span class="small text-muted">
+                            Select the quantity you need.
+                        </span>
+
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary btn-lg w-100 mt-3 action-btn"
+                        {% if product.available_stock < 1 %}disabled{% endif %}
+                    >
+                        <i class="bi bi-cart-plus me-2"></i>
+                        Add to Cart
+                    </button>
+
+                </form>
+
+
+                <!-- BUY NOW: VISIBLE FOR BOTH PRODUCT TYPES -->
+                <form
+                    action="{% url 'buy_now' product.pk %}"
+                    method="post"
+                    id="buyNowForm"
+                    class="mt-2"
+                >
+                    {% csrf_token %}
+
+                    <input
+                        type="hidden"
+                        name="qty"
+                        value="1"
+                        id="buyNowQty"
+                    >
+
+                    <button
+                        type="submit"
+                        class="btn btn-warning btn-lg w-100 action-btn"
+                        {% if product.available_stock < 1 %}disabled{% endif %}
+                    >
+                        <i class="bi bi-lightning-charge-fill me-2"></i>
+                        Buy Now
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <!-- PURCHASE INFORMATION -->
+            <div class="purchase-notice mt-3">
+                <div class="d-flex gap-2 align-items-start">
+                    <i class="bi bi-truck text-primary fs-5"></i>
+
+                    <div>
+                        <strong>Delivery Information</strong>
+
+                        <p class="small text-muted mb-0 mt-1">
+                            Confirm delivery availability and applicable
+                            charges during checkout.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="purchase-notice mt-2">
+                <div class="d-flex gap-2 align-items-start">
+                    <i class="bi bi-tools text-success fs-5"></i>
+
+                    <div>
+                        <strong>Support and Assistance</strong>
+
+                        <p class="small text-muted mb-0 mt-1">
+                            Contact Camura for help with product selection,
+                            installation requirements and support.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- COMBO COMPONENTS -->
+    {% if product.product_type == "combo" %}
+
+    <section class="content-section mt-5">
+
+        <div class="section-heading">
+            <h2 class="h4 fw-bold mb-1">
+                <i class="bi bi-box-seam text-primary me-2"></i>
+                What's Included in This Combo?
+            </h2>
+
+            <p class="text-muted mb-0">
+                Individual products and quantities included in this package.
+            </p>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-4 mt-3">
+            <div class="card-body p-3 p-md-4">
+
+                {% for component_item in product.components.all %}
+
+                <div class="component-row">
+
+                    <div class="component-image">
+                        {% if component_item.component.main_image %}
+                        <img
+                            src="{{ component_item.component.main_image.url }}"
+                            alt="{{ component_item.component.name }}"
+                            loading="lazy"
+                            width="100"
+                            height="100"
+                        >
+                        {% else %}
+                        <img
+                            src="{% static 'img/no-image.png' %}"
+                            alt="{{ component_item.component.name }}"
+                            loading="lazy"
+                            width="100"
+                            height="100"
+                        >
+                        {% endif %}
+                    </div>
+
+                    <div class="component-details">
+
+                        <h3 class="h6 fw-bold mb-1">
+                            {{ component_item.component.name }}
+                        </h3>
+
+                        <div class="small text-muted mb-1">
+                            SKU: {{ component_item.component.sku }}
+                        </div>
+
+                        <div class="small text-muted">
+                            Quantity included:
+                            <strong>{{ component_item.quantity }}</strong>
+                        </div>
+
+                        <div class="small text-muted mt-1">
+                            Unit price:
+                            ₹{{ component_item.component.price|floatformat:2 }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% empty %}
+
+                <div class="empty-state">
+                    <i class="bi bi-box-seam"></i>
+
+                    <h3 class="h6 fw-bold mt-3">
+                        No Components Configured
+                    </h3>
+
+                    <p class="text-muted small mb-0">
+                        No individual products have been configured
+                        for this combo yet.
+                    </p>
+                </div>
+
+                {% endfor %}
+
+                <div class="combo-total-row mt-3">
+                    <span class="fw-bold">Combo Price</span>
+
+                    <span class="fs-4 fw-bold text-success">
+                        ₹{{ product.price|floatformat:2 }}
+                    </span>
+                </div>
+
+            </div>
+        </div>
+
+    </section>
+
+    {% endif %}
+
+
+    <!-- CUSTOMER REVIEWS -->
+    <section class="content-section mt-5" id="reviews">
+
+        <div class="section-heading">
+            <h2 class="h4 fw-bold mb-1">
+                <i class="bi bi-star-fill text-warning me-2"></i>
+                Customer Reviews
+            </h2>
+
+            <p class="text-muted mb-0">
+                {{ product.reviews.count }}
+                review{{ product.reviews.count|pluralize }}
+            </p>
+        </div>
+
+        <div class="mt-3">
+
+            {% for review in product.reviews.all %}
+
+            <div class="review-card mb-3">
+
+                <div aria-label="Rating: {{ review.rating }} out of 5"
+                     class="mb-2">
+
+                    {% for star in "12345" %}
+                        {% if forloop.counter <= review.rating %}
+                            <span class="text-warning" aria-hidden="true">★</span>
+                        {% else %}
+                            <span class="text-secondary" aria-hidden="true">★</span>
+                        {% endif %}
+                    {% endfor %}
+
+                </div>
+
+                {% if review.comment %}
+                <p class="mb-2 review-comment">
+                    {{ review.comment|linebreaksbr }}
+                </p>
+                {% endif %}
+
+                <div class="small text-muted">
+                    <i class="bi bi-person-circle me-1"></i>
+                    {{ review.user.username }}
+
+                    {% if review.created_at %}
+                    <span class="mx-1">·</span>
+                    {{ review.created_at|date:"d M Y" }}
+                    {% endif %}
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <div class="empty-state">
+                <i class="bi bi-chat-square-text"></i>
+
+                <h3 class="h6 fw-bold mt-3">No Reviews Yet</h3>
+
+                <p class="text-muted small mb-0">
+                    Customer reviews for this product will appear here.
+                </p>
+            </div>
+
             {% endfor %}
+
         </div>
-        <p>{{ review.comment }}</p>
-        <small class="text-muted">{{ review.user.username }} | {{ review.created_at|date:"d M Y" }}</small>
-      </div>
-      {% empty %}
-      <p>No reviews yet.</p>
-      {% endfor %}
-    </div>
-  </div>
 
-  <!-- RELATED PRODUCTS ROW -->
-  <div class="row mt-4">
-    <div class="col-12">
-      <hr>
-      <h5>Related Products</h5>
-      <div class="row row-cols-1 row-cols-md-2 g-3">
-        {% for related in combo.related_products.all %}
-        <div class="col">
-          <a href="{% url 'product_detail' related.id %}" class="text-decoration-none text-dark">
-            {% if related.image %}
-            <img src="{{ related.image.url }}" class="img-fluid mb-1" loading="lazy">
-            {% else %}
-            <img src="{% static 'img/no-image.png' %}" class="img-fluid mb-1" loading="lazy">
-            {% endif %}
-            <p>{{ related.name }}</p>
-            <p class="text-success">₹{{ related.total_price }}</p>
-          </a>
+    </section>
+
+
+    <!-- PRODUCT SPECIFICATIONS -->
+    <section class="content-section mt-5">
+
+        <div class="section-heading">
+            <h2 class="h4 fw-bold mb-1">
+                Product Specifications
+            </h2>
+
+            <p class="text-muted mb-0">
+                Detailed information about this product.
+            </p>
         </div>
-        {% empty %}
-        <p>No related products.</p>
-        {% endfor %}
-      </div>
+
+        <div class="card border-0 shadow-sm rounded-4 mt-3">
+            <div class="card-body p-3 p-md-4">
+
+                <div class="row g-0">
+
+                    <div class="col-12 col-md-6">
+
+                        <div class="detail-row">
+                            <span>Product Name</span>
+                            <strong>{{ product.name }}</strong>
+                        </div>
+
+                        <div class="detail-row">
+                            <span>SKU</span>
+                            <strong>{{ product.sku }}</strong>
+                        </div>
+
+                        <div class="detail-row">
+                            <span>Product Type</span>
+                            <strong>{{ product.get_product_type_display }}</strong>
+                        </div>
+
+                        {% if product.category %}
+                        <div class="detail-row">
+                            <span>Category</span>
+                            <strong>{{ product.category.name }}</strong>
+                        </div>
+                        {% endif %}
+
+                    </div>
+
+                    <div class="col-12 col-md-6">
+
+                        <div class="detail-row">
+                            <span>Price</span>
+                            <strong class="text-success">
+                                ₹{{ product.price|floatformat:2 }}
+                            </strong>
+                        </div>
+
+                        <div class="detail-row">
+                            <span>Availability</span>
+                            <strong>
+                                {% if product.available_stock > 0 %}
+                                    In Stock
+                                {% else %}
+                                    Out of Stock
+                                {% endif %}
+                            </strong>
+                        </div>
+
+                        {% if product.product_type == "combo" %}
+                        <div class="detail-row">
+                            <span>Component Types</span>
+                            <strong>{{ product.components.count }}</strong>
+                        </div>
+                        {% endif %}
+
+                        <div class="detail-row">
+                            <span>Description</span>
+                            <strong>
+                                {{ product.description|default:"No description provided." }}
+                            </strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </section>
+
+
+    <!-- BOTTOM SHOPPING ACTION -->
+    <div class="bottom-shopping-action mt-5">
+
+        <div>
+            <div class="fw-bold">{{ product.name }}</div>
+
+            <div class="text-success fw-bold">
+                ₹{{ product.price|floatformat:2 }}
+            </div>
+        </div>
+
+        <a href="{% url 'product_list' %}"
+           class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left me-1"></i>
+            More Products
+        </a>
+
     </div>
-  </div>
-
-  <!-- PRODUCT INFORMATION SECTION -->
-  <hr style="border: 1px solid #0d6efd;">
-  <h5 style="color:#0d6efd;">Product Details</h5>
-  <hr style="border: 1px solid #0d6efd;">
-
-
-
-  <div class="row">
-    <div class="col-md-6">
-      
-      <p><b>Product Name:</b> {{ combo.name }}</p>
-      <hr>
-      <p><b>MRP:</b> ₹{{ combo.mrp }}</p>
-      <hr>
-      <p><b>Total Price:</b> ₹{{ combo.total_price }}</p>
-      <hr>
-      <p><b>Camera Quantity:</b> {{ combo.camera_qty }}</p>
-      {% if combo.cameraBullet %}
-      <hr>
-      <p><b>Camera Bullet Quantity:</b> {{ combo.camerabullet_qty }}</p>
-      {% endif %}
-      <hr>
-      <p><b>DVR:</b> {{ combo.dvr.get_resolution_display }} {{ combo.dvr.get_channels_display }}</p>
-      {% if combo.hard_disk %}
-      <hr>
-      <p><b>Hard Disk:</b> {{ combo.hard_disk.brand }} {{ combo.hard_disk.size }}</p>
-      {% endif %}
-    </div>
-    <div class="col-md-6">
-      <p><b>Cable Quantity:</b> {{ combo.cable_qty }}</p>
-      <hr>
-      <p><b>Power Supply Quantity:</b> {{ combo.power_qty }}</p>
-      <hr>
-      <p><b>BNC Connector:</b> ₹{{ combo.bnc_connector.price }}</p>
-      <hr>
-      <p><b>DC Connector:</b> ₹{{ combo.dc_connector.price }}</p>
-      <hr>
-      <p><b>Installation Charges:</b> ₹{{ combo.installation.price }}</p>
-      <hr>
-      <p><b>Description:</b> {{ combo.description|default:"-" }}</p>
-      <hr>
-    </div>
-  </div>
 
 </div>
 
+
+<!-- PAGE CSS -->
 <style>
-  .main-product-image {
-    width: 100%;
-    height: 400px;
-    object-fit: contain;
-    border-radius: 12px;
-  }
+    .product-image-box {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 300px;
+        padding: 18px;
+        border: 1px solid #e9ecef;
+        border-radius: 18px;
+        background: #fff;
+    }
 
-  .spec-list li {
-    margin-bottom: 6px;
-    font-size: 15px;
-  }
+    .main-product-image {
+        display: block;
+        width: 100%;
+        height: 400px;
+        object-fit: contain;
+        border-radius: 12px;
+    }
 
-  .qty-btn {
-    width: 35px;
-  }
+    .product-title {
+        font-size: clamp(1.6rem, 3vw, 2.35rem);
+        line-height: 1.25;
+        overflow-wrap: anywhere;
+    }
 
-  .badge-icon {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    background: #f8f9fa;
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-size: 0.9rem;
-  }
+    .product-description {
+        line-height: 1.8;
+        overflow-wrap: anywhere;
+    }
 
-  .badge-icon i {
-    color: #FF6F00;
-  }
+    .price-panel {
+        padding: 20px;
+        border: 1px solid #e9ecef;
+        border-radius: 14px;
+        background: #f8f9fa;
+    }
 
-  .action-btn {
-    padding: 15px;
-    font-size: 1.1rem;
-    font-weight: bold;
-  }
+    .current-price {
+        color: #198754;
+        font-size: clamp(1.8rem, 4vw, 2.25rem);
+        font-weight: 800;
+        line-height: 1.2;
+    }
+
+    .purchase-panel {
+        padding: 18px;
+        border: 1px solid #e9ecef;
+        border-radius: 14px;
+        background: #fff;
+    }
+
+    .quantity-control {
+        display: inline-flex;
+        align-items: stretch;
+        min-height: 46px;
+        overflow: hidden;
+        border: 1px solid #ced4da;
+        border-radius: 9px;
+        background: #fff;
+    }
+
+    .qty-btn {
+        width: 42px;
+        border: 0;
+        background: #f8f9fa;
+        color: #212529;
+        cursor: pointer;
+    }
+
+    .qty-btn:hover:not(:disabled) {
+        background: #e9ecef;
+    }
+
+    .qty-btn:disabled {
+        opacity: .5;
+        cursor: not-allowed;
+    }
+
+    .quantity-input {
+        width: 60px;
+        min-width: 0;
+        border: 0;
+        border-right: 1px solid #ced4da;
+        border-left: 1px solid #ced4da;
+        border-radius: 0;
+        outline: none;
+        text-align: center;
+        font-weight: 700;
+        -moz-appearance: textfield;
+    }
+
+    .quantity-input::-webkit-inner-spin-button,
+    .quantity-input::-webkit-outer-spin-button {
+        margin: 0;
+        -webkit-appearance: none;
+    }
+
+    .action-btn {
+        min-height: 52px;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 700;
+    }
+
+    .action-btn:disabled {
+        opacity: .6;
+        cursor: not-allowed;
+    }
+
+    .stock-status {
+        padding: 11px 14px;
+        border-radius: 9px;
+        font-size: .9rem;
+        font-weight: 600;
+    }
+
+    .stock-available {
+        color: #146c43;
+        background: #d1e7dd;
+    }
+
+    .stock-unavailable {
+        color: #842029;
+        background: #f8d7da;
+    }
+
+    .purchase-notice {
+        padding: 13px;
+        border: 1px solid #e9ecef;
+        border-radius: 10px;
+        background: #fafbfc;
+    }
+
+    .trust-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 100%;
+        padding: 11px;
+        border: 1px solid #e9ecef;
+        border-radius: 10px;
+        font-size: .85rem;
+        font-weight: 600;
+    }
+
+    .trust-item i {
+        flex-shrink: 0;
+        font-size: 1.1rem;
+    }
+
+    .content-section {
+        scroll-margin-top: 90px;
+    }
+
+    .section-heading {
+        padding-bottom: 13px;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .component-row {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 16px 0;
+        border-bottom: 1px solid #edf0f2;
+    }
+
+    .component-row:last-child {
+        border-bottom: 0;
+    }
+
+    .component-image {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 90px;
+        width: 90px;
+        height: 90px;
+        padding: 5px;
+        border-radius: 10px;
+        background: #f8f9fa;
+    }
+
+    .component-image img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    .component-details {
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+
+    .combo-total-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding-top: 18px;
+        border-top: 1px solid #dee2e6;
+    }
+
+    .review-card {
+        padding: 18px;
+        border: 1px solid #e9ecef;
+        border-radius: 12px;
+        background: #fff;
+    }
+
+    .review-comment {
+        line-height: 1.7;
+        overflow-wrap: anywhere;
+    }
+
+    .empty-state {
+        padding: 32px 16px;
+        border: 1px dashed #ced4da;
+        border-radius: 12px;
+        text-align: center;
+    }
+
+    .empty-state > i {
+        color: #6c757d;
+        font-size: 2.5rem;
+    }
+
+    .detail-row {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        padding: 14px 10px;
+        border-bottom: 1px solid #edf0f2;
+        overflow-wrap: anywhere;
+    }
+
+    .detail-row > span {
+        color: #6c757d;
+        font-size: .87rem;
+    }
+
+    .detail-row > strong {
+        line-height: 1.5;
+    }
+
+    .bottom-shopping-action {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 18px;
+        border: 1px solid #e9ecef;
+        border-radius: 14px;
+        background: #f8f9fa;
+    }
+
+    @media (max-width: 767.98px) {
+        .main-product-image {
+            height: 300px;
+        }
+
+        .product-image-box {
+            min-height: 250px;
+            padding: 12px;
+        }
+
+        .purchase-panel {
+            padding: 14px;
+        }
+
+        .trust-item {
+            font-size: .8rem;
+        }
+
+        .component-image {
+            flex-basis: 68px;
+            width: 68px;
+            height: 68px;
+        }
+    }
+
+    @media (max-width: 450px) {
+        .main-product-image {
+            height: 250px;
+        }
+
+        .component-row {
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .component-image {
+            flex-basis: 56px;
+            width: 56px;
+            height: 56px;
+        }
+
+        .quantity-control {
+            min-height: 44px;
+        }
+
+        .qty-btn {
+            width: 38px;
+        }
+
+        .quantity-input {
+            width: 48px;
+        }
+
+        .combo-total-row {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .bottom-shopping-action {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .bottom-shopping-action .btn {
+            width: 100%;
+        }
+    }
 </style>
 
+
+<!-- QUANTITY SELECTOR -->
 <script>
-  document.querySelectorAll('.qty-btn').forEach(btn => {
-    btn.addEventListener('click', function () {
-      const input = this.parentElement.querySelector('input[name="qty"]');
-      let value = parseInt(input.value);
-      if (this.dataset.action === 'plus') value++;
-      if (this.dataset.action === 'minus' && value > 1) value--;
-      input.value = value;
-      const buyNowInput = document.querySelector('.buy-now-qty');
-      if (buyNowInput) buyNowInput.value = value;
+document.addEventListener("DOMContentLoaded", function () {
+    const quantityInput = document.getElementById("productQty");
+    const buyNowQuantity = document.getElementById("buyNowQty");
+    const addToCartForm = document.getElementById("addToCartForm");
+    const buyNowForm = document.getElementById("buyNowForm");
+    const quantityButtons = document.querySelectorAll(".qty-btn");
+
+    if (!quantityInput) {
+        return;
+    }
+
+    const maxQuantity = Number.parseInt(quantityInput.max, 10);
+    const hasStock = Number.isFinite(maxQuantity) && maxQuantity > 0;
+
+    function getValidQuantity() {
+        let quantity = Number.parseInt(quantityInput.value, 10);
+
+        if (!Number.isFinite(quantity) || quantity < 1) {
+            quantity = 1;
+        }
+
+        if (hasStock) {
+            quantity = Math.min(quantity, maxQuantity);
+        }
+
+        return quantity;
+    }
+
+    function syncQuantity() {
+        const quantity = getValidQuantity();
+
+        quantityInput.value = quantity;
+
+        if (buyNowQuantity) {
+            buyNowQuantity.value = quantity;
+        }
+
+        quantityButtons.forEach(function (button) {
+            if (button.dataset.action === "minus") {
+                button.disabled = !hasStock || quantity <= 1;
+            }
+
+            if (button.dataset.action === "plus") {
+                button.disabled = !hasStock || quantity >= maxQuantity;
+            }
+        });
+    }
+
+    quantityButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+            let quantity = getValidQuantity();
+
+            if (button.dataset.action === "plus" && hasStock) {
+                quantity = Math.min(quantity + 1, maxQuantity);
+            } else if (button.dataset.action === "minus") {
+                quantity = Math.max(1, quantity - 1);
+            }
+
+            quantityInput.value = quantity;
+            syncQuantity();
+        });
     });
-  });
+
+    quantityInput.addEventListener("input", syncQuantity);
+    quantityInput.addEventListener("change", syncQuantity);
+
+    if (addToCartForm) {
+        addToCartForm.addEventListener("submit", syncQuantity);
+    }
+
+    if (buyNowForm) {
+        buyNowForm.addEventListener("submit", syncQuantity);
+    }
+
+    syncQuantity();
+});
 </script>
 
 
+<!-- PRODUCT STRUCTURED DATA -->
 <script type="application/ld+json">
 {
-  "@context": "https://schema.org",
-  "@type": "Product",
-  "name": "{{ combo.name|escapejs }}",
-  "image": [
-    "{{ request.scheme }}://{{ request.get_host }}{{ combo.image.url }}"
-  ],
-  "description": "{{ combo.description|striptags|truncatechars:300|escapejs }}",
-  "brand": {
-    "@type": "Brand",
-    "name": "{{ combo.brand|default:'Camura'|escapejs }}"
-  },
-  "offers": {
-    "@type": "Offer",
-    "url": "{{ request.build_absolute_uri }}",
-    "priceCurrency": "INR",
-    "price": "{{ combo.total_price }}",
-    "availability": "https://schema.org/{% if combo.stock > 0 %}InStock{% else %}OutOfStock{% endif %}"
-  }
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "{{ product.name|escapejs }}",
+    "sku": "{{ product.sku|escapejs }}",
+    {% if product.main_image %}
+    "image": [
+        "{{ request.scheme }}://{{ request.get_host }}{{ product.main_image.url }}"
+    ],
+    {% endif %}
+    "description": "{{ product.description|striptags|truncatechars:300|escapejs }}",
+    "brand": {
+        "@type": "Brand",
+        "name": "Camura"
+    },
+    "offers": {
+        "@type": "Offer",
+        "url": "{{ request.build_absolute_uri|escapejs }}",
+        "priceCurrency": "INR",
+        "price": "{{ product.price }}",
+        "availability": "{% if product.available_stock > 0 %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}"
+    }
 }
 </script>
-
 
 {% endblock %}

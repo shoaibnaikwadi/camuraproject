@@ -14,15 +14,7 @@ from crispy_forms.layout import (
 
 from django import forms
 from .models import (
-    Camera,
-    CameraBullet,
-    DVR,
-    HardDisk,
-    Cable,
-    PowerSupply,
-    Accessory,
-    InstallationCharge,
-    ComboProduct,
+    Product,
     CustomerProfile,
     ServiceBooking,
     CCTVEngineer,
@@ -33,541 +25,206 @@ from .models import (
 # CAMERA
 # ============================================================
 
-class CameraForm(forms.ModelForm):
-
-    class Meta:
-        model = Camera
-
-        fields = [
-            "camera_type",
-            "model_number",
-            "price",
-            "stock",
-        ]
-
-        widgets = {
-            "camera_type": forms.TextInput(
-                attrs={
-                    "class": "form-control",
-                    "placeholder": "e.g. 2MP Dome Camera",
-                }
-            ),
-
-            "model_number": forms.TextInput(
-                attrs={
-                    "class": "form-control",
-                    "placeholder": "e.g. CP-UNC-TA21L3",
-                }
-            ),
-
-            "price": forms.NumberInput(
-                attrs={
-                    "class": "form-control",
-                    "step": "0.01",
-                    "min": "0",
-                }
-            ),
-
-            "stock": forms.NumberInput(
-                attrs={
-                    "class": "form-control",
-                    "min": "0",
-                }
-            ),
-        }
-
-
-# ============================================================
-# BULLET CAMERA
-# ============================================================
-
-class CameraBulletForm(forms.ModelForm):
-
-    class Meta:
-        model = CameraBullet
-
-        fields = [
-            "bullet_camera_type",
-            "bullet_model_number",
-            "price",
-            "stock",
-        ]
-
-        widgets = {
-            "bullet_camera_type": forms.TextInput(
-                attrs={
-                    "class": "form-control",
-                    "placeholder": "e.g. 2MP Bullet Camera",
-                }
-            ),
-
-            "bullet_model_number": forms.TextInput(
-                attrs={
-                    "class": "form-control",
-                    "placeholder": "e.g. CP-UNC-TB21L3",
-                }
-            ),
-
-            "price": forms.NumberInput(
-                attrs={
-                    "class": "form-control",
-                    "step": "0.01",
-                    "min": "0",
-                }
-            ),
-
-            "stock": forms.NumberInput(
-                attrs={
-                    "class": "form-control",
-                    "min": "0",
-                }
-            ),
-        }
-
-
-# ============================================================
-# DVR
-# ============================================================
-
-class DVRForm(forms.ModelForm):
-
-    class Meta:
-        model = DVR
-
-        fields = [
-            "dvr_name",
-            "model_number",
-            "price",
-            "stock",
-        ]
-
-        widgets = {
-            "dvr_name": forms.TextInput(
-                attrs={
-                    "class": "form-control",
-                    "placeholder": "e.g. CP Plus 8 Channel DVR",
-                }
-            ),
-
-            "model_number": forms.TextInput(
-                attrs={
-                    "class": "form-control",
-                    "placeholder": "DVR model number",
-                }
-            ),
-
-            "price": forms.NumberInput(
-                attrs={
-                    "class": "form-control",
-                    "step": "0.01",
-                    "min": "0",
-                }
-            ),
-
-            "stock": forms.NumberInput(
-                attrs={
-                    "class": "form-control",
-                    "min": "0",
-                }
-            ),
-        }
-
-
-# ============================================================
-# HARD DISK
-# ============================================================
-
-class HardDiskForm(forms.ModelForm):
-
-    class Meta:
-        model = HardDisk
-
-        fields = [
-            "size",
-            "price",
-            "stock",
-        ]
-
-        widgets = {
-            "size": forms.TextInput(
-                attrs={
-                    "class": "form-control",
-                    "placeholder": "e.g. 1TB, 2TB, 4TB",
-                }
-            ),
-
-            "price": forms.NumberInput(
-                attrs={
-                    "class": "form-control",
-                    "step": "0.01",
-                    "min": "0",
-                }
-            ),
-
-            "stock": forms.NumberInput(
-                attrs={
-                    "class": "form-control",
-                    "min": "0",
-                }
-            ),
-        }
-
-
-# ============================================================
-# CABLE
-# ============================================================
-
-class CableForm(forms.ModelForm):
-
-    class Meta:
-        model = Cable
-
-        fields = [
-            "length",
-            "price",
-            "stock",
-        ]
-
-        widgets = {
-            "length": forms.TextInput(
-                attrs={
-                    "class": "form-control",
-                    "placeholder": "e.g. 90 Meter, 305 Meter",
-                }
-            ),
-
-            "price": forms.NumberInput(
-                attrs={
-                    "class": "form-control",
-                    "step": "0.01",
-                    "min": "0",
-                }
-            ),
-
-            "stock": forms.NumberInput(
-                attrs={
-                    "class": "form-control",
-                    "min": "0",
-                }
-            ),
-        }
-
-
-# ============================================================
-# POWER SUPPLY
-# ============================================================
-
-class PowerSupplyForm(forms.ModelForm):
-
-    class Meta:
-        model = PowerSupply
-
-        fields = [
-            "range_slug",
-            "price",
-            "stock",
-        ]
-
-        widgets = {
-            "range_slug": forms.TextInput(
-                attrs={
-                    "class": "form-control",
-                    "placeholder": "e.g. 12V 5A",
-                }
-            ),
-
-            "price": forms.NumberInput(
-                attrs={
-                    "class": "form-control",
-                    "step": "0.01",
-                    "min": "0",
-                }
-            ),
-
-            "stock": forms.NumberInput(
-                attrs={
-                    "class": "form-control",
-                    "min": "0",
-                }
-            ),
-        }
-
-
-# ============================================================
-# ACCESSORY
-# ============================================================
-
-class AccessoryForm(forms.ModelForm):
-
-    class Meta:
-        model = Accessory
-
-        fields = [
-            "name",
-            "price",
-            "stock",
-        ]
-
-        widgets = {
-            "name": forms.TextInput(
-                attrs={
-                    "class": "form-control",
-                    "placeholder": "e.g. BNC Connector",
-                }
-            ),
-
-            "price": forms.NumberInput(
-                attrs={
-                    "class": "form-control",
-                    "step": "0.01",
-                    "min": "0",
-                }
-            ),
-
-            "stock": forms.NumberInput(
-                attrs={
-                    "class": "form-control",
-                    "min": "0",
-                }
-            ),
-        }
-
-
-# ============================================================
-# INSTALLATION CHARGE
-# ============================================================
-
-class InstallationForm(forms.ModelForm):
-
-    class Meta:
-        model = InstallationCharge
-
-        fields = [
-            "description",
-            "price",
-        ]
-
-        widgets = {
-            "description": forms.TextInput(
-                attrs={
-                    "class": "form-control",
-                    "placeholder": "e.g. CCTV Installation",
-                }
-            ),
-
-            "price": forms.NumberInput(
-                attrs={
-                    "class": "form-control",
-                    "step": "0.01",
-                    "min": "0",
-                }
-            ),
-        }
-
-
-# ============================================================
-# CCTV COMBO PRODUCT
-# ============================================================
-
-class ComboForm(forms.ModelForm):
-
-    class Meta:
-        model = ComboProduct
-
-        fields = [
-            "name",
-            "brand",
-            "mrp",
-
-            # Camera
-            "camera",
-            "camera_qty",
-
-            # Bullet Camera
-            "cameraBullet",
-            "camerabullet_qty",
-
-            # DVR
-            "dvr",
-
-            # Hard Disk
-            "hard_disk",
-            "hard_disk_qty",
-
-            # Cable
-            "cable",
-            "cable_qty",
-
-            # Power Supply
-            "power",
-            "power_qty",
-
-            # BNC
-            "bnc_connector",
-            "bnc_qty",
-
-            # DC
-            "dc_connector",
-            "dc_qty",
-
-            # Installation
-            "installation",
-            "installation_qty",
-
-            # Display
-            "description",
-            "image",
-        ]
-
-        widgets = {
-
-            "name": forms.TextInput(
-                attrs={
-                    "class": "form-control",
-                    "placeholder": "e.g. 4 Camera CCTV Combo Kit",
-                }
-            ),
-
-            "brand": forms.TextInput(
-                attrs={
-                    "class": "form-control",
-                    "placeholder": "e.g. CP Plus",
-                }
-            ),
-
-            "mrp": forms.NumberInput(
-                attrs={
-                    "class": "form-control",
-                    "step": "0.01",
-                    "min": "0",
-                    "placeholder": "MRP",
-                }
-            ),
-
-            "camera": forms.Select(
-                attrs={
-                    "class": "form-select",
-                }
-            ),
-
-            "camera_qty": forms.NumberInput(
-                attrs={
-                    "class": "form-control",
-                    "min": "1",
-                }
-            ),
-
-            "cameraBullet": forms.Select(
-                attrs={
-                    "class": "form-select",
-                }
-            ),
-
-            "camerabullet_qty": forms.NumberInput(
-                attrs={
-                    "class": "form-control",
-                    "min": "1",
-                }
-            ),
-
-            "dvr": forms.Select(
-                attrs={
-                    "class": "form-select",
-                }
-            ),
-
-            "hard_disk": forms.Select(
-                attrs={
-                    "class": "form-select",
-                }
-            ),
-
-            "hard_disk_qty": forms.NumberInput(
-                attrs={
-                    "class": "form-control",
-                    "min": "1",
-                }
-            ),
-
-            "cable": forms.Select(
-                attrs={
-                    "class": "form-select",
-                }
-            ),
-
-            "cable_qty": forms.NumberInput(
-                attrs={
-                    "class": "form-control",
-                    "min": "1",
-                }
-            ),
-
-            "power": forms.Select(
-                attrs={
-                    "class": "form-select",
-                }
-            ),
-
-            "power_qty": forms.NumberInput(
-                attrs={
-                    "class": "form-control",
-                    "min": "1",
-                }
-            ),
-
-            "bnc_connector": forms.Select(
-                attrs={
-                    "class": "form-select",
-                }
-            ),
-
-            "bnc_qty": forms.NumberInput(
-                attrs={
-                    "class": "form-control",
-                    "min": "1",
-                }
-            ),
-
-            "dc_connector": forms.Select(
-                attrs={
-                    "class": "form-select",
-                }
-            ),
-
-            "dc_qty": forms.NumberInput(
-                attrs={
-                    "class": "form-control",
-                    "min": "1",
-                }
-            ),
-
-            "installation": forms.Select(
-                attrs={
-                    "class": "form-select",
-                }
-            ),
-
-            "installation_qty": forms.NumberInput(
-                attrs={
-                    "class": "form-control",
-                    "min": "1",
-                }
-            ),
-
-            "description": forms.Textarea(
-                attrs={
-                    "class": "form-control",
-                    "rows": 4,
-                    "placeholder": "Describe the CCTV combo kit...",
-                }
-            ),
-
-            "image": forms.ClearableFileInput(
-                attrs={
-                    "class": "form-control",
-                }
-            ),
-        }
+
+# class ComboForm(forms.ModelForm):
+
+#     class Meta:
+#         model = Product
+
+#         fields = [
+#             "name",
+#             "brand",
+#             "mrp",
+
+#             # Camera
+#             "camera",
+#             "camera_qty",
+
+#             # Bullet Camera
+#             "cameraBullet",
+#             "camerabullet_qty",
+
+#             # DVR
+#             "dvr",
+
+#             # Hard Disk
+#             "hard_disk",
+#             "hard_disk_qty",
+
+#             # Cable
+#             "cable",
+#             "cable_qty",
+
+#             # Power Supply
+#             "power",
+#             "power_qty",
+
+#             # BNC
+#             "bnc_connector",
+#             "bnc_qty",
+
+#             # DC
+#             "dc_connector",
+#             "dc_qty",
+
+#             # Installation
+#             "installation",
+#             "installation_qty",
+
+#             # Display
+#             "description",
+#             "image",
+#         ]
+
+#         widgets = {
+
+#             "name": forms.TextInput(
+#                 attrs={
+#                     "class": "form-control",
+#                     "placeholder": "e.g. 4 Camera CCTV Combo Kit",
+#                 }
+#             ),
+
+#             "brand": forms.TextInput(
+#                 attrs={
+#                     "class": "form-control",
+#                     "placeholder": "e.g. CP Plus",
+#                 }
+#             ),
+
+#             "mrp": forms.NumberInput(
+#                 attrs={
+#                     "class": "form-control",
+#                     "step": "0.01",
+#                     "min": "0",
+#                     "placeholder": "MRP",
+#                 }
+#             ),
+
+#             "camera": forms.Select(
+#                 attrs={
+#                     "class": "form-select",
+#                 }
+#             ),
+
+#             "camera_qty": forms.NumberInput(
+#                 attrs={
+#                     "class": "form-control",
+#                     "min": "1",
+#                 }
+#             ),
+
+#             "cameraBullet": forms.Select(
+#                 attrs={
+#                     "class": "form-select",
+#                 }
+#             ),
+
+#             "camerabullet_qty": forms.NumberInput(
+#                 attrs={
+#                     "class": "form-control",
+#                     "min": "1",
+#                 }
+#             ),
+
+#             "dvr": forms.Select(
+#                 attrs={
+#                     "class": "form-select",
+#                 }
+#             ),
+
+#             "hard_disk": forms.Select(
+#                 attrs={
+#                     "class": "form-select",
+#                 }
+#             ),
+
+#             "hard_disk_qty": forms.NumberInput(
+#                 attrs={
+#                     "class": "form-control",
+#                     "min": "1",
+#                 }
+#             ),
+
+#             "cable": forms.Select(
+#                 attrs={
+#                     "class": "form-select",
+#                 }
+#             ),
+
+#             "cable_qty": forms.NumberInput(
+#                 attrs={
+#                     "class": "form-control",
+#                     "min": "1",
+#                 }
+#             ),
+
+#             "power": forms.Select(
+#                 attrs={
+#                     "class": "form-select",
+#                 }
+#             ),
+
+#             "power_qty": forms.NumberInput(
+#                 attrs={
+#                     "class": "form-control",
+#                     "min": "1",
+#                 }
+#             ),
+
+#             "bnc_connector": forms.Select(
+#                 attrs={
+#                     "class": "form-select",
+#                 }
+#             ),
+
+#             "bnc_qty": forms.NumberInput(
+#                 attrs={
+#                     "class": "form-control",
+#                     "min": "1",
+#                 }
+#             ),
+
+#             "dc_connector": forms.Select(
+#                 attrs={
+#                     "class": "form-select",
+#                 }
+#             ),
+
+#             "dc_qty": forms.NumberInput(
+#                 attrs={
+#                     "class": "form-control",
+#                     "min": "1",
+#                 }
+#             ),
+
+#             "installation": forms.Select(
+#                 attrs={
+#                     "class": "form-select",
+#                 }
+#             ),
+
+#             "installation_qty": forms.NumberInput(
+#                 attrs={
+#                     "class": "form-control",
+#                     "min": "1",
+#                 }
+#             ),
+
+#             "description": forms.Textarea(
+#                 attrs={
+#                     "class": "form-control",
+#                     "rows": 4,
+#                     "placeholder": "Describe the CCTV combo kit...",
+#                 }
+#             ),
+
+#             "image": forms.ClearableFileInput(
+#                 attrs={
+#                     "class": "form-control",
+#                 }
+#             ),
+#         }
 
 
 # ============================================================

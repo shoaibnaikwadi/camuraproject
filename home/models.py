@@ -1,525 +1,268 @@
-# shop/models.py
-from django.db import models
 from decimal import Decimal
-from django.contrib.auth.models import User
+from io import BytesIO
+
 from django.conf import settings
-
+from django.core.exceptions import ValidationError
+from django.core.files.base import ContentFile
+from django.core.validators import MinValueValidator
 from django.db import models
+from django.db.models import Q
+from PIL import Image
 
 
-# ============================================================
-# CAMERA MASTER
-# ============================================================
+class Category(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=120, unique=True)
+    description = models.TextField(blank=True)
+    is_active = models.BooleanField(default=True)
 
-class Camera(models.Model):
-    camera_type = models.CharField(max_length=100)
-
-    model_number = models.CharField(
-        max_length=100,
-        null=True,
-        blank=True
-    )
-
-    image = models.ImageField(
-        upload_to="products/cameras/",
-        null=True,
-        blank=True
-    )
-
-    price = models.DecimalField(
-        max_digits=10,
-        decimal_places=2
-    )
-
-    stock = models.PositiveIntegerField(default=5)
-
-    def __str__(self):
-        if self.model_number:
-            return f"{self.camera_type} - {self.model_number}"
-        return self.camera_type
-
-
-# ============================================================
-# BULLET CAMERA MASTER
-# ============================================================
-
-class CameraBullet(models.Model):
-    bullet_camera_type = models.CharField(max_length=100)
-
-    bullet_model_number = models.CharField(
-        max_length=100,
-        null=True,
-        blank=True
-    )
-
-    image = models.ImageField(
-        upload_to="products/bullet_cameras/",
-        null=True,
-        blank=True
-    )
-
-    price = models.DecimalField(
-        max_digits=10,
-        decimal_places=2
-    )
-
-    stock = models.PositiveIntegerField(default=5)
-
-    def __str__(self):
-        if self.bullet_model_number:
-            return f"{self.bullet_camera_type} - {self.bullet_model_number}"
-        return self.bullet_camera_type
-
-
-# ============================================================
-# DVR MASTER
-# ============================================================
-
-class DVR(models.Model):
-    dvr_name = models.CharField(
-        max_length=100,
-        help_text="Enter DVR name (e.g., CP Plus 8 Channel DVR)"
-    )
-
-    model_number = models.CharField(
-        max_length=100,
-        null=True,
-        blank=True
-    )
-
-    image = models.ImageField(
-        upload_to="products/dvrs/",
-        null=True,
-        blank=True
-    )
-
-    price = models.DecimalField(
-        max_digits=10,
-        decimal_places=2
-    )
-
-    stock = models.PositiveIntegerField(default=5)
-
-    def __str__(self):
-        if self.model_number:
-            return f"{self.dvr_name} - {self.model_number}"
-        return self.dvr_name
-
-
-# ============================================================
-# HARD DISK MASTER
-# ============================================================
-
-class HardDisk(models.Model):
-    size = models.CharField(
-        max_length=50,
-        help_text="Example: 1TB, 2TB, 4TB"
-    )
-
-    image = models.ImageField(
-        upload_to="products/hard_disks/",
-        null=True,
-        blank=True
-    )
-
-    price = models.DecimalField(
-        max_digits=10,
-        decimal_places=2
-    )
-
-    stock = models.PositiveIntegerField(default=5)
-
-    def __str__(self):
-        return f"{self.size} HDD"
-
-
-# ============================================================
-# CABLE MASTER
-# ============================================================
-
-class Cable(models.Model):
-    length = models.CharField(
-        max_length=100,
-        help_text="Example: 90 Meter, 100 Meter"
-    )
-
-    image = models.ImageField(
-        upload_to="products/cables/",
-        null=True,
-        blank=True
-    )
-
-    price = models.DecimalField(
-        max_digits=10,
-        decimal_places=2
-    )
-
-    stock = models.PositiveIntegerField(default=5)
-
-    def __str__(self):
-        return self.length
-
-
-# ============================================================
-# POWER SUPPLY MASTER
-# ============================================================
-
-class PowerSupply(models.Model):
-    range_slug = models.CharField(
-        max_length=100,
-        help_text="Example: 12V 2A, 12V 5A, 12V 10A"
-    )
-
-    image = models.ImageField(
-        upload_to="products/power_supplies/",
-        null=True,
-        blank=True
-    )
-
-    price = models.DecimalField(
-        max_digits=10,
-        decimal_places=2
-    )
-
-    stock = models.PositiveIntegerField(default=5)
-
-    def __str__(self):
-        return self.range_slug
-
-
-# ============================================================
-# ACCESSORY MASTER
-# BNC Connector, DC Connector, SMPS, etc.
-# ============================================================
-
-class Accessory(models.Model):
-    name = models.CharField(
-        max_length=100,
-        help_text="Example: BNC Connector, DC Connector"
-    )
-
-    image = models.ImageField(
-        upload_to="products/accessories/",
-        null=True,
-        blank=True
-    )
-
-    price = models.DecimalField(
-        max_digits=10,
-        decimal_places=2
-    )
-
-    stock = models.PositiveIntegerField(default=5)
+    class Meta:
+        verbose_name_plural = "Categories"
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
 
-# INSTALLATION CHARGES MASTER
-class InstallationCharge(models.Model):
-    description = models.CharField(max_length=200, default="Installation")
-    price = models.DecimalField(max_digits=10, decimal_places=2)
 
-    def __str__(self):
-        return f"{self.description} (₹{self.price})"
-
-
-
-
-
-
-from decimal import Decimal
+class Product(models.Model):
+    class ProductType(models.TextChoices):
+        SINGLE = "single", "Individual Product"
+        COMBO = "combo", "Combo Kit"
+        
+    class CameraType(models.TextChoices):
+        HD = "hd", "HD Camera"
+        IP = "ip", "IP Camera"
+        COMMERCIAL = "Commercial", "Commercial"
 
 
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.PROTECT,
+        related_name="products",
+        null=True,
+        blank=True,
+    )
 
-from decimal import Decimal
-from django.db import models
+    product_type = models.CharField(
+        max_length=10,
+        choices=ProductType.choices,
+        default=ProductType.SINGLE,
+        db_index=True,
+    )
 
+    name = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=220, unique=True)
+    sku = models.CharField(max_length=100, unique=True)
+    description = models.TextField(blank=True)
 
-
-
-
-
-
-
-
-from django.db import models
-from decimal import Decimal
-
-
-class ComboProduct(models.Model):
-    name = models.CharField(max_length=150)
-    brand = models.CharField(max_length=100, default="Unknown")
-
-    mrp = models.DecimalField(
+    price = models.DecimalField(
         max_digits=10,
         decimal_places=2,
+        validators=[MinValueValidator(Decimal("0.01"))],
+    )
+    brand = models.CharField(
+        max_length=100,
+        blank=True,
+        db_index=True,
+        help_text="Brand name, e.g. Hikvision, Dahua, CP Plus",
+    )
+
+    camera_type = models.CharField(
+        max_length=10,
+        choices=CameraType.choices,
+        blank=True,
+        default="",
+        db_index=True,
+        help_text="Choose HD or IP for cameras and combo kits.",
+    )
+
+    camera_quantity = models.PositiveSmallIntegerField(
+        default=0,
+        db_index=True,
+        help_text=(
+            "Total cameras included in this product or combo. "
+            "For example, enter 4 for a four-camera kit."
+        ),
+    )
+
+    # Stock is maintained for individual products.
+    # Combo availability is calculated from its components.
+    stock = models.PositiveIntegerField(default=0)
+
+    main_image = models.ImageField(
+        upload_to="products/",
+        blank=True,
         null=True,
-        blank=True
     )
 
-    # ---- COMPONENTS ----
-
-    camera = models.ForeignKey(
-        'Camera',
-        on_delete=models.CASCADE
-    )
-    camera_qty = models.PositiveIntegerField(default=2)
-
-    cameraBullet = models.ForeignKey(
-        'CameraBullet',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True
-    )
-    camerabullet_qty = models.PositiveIntegerField(default=1)
-
-    dvr = models.ForeignKey(
-        'DVR',
-        on_delete=models.CASCADE
-    )
-
-    hard_disk = models.ForeignKey(
-        'HardDisk',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True
-    )
-    hard_disk_qty = models.PositiveIntegerField(default=1)
-
-    cable = models.ForeignKey(
-        'Cable',
-        on_delete=models.CASCADE
-    )
-    cable_qty = models.PositiveIntegerField(default=1)
-
-    power = models.ForeignKey(
-        'PowerSupply',
-        on_delete=models.CASCADE
-    )
-    power_qty = models.PositiveIntegerField(default=1)
-
-    bnc_connector = models.ForeignKey(
-        'Accessory',
-        on_delete=models.CASCADE,
-        related_name='bnc_combo_products'
-    )
-    bnc_qty = models.PositiveIntegerField(default=2)
-
-    dc_connector = models.ForeignKey(
-        'Accessory',
-        on_delete=models.CASCADE,
-        related_name='dc_combo_products'
-    )
-    dc_qty = models.PositiveIntegerField(default=2)
-
-    installation = models.ForeignKey(
-        'InstallationCharge',
-        on_delete=models.CASCADE
-    )
-    installation_qty = models.PositiveIntegerField(default=1)
-
-    # ---- DISPLAY ----
-
-    description = models.TextField(blank=True)
-    image = models.ImageField(
-        upload_to='product_images/',
-        null=True,
-        blank=True
-    )
+    is_active = models.BooleanField(default=True, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
-    # ---- PRICE LOGIC ----
-
-    def total_price(self):
-        total = Decimal('0.00')
-
-        total += self.camera.price * self.camera_qty
-
-        if self.cameraBullet:
-            total += self.cameraBullet.price * self.camerabullet_qty
-
-        total += self.dvr.price
-
-        if self.hard_disk:
-            total += self.hard_disk.price * self.hard_disk_qty
-
-        total += self.cable.price * self.cable_qty
-        total += self.power.price * self.power_qty
-        total += self.bnc_connector.price * self.bnc_qty
-        total += self.dc_connector.price * self.dc_qty
-        total += self.installation.price * self.installation_qty
-
-        return total
-
-    # ---- STOCK LOGIC (DERIVED) ----
+    class Meta:
+        ordering = ["-created_at"]
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(price__gte=0),
+                name="product_price_nonnegative",
+            ),
+        ]
 
     @property
     def available_stock(self):
-        stocks = [
-            self.camera.stock // self.camera_qty,
-            self.dvr.stock,
-            self.cable.stock // self.cable_qty,
-            self.power.stock // self.power_qty,
-            self.bnc_connector.stock // self.bnc_qty,
-            self.dc_connector.stock // self.dc_qty,
-        ]
+        if self.product_type == self.ProductType.SINGLE:
+            return self.stock
 
-        if self.cameraBullet:
-            stocks.append(
-                self.cameraBullet.stock // self.camerabullet_qty
-            )
+        components = list(
+            self.components.select_related("component").all()
+        )
 
-        if self.hard_disk:
-            stocks.append(
-                self.hard_disk.stock // self.hard_disk_qty
-            )
+        if not components:
+            return 0
 
-        return min(stocks)
+        if any(item.quantity <= 0 for item in components):
+            return 0
 
-    # ---- HELPERS ----
+        return min(
+            item.component.stock // item.quantity
+            for item in components
+        )
 
-    @property
-    def in_stock(self):
-        return self.available_stock > 0
+    def clean(self):
+        super().clean()
 
-    @property
-    def discount_percentage(self):
-        if self.mrp:
-            return int((self.mrp - self.total_price()) / self.mrp * 100)
-        return 0
+        if self.product_type == self.ProductType.COMBO and self.pk:
+            # Combo stock is calculated from its components.
+            return
 
     def __str__(self):
-        return f"{self.name} (₹{self.total_price()})"
+        return self.name
 
 
-
-
-
-
-
-
-class ProductReview(models.Model):
-    product = models.ForeignKey(ComboProduct, on_delete=models.CASCADE, related_name="reviews")
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    rating = models.PositiveSmallIntegerField(choices=[(i,i) for i in range(1,6)])
-    comment = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-
-
-
-
-
-
-
-from django.core.exceptions import ValidationError
-
-from django.core.exceptions import ValidationError
-from django.core.validators import MinValueValidator
-from django.db import models
-
-
-class CartItem(models.Model):
-
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="cart_items"
-    )
+class ComboComponent(models.Model):
+    """Individual products and quantities included in a combo."""
 
     combo = models.ForeignKey(
-        ComboProduct,
+        Product,
         on_delete=models.CASCADE,
-        null=True,
-        blank=True
+        related_name="components",
+        limit_choices_to={
+            "product_type": Product.ProductType.COMBO
+        },
     )
 
-    camera = models.ForeignKey(
-        Camera,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True
-    )
-
-    bullet_camera = models.ForeignKey(
-        CameraBullet,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True
-    )
-
-    dvr = models.ForeignKey(
-        DVR,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True
-    )
-
-    hard_disk = models.ForeignKey(
-        HardDisk,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True
-    )
-
-    cable = models.ForeignKey(
-        Cable,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True
-    )
-
-    power_supply = models.ForeignKey(
-        PowerSupply,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True
-    )
-
-    accessory = models.ForeignKey(
-        Accessory,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True
+    component = models.ForeignKey(
+        Product,
+        on_delete=models.PROTECT,
+        related_name="included_in_combos",
+        limit_choices_to={
+            "product_type": Product.ProductType.SINGLE
+        },
     )
 
     quantity = models.PositiveIntegerField(
         default=1,
-        validators=[MinValueValidator(1)]
+        validators=[MinValueValidator(1)],
     )
 
-    PRODUCT_FIELDS = (
-        "combo", "camera", "bullet_camera", "dvr",
-        "hard_disk", "cable", "power_supply", "accessory"
-    )
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["combo", "component"],
+                name="unique_combo_component",
+            ),
+            models.CheckConstraint(
+                condition=Q(quantity__gte=1),
+                name="combo_component_quantity_positive",
+            ),
+        ]
 
-    @property
-    def product(self):
-        for field in self.PRODUCT_FIELDS:
-            product = getattr(self, field)
-            if product is not None:
-                return product
-        return None
+    def clean(self):
+        super().clean()
+
+        if (
+            self.combo_id
+            and self.combo.product_type != Product.ProductType.COMBO
+        ):
+            raise ValidationError({
+                "combo": "Choose a product marked as a combo kit."
+            })
+
+        if (
+            self.component_id
+            and self.component.product_type
+            != Product.ProductType.SINGLE
+        ):
+            raise ValidationError({
+                "component": (
+                    "Combo components must be individual products."
+                )
+            })
+
+        if (
+            self.combo_id
+            and self.component_id
+            and self.combo_id == self.component_id
+        ):
+            raise ValidationError("A combo cannot contain itself.")
+
+    def __str__(self):
+        return (
+            f"{self.combo.name}: "
+            f"{self.component.name} x {self.quantity}"
+        )
+
+
+class ProductReview(models.Model):
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name="reviews",
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+    rating = models.PositiveSmallIntegerField(
+        choices=[(i, i) for i in range(1, 6)]
+    )
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.product.name} - {self.rating}/5"
+
+
+class CartItem(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="cart_items",
+    )
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name="cart_items",
+    )
+    quantity = models.PositiveIntegerField(
+        default=1,
+        validators=[MinValueValidator(1)],
+    )
 
     @property
     def product_name(self):
-        product = self.product
-        return product.name if self.combo_id else str(product)
+        return self.product.name
 
     @property
     def unit_price(self):
-        if self.combo_id:
-            return self.combo.total_price()
-
-        product = self.product
-        return product.price if product else Decimal("0.00")
+        return self.product.price
 
     @property
     def available_stock(self):
-        if self.combo_id:
-            return self.combo.available_stock
-
-        product = self.product
-        return product.stock if product else 0
+        return self.product.available_stock
 
     def subtotal(self):
         return self.unit_price * self.quantity
@@ -527,139 +270,26 @@ class CartItem(models.Model):
     def clean(self):
         super().clean()
 
-        selected = [
-            field for field in self.PRODUCT_FIELDS
-            if getattr(self, f"{field}_id") is not None
-        ]
-
-        if len(selected) != 1:
-            raise ValidationError(
-                "Select exactly one product."
-            )
-
         if self.quantity < 1:
-            raise ValidationError(
-                "Quantity must be at least 1."
-            )
+            raise ValidationError({
+                "quantity": "Quantity must be at least 1."
+            })
 
-        if self.quantity > self.available_stock:
-            raise ValidationError(
-                f"Only {self.available_stock} available."
-            )
+        if (
+            self.product_id
+            and self.quantity > self.product.available_stock
+        ):
+            raise ValidationError({
+                "quantity": (
+                    f"Only {self.product.available_stock} available."
+                )
+            })
 
     def __str__(self):
         return f"{self.product_name} x {self.quantity}"
- 
 
 
-
-
-# class Order(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE)
-#     profile = models.ForeignKey('CustomerProfile', on_delete=models.SET_NULL, null=True)
-#     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
-#     razorpay_order_id = models.CharField(max_length=100, blank=True, null=True)
-#     payment_id = models.CharField(max_length=100, blank=True, null=True)
-#     payment_status = models.CharField(max_length=50, default='Pending')
-#     created_at = models.DateTimeField(auto_now_add=True)
-
-#     def __str__(self):
-#         return f"Order #{self.id} - {self.user.username}"
-
-
-
-
-# class Order(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE)
-#     profile = models.ForeignKey('CustomerProfile', on_delete=models.SET_NULL, null=True)
-#     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
-#     razorpay_order_id = models.CharField(max_length=100, blank=True, null=True)
-#     payment_id = models.CharField(max_length=100, blank=True, null=True)
-#     payment_status = models.CharField(max_length=50, default="Pending")
-#     created_at = models.DateTimeField(auto_now_add=True)
-
-#     def calculate_total(self):
-#         return sum(item.subtotal() for item in self.items.all())
-
-#     def __str__(self):
-#         return f"Order #{self.id} - {self.user.username}"
-
-
-
-
-from decimal import Decimal
-
-
-
-
-# class Order(models.Model):
-
-#     PAYMENT_METHOD_CHOICES = [
-#         ("online", "Online Payment"),
-#         ("cod", "Cash on Delivery"),
-#     ]
-
-#     PAYMENT_STATUS_CHOICES = [
-#         ("Pending", "Pending"),
-#         ("Paid", "Paid"),
-#         ("Failed", "Failed"),
-#     ]
-
-#     user = models.ForeignKey(
-#         User,
-#         on_delete=models.CASCADE
-#     )
-
-#     profile = models.ForeignKey(
-#         "CustomerProfile",
-#         on_delete=models.SET_NULL,
-#         null=True
-#     )
-
-#     total_amount = models.DecimalField(
-#         max_digits=10,
-#         decimal_places=2
-#     )
-
-#     payment_method = models.CharField(
-#         max_length=10,
-#         choices=PAYMENT_METHOD_CHOICES,
-#         default="online"
-#     )
-
-#     razorpay_order_id = models.CharField(
-#         max_length=100,
-#         blank=True,
-#         null=True
-#     )
-
-#     payment_id = models.CharField(
-#         max_length=100,
-#         blank=True,
-#         null=True
-#     )
-
-#     payment_status = models.CharField(
-#         max_length=50,
-#         choices=PAYMENT_STATUS_CHOICES,
-#         default="Pending"
-#     )
-
-#     created_at = models.DateTimeField(
-#         auto_now_add=True
-#     )
-
-#     def calculate_total(self):
-#         return sum(
-#             (item.subtotal() for item in self.items.all()),
-#             Decimal("0.00")
-#         )
-
-#     def __str__(self):
-#         return f"Order #{self.id} - {self.user.username}"
-    
 class Order(models.Model):
-
     PAYMENT_METHOD_CHOICES = [
         ("online", "Online Payment"),
         ("cod", "Cash on Delivery"),
@@ -680,214 +310,96 @@ class Order(models.Model):
     ]
 
     user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="orders",
     )
 
     profile = models.ForeignKey(
         "CustomerProfile",
         on_delete=models.SET_NULL,
-        null=True
+        null=True,
+        blank=True,
     )
 
     total_amount = models.DecimalField(
         max_digits=10,
-        decimal_places=2
+        decimal_places=2,
     )
 
     payment_method = models.CharField(
         max_length=10,
         choices=PAYMENT_METHOD_CHOICES,
-        default="online"
+        default="online",
     )
 
     razorpay_order_id = models.CharField(
         max_length=100,
         blank=True,
-        null=True
+        null=True,
     )
 
     payment_id = models.CharField(
         max_length=100,
         blank=True,
-        null=True
+        null=True,
     )
 
     payment_status = models.CharField(
         max_length=50,
         choices=PAYMENT_STATUS_CHOICES,
-        default="Pending"
+        default="Pending",
     )
 
     order_status = models.CharField(
         max_length=20,
         choices=ORDER_STATUS_CHOICES,
-        default="Received"
+        default="Received",
     )
+    stock_deducted = models.BooleanField(default=False)
 
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def calculate_total(self):
         return sum(
-            (
-                item.subtotal()
-                for item in self.items.all()
-            ),
-            Decimal("0.00")
+            (item.subtotal() for item in self.items.all()),
+            Decimal("0.00"),
         )
 
     def __str__(self):
-        return f"Order #{self.id} - {self.user.username}"    
-    
-    
-# class OrderItem(models.Model):
-#     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
-#     combo = models.ForeignKey('ComboProduct', on_delete=models.SET_NULL, null=True)
-#     quantity = models.PositiveIntegerField(default=1)
-#     price = models.DecimalField(max_digits=10, decimal_places=2)
-
-#     def subtotal(self):
-#         return self.quantity * self.price
-
-#     def __str__(self):
-#         if self.combo:
-#             return f"{self.combo.name} x {self.quantity}"
-#         else:
-#             return f"Deleted Product x {self.quantity}"
-  
-
-
-
-
-# class OrderItem(models.Model):
-#     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="items")
-#     combo = models.ForeignKey(ComboProduct, on_delete=models.SET_NULL, null=True)
-#     quantity = models.PositiveIntegerField(default=1)
-#     price = models.DecimalField(max_digits=10, decimal_places=2)  # snapshot
-
-#     def subtotal(self):
-#         return self.quantity * self.price
-
-#     def __str__(self):
-#         if self.combo:
-#             return f"{self.combo.name} x {self.quantity}"
-#         return f"Deleted Product x {self.quantity}"
-
-from django.db import models
-from django.core.exceptions import ValidationError
-from django.core.validators import MinValueValidator
+        return f"Order #{self.pk} - {self.user}"
 
 
 class OrderItem(models.Model):
-
     order = models.ForeignKey(
         Order,
         on_delete=models.CASCADE,
-        related_name="items"
+        related_name="items",
     )
 
-    # CCTV Combo Kit
-    combo = models.ForeignKey(
-        ComboProduct,
+    # Preserve order history if the product is deleted.
+    product = models.ForeignKey(
+        Product,
         on_delete=models.SET_NULL,
         null=True,
-        blank=True
+        blank=True,
+        related_name="order_items",
     )
 
-    # Individual products
-    camera = models.ForeignKey(
-        Camera,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True
-    )
+    product_name = models.CharField(max_length=200)
+    product_sku = models.CharField(max_length=100, blank=True)
+    product_details = models.JSONField(default=dict, blank=True)
 
-    bullet_camera = models.ForeignKey(
-        CameraBullet,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True
-    )
-
-    dvr = models.ForeignKey(
-        DVR,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True
-    )
-
-    hard_disk = models.ForeignKey(
-        HardDisk,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True
-    )
-
-    cable = models.ForeignKey(
-        Cable,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True
-    )
-
-    power_supply = models.ForeignKey(
-        PowerSupply,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True
-    )
-
-    accessory = models.ForeignKey(
-        Accessory,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True
-    )
-
-    # Preserve product information after purchase
-    product_name = models.CharField(
-        max_length=150,
-        blank=True
-    )
-
-    product_details = models.JSONField(
-        default=dict,
-        blank=True
-    )
-
-    # Quantity and purchase-time price
     quantity = models.PositiveIntegerField(
         default=1,
-        validators=[MinValueValidator(1)]
+        validators=[MinValueValidator(1)],
     )
 
     price = models.DecimalField(
         max_digits=10,
-        decimal_places=2
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal("0.00"))],
     )
-
-    PRODUCT_FIELDS = (
-        "combo",
-        "camera",
-        "bullet_camera",
-        "dvr",
-        "hard_disk",
-        "cable",
-        "power_supply",
-        "accessory",
-    )
-
-    @property
-    def product(self):
-        for field in self.PRODUCT_FIELDS:
-            product = getattr(self, field)
-
-            if product is not None:
-                return product
-
-        return None
 
     def subtotal(self):
         return self.quantity * self.price
@@ -895,43 +407,44 @@ class OrderItem(models.Model):
     def clean(self):
         super().clean()
 
-        selected = sum(
-            getattr(self, f"{field}_id") is not None
-            for field in self.PRODUCT_FIELDS
-        )
-
-        # Allow zero references for historical orders
-        # whose products have been deleted.
-        if selected > 1:
-            raise ValidationError(
-                "Only one product can be selected."
-            )
-
-        if selected == 0 and not self.product_name:
+        if not self.product_id and not self.product_name:
             raise ValidationError(
                 "A product or saved product name is required."
             )
 
+    def save(self, *args, **kwargs):
+        if self.product_id:
+            if not self.product_name:
+                self.product_name = self.product.name
+
+            if not self.product_sku:
+                self.product_sku = self.product.sku
+
+            if not self.product_details:
+                self.product_details = {
+                    "product_type": self.product.product_type,
+                    "category": (
+                        self.product.category.name
+                        if self.product.category_id
+                        else ""
+                    ),
+                }
+
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        name = self.product_name
-
-        if not name:
-            if self.combo:
-                name = self.combo.name
-            elif self.product:
-                name = str(self.product)
-            else:
-                name = "Deleted Product"
-
-        return f"{name} x {self.quantity}"
+        return (
+            f"{self.product_name or 'Deleted Product'} "
+            f"x {self.quantity}"
+        )
 
 
-
-
-
-# now this is used for addresses
 class CustomerProfile(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='addresses')
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="addresses",
+    )
     full_name = models.CharField(max_length=100)
     email = models.EmailField()
     mobile = models.CharField(max_length=15)
@@ -944,77 +457,22 @@ class CustomerProfile(models.Model):
 
     def __str__(self):
         return self.full_name
-    
 
-
-
-from django.db import models
-from django.contrib.auth.models import User
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
     full_name = models.CharField(max_length=100, blank=True)
     email = models.EmailField(unique=True, null=True, blank=True)
     mobile = models.CharField(max_length=20, unique=True)
 
     def __str__(self):
-        return self.full_name if self.full_name else self.mobile
- 
-
-
-
-
-# class ServiceBooking(models.Model):
-#     SERVICE_TYPES = [
-#         ("cctvrepair", "CCTV Repair"),
-#         # ("desotherktop", "Other Repair"),
-#         # ("onsite", "On-site Visit"),
-#         ("other", "Other"),
-#     ]
-
-#     STATUS_CHOICES = [
-#         ("new", "New"),
-#         ("scheduled", "Scheduled"),
-#         ("completed", "Completed"),
-#         ("cancelled", "Cancelled"),
-#     ]
-
-#     name = models.CharField(max_length=100)
-#     mobile = models.CharField(max_length=15)
-#     email = models.EmailField(blank=True, null=True)
-#     problem_description = models.TextField()
-
-#     service_type = models.CharField(
-#         max_length=20, choices=SERVICE_TYPES, default="onsite"
-#     )
-
-#     preferred_date = models.DateField()
-#     preferred_time = models.TimeField()
-
-#     address = models.TextField(blank=True, null=True)
-
-#     attachment = models.FileField(upload_to="service_attachments/", blank=True, null=True)
-
-#     status = models.CharField(
-#         max_length=20, choices=STATUS_CHOICES, default="new", blank=True
-#     )
-
-#     created_at = models.DateTimeField(auto_now_add=True)
-
-#     def __str__(self):
-#         return f"{self.name} - {self.mobile}"
-
-
-from django.conf import settings
+        return self.full_name or self.mobile
 
 
 class ServiceBooking(models.Model):
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="service_bookings"
-    )
-    
     SERVICE_TYPES = [
         ("cctvrepair", "CCTV Repair Rs. 2000"),
         ("computerrepair", "Computer Repair Rs. 1000"),
@@ -1033,6 +491,12 @@ class ServiceBooking(models.Model):
         ("failed", "Failed"),
     ]
 
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="service_bookings",
+    )
+
     name = models.CharField(max_length=100)
     mobile = models.CharField(max_length=15)
     email = models.EmailField(blank=True, null=True)
@@ -1041,50 +505,48 @@ class ServiceBooking(models.Model):
     service_type = models.CharField(
         max_length=20,
         choices=SERVICE_TYPES,
-        default="cctvrepair"
+        default="cctvrepair",
     )
 
     preferred_date = models.DateField()
     preferred_time = models.TimeField()
-
     address = models.TextField(blank=True, null=True)
 
     attachment = models.FileField(
         upload_to="service_attachments/",
         blank=True,
-        null=True
+        null=True,
     )
 
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
         default="new",
-        blank=True
+        blank=True,
     )
 
-    # PAYMENT
     amount = models.DecimalField(
         max_digits=10,
         decimal_places=2,
-        default=0
+        default=0,
     )
 
     payment_status = models.CharField(
         max_length=20,
         choices=PAYMENT_STATUS_CHOICES,
-        default="pending"
+        default="pending",
     )
 
     razorpay_order_id = models.CharField(
         max_length=100,
         blank=True,
-        null=True
+        null=True,
     )
 
     razorpay_payment_id = models.CharField(
         max_length=100,
         blank=True,
-        null=True
+        null=True,
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -1093,35 +555,12 @@ class ServiceBooking(models.Model):
         return f"{self.name} - {self.mobile}"
 
 
-
-from django.db import models
-
-# class CCTVEngineer(models.Model):
-#     full_name = models.CharField(max_length=100)
-#     mobile = models.CharField(max_length=15, unique=True)
-#     email = models.EmailField(unique=True)
-#     experience = models.CharField(max_length=50)
-#     city = models.CharField(max_length=100)
-#     address = models.TextField()
-#     government_id = models.FileField(upload_to='engineer_ids/', blank=False, null=False)  # 🆕 NEW FIELD
-#     certified = models.BooleanField(default=False)
-#     date_registered = models.DateTimeField(auto_now_add=True)
-
-#     def __str__(self):
-#         return self.full_name
-
-from django.db import models
-from PIL import Image
-from io import BytesIO
-from django.core.files.base import ContentFile
-
 class CCTVEngineer(models.Model):
-
-    STATUS_CHOICES = (
-        ('pending', 'Pending'),
-        ('verified', 'Verified'),
-        ('hold', 'Hold'),
-    )
+    STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("verified", "Verified"),
+        ("hold", "Hold"),
+    ]
 
     full_name = models.CharField(max_length=100)
     mobile = models.CharField(max_length=15, unique=True)
@@ -1129,32 +568,46 @@ class CCTVEngineer(models.Model):
     experience = models.CharField(max_length=50)
     city = models.CharField(max_length=100)
     address = models.TextField()
-    government_id = models.FileField(upload_to='engineer_ids/')
+    government_id = models.FileField(upload_to="engineer_ids/")
     certified = models.BooleanField(default=False)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
-    date_registered = models.DateTimeField(auto_now_add=True, editable=False)
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="pending",
+    )
+
+    date_registered = models.DateTimeField(
+        auto_now_add=True,
+        editable=False,
+    )
 
     def save(self, *args, **kwargs):
-        # compress ONLY if image
         if self.government_id:
             file = self.government_id
-            file_ext = file.name.split('.')[-1].lower()
+            ext = file.name.rsplit(".", 1)[-1].lower()
 
-            if file_ext in ['jpg', 'jpeg', 'png']:
-                img = Image.open(file)
+            if ext in {"jpg", "jpeg", "png"}:
+                try:
+                    img = Image.open(file)
 
-                # convert PNG to RGB (JPEG-friendly)
-                if img.mode in ("RGBA", "P"):
-                    img = img.convert("RGB")
+                    if img.mode in ("RGBA", "P"):
+                        img = img.convert("RGB")
 
-                buffer = BytesIO()
-                img.save(buffer, format='JPEG', quality=70)  # compress to 70%
-                buffer.seek(0)
+                    buffer = BytesIO()
+                    img.save(buffer, format="JPEG", quality=70)
+                    buffer.seek(0)
 
-                self.government_id = ContentFile(
-                    buffer.read(),
-                    name=f"{file.name.split('.')[0]}_compressed.jpg"
-                )
+                    self.government_id = ContentFile(
+                        buffer.read(),
+                        name=(
+                            f"{file.name.rsplit('.', 1)[0]}"
+                            "_compressed.jpg"
+                        ),
+                    )
+
+                except (OSError, ValueError):
+                    pass
 
         super().save(*args, **kwargs)
 
@@ -1162,12 +615,7 @@ class CCTVEngineer(models.Model):
         return self.full_name
 
 
-
-
-
-
 class JobOpening(models.Model):
-
     JOB_TYPE_CHOICES = [
         ("Full Time", "Full Time"),
         ("Part Time", "Part Time"),
@@ -1177,7 +625,13 @@ class JobOpening(models.Model):
 
     title = models.CharField(max_length=150)
     location = models.CharField(max_length=100)
-    job_type = models.CharField(max_length=20, choices=JOB_TYPE_CHOICES, default="Full Time")
+
+    job_type = models.CharField(
+        max_length=20,
+        choices=JOB_TYPE_CHOICES,
+        default="Full Time",
+    )
+
     experience = models.CharField(max_length=100)
     qualification = models.CharField(max_length=200)
     salary = models.CharField(max_length=100, blank=True)

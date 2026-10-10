@@ -1,31 +1,36 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}
-My Orders | Camura.in
+{% block title %}My Orders | Camura.in{% endblock %}
+
+{% block meta %}
+<meta name="description"
+      content="View your Camura CCTV orders, order totals, payment methods and order statuses.">
+<meta name="robots" content="noindex, follow">
 {% endblock %}
 
 {% block content %}
 
-<div class="container py-4 py-md-5">
+<div class="container py-4 py-lg-5">
 
-    <!-- Page Header -->
-    <div class="d-flex flex-column flex-sm-row
-                justify-content-between align-items-sm-center
-                gap-2 mb-4">
+    <!-- PAGE HEADER -->
+    <div class="d-flex justify-content-between align-items-center
+                flex-wrap gap-3 mb-4">
 
         <div>
-            <h3 class="fw-bold mb-1">
-                <i class="bi bi-box-seam me-2"></i>
+            <h1 class="h3 fw-bold mb-1">
+                <i class="bi bi-box-seam text-primary me-2"></i>
                 My Orders
-            </h3>
+            </h1>
 
             <p class="text-muted mb-0">
-                View your previous orders and products.
+                View and track your Camura purchases.
             </p>
         </div>
 
-        <a href="{% url 'home' %}" class="btn btn-outline-primary">
-            <i class="bi bi-arrow-left me-1"></i>
+        <a href="{% url 'product_list' %}"
+           class="btn btn-outline-primary">
+            <i class="bi bi-shop me-1"></i>
             Continue Shopping
         </a>
 
@@ -34,179 +39,164 @@ My Orders | Camura.in
 
     {% if orders %}
 
-        {% for order in orders %}
+        <!-- ORDER COUNT -->
+        <div class="mb-3">
+            <span class="badge bg-light text-dark border rounded-pill px-3 py-2">
+                {{ orders|length }} order{{ orders|length|pluralize }}
+            </span>
+        </div>
 
-        <!-- Order Card -->
-        <div class="card border-0 shadow-sm mb-4 order-card">
+        <!-- ORDER CARDS -->
+        <div class="row g-3">
 
-            <!-- Order Header -->
-            <div class="card-header bg-white border-0 p-3 p-md-4">
+            {% for order in orders %}
 
-                <div class="row g-3 align-items-center">
+            <div class="col-12">
 
-                    <!-- Order Information -->
-                    <div class="col-12 col-md-8">
+                <div class="card order-card border-0 shadow-sm">
 
-                        <div class="d-flex flex-wrap
-                                    align-items-center gap-2 mb-2">
+                    <!-- ORDER HEADER -->
+                    <div class="card-header bg-white p-3 p-md-4">
 
-                            <h5 class="fw-bold mb-0">
-                                Order #{{ order.id }}
-                            </h5>
+                        <div class="d-flex justify-content-between
+                                    align-items-start flex-wrap gap-3">
 
-                            {% if order.payment_status == 'Paid' %}
+                            <div>
+                                <div class="small text-muted mb-1">
+                                    Order Number
+                                </div>
 
-                                <span class="badge bg-success">
-                                    <i class="bi bi-check-circle me-1"></i>
-                                    Paid
+                                <h2 class="h5 fw-bold mb-1">
+                                    #{{ order.pk }}
+                                </h2>
+
+                                {% if order.created_at %}
+                                <div class="small text-muted">
+                                    <i class="bi bi-calendar3 me-1"></i>
+                                    {{ order.created_at|date:"d M Y, h:i A" }}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="text-md-end">
+
+                                <div class="small text-muted mb-1">
+                                    Order Status
+                                </div>
+
+                                <span class="badge rounded-pill status-badge">
+                                    {{ order.get_order_status_display|default:order.order_status|default:"Order received" }}
                                 </span>
 
-                            {% elif order.payment_status == 'Failed' %}
+                            </div>
 
-                                <span class="badge bg-danger">
-                                    <i class="bi bi-x-circle me-1"></i>
-                                    Failed
-                                </span>
-
-                            {% else %}
-
-                                <span class="badge bg-warning text-dark">
-                                    <i class="bi bi-clock me-1"></i>
-                                    {{ order.payment_status }}
-                                </span>
-
-                            {% endif %}
-
-                        </div>
-
-                        <div class="small text-muted">
-                            <i class="bi bi-calendar3 me-1"></i>
-                            Ordered on:
-                            {{ order.created_at|date:"d M Y, h:i A" }}
                         </div>
 
                     </div>
 
 
-                    <!-- Order Total -->
-                    <div class="col-12 col-md-4 text-md-end">
+                    <!-- ORDER DETAILS -->
+                    <div class="card-body p-3 p-md-4">
 
-                        <div class="small text-muted">
-                            Order Total
-                        </div>
+                        <div class="row g-3">
 
-                        <div class="fw-bold fs-5">
-                            ₹{{ order.total_amount|floatformat:2 }}
-                        </div>
+                            <!-- TOTAL -->
+                            <div class="col-6 col-md-4">
 
-                    </div>
+                                <div class="order-info">
+                                    <div class="order-info-icon text-success">
+                                        <i class="bi bi-currency-rupee"></i>
+                                    </div>
 
-                </div>
-
-            </div>
-
-
-            <!-- Order Items -->
-            <div class="card-body border-top p-3 p-md-4">
-
-                {% for item in order.items.all %}
-
-                <div class="order-item py-3
-                            {% if not forloop.last %}border-bottom{% endif %}">
-
-                    <div class="row g-3 align-items-center">
-
-                        <!-- Product Image -->
-                        <div class="col-auto">
-
-                            {% if item.combo %}
-
-                                <a href="{% url 'product_detail' item.combo.id %}">
-
-                                    {% if item.combo.image %}
-
-                                        <img
-                                            src="{{ item.combo.image.url }}"
-                                            alt="{{ item.combo.name }}"
-                                            class="order-product-img"
-                                        >
-
-                                    {% else %}
-
-                                        <div class="order-product-placeholder">
-                                            <i class="bi bi-camera-video"></i>
+                                    <div>
+                                        <div class="small text-muted">
+                                            Order Total
                                         </div>
 
-                                    {% endif %}
-
-                                </a>
-
-                            {% else %}
-
-                                <div class="order-product-placeholder text-danger">
-                                    <i class="bi bi-trash"></i>
+                                        <div class="fw-bold text-success">
+                                            ₹{{ order.total_amount|floatformat:2 }}
+                                        </div>
+                                    </div>
                                 </div>
 
-                            {% endif %}
+                            </div>
+
+
+                            <!-- PAYMENT METHOD -->
+                            <div class="col-6 col-md-4">
+
+                                <div class="order-info">
+                                    <div class="order-info-icon text-primary">
+                                        <i class="bi bi-credit-card"></i>
+                                    </div>
+
+                                    <div>
+                                        <div class="small text-muted">
+                                            Payment Method
+                                        </div>
+
+                                        <div class="fw-semibold">
+                                            {{ order.get_payment_method_display|default:order.payment_method|default:"Not specified" }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            <!-- PAYMENT STATUS -->
+                            <div class="col-12 col-md-4">
+
+                                <div class="order-info">
+                                    <div class="order-info-icon text-warning">
+                                        <i class="bi bi-wallet2"></i>
+                                    </div>
+
+                                    <div>
+                                        <div class="small text-muted">
+                                            Payment Status
+                                        </div>
+
+                                        <div class="fw-semibold">
+                                            {{ order.get_payment_status_display|default:order.payment_status|default:"Pending" }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
 
                         </div>
 
 
-                        <!-- Product Details -->
-                        <div class="col">
+                        <!-- COD NOTICE -->
+                        {% if order.payment_method == "cod" or order.payment_method == "COD" or order.payment_method == "cash_on_delivery" %}
 
-                            {% if item.combo %}
+                        {% if order.payment_status == "Pending" or order.payment_status == "pending" %}
 
-                                <a
-                                    href="{% url 'product_detail' item.combo.id %}"
-                                    class="order-product-name"
-                                >
-                                    {{ item.combo.name }}
-                                </a>
-
-                            {% else %}
-
-                                <div class="fw-bold text-danger">
-                                    Product Deleted
-                                </div>
-
-                            {% endif %}
-
-
-                            <div class="small text-muted mt-1">
-                                Quantity: {{ item.quantity }}
-                            </div>
-
-                            <div class="fw-bold mt-1">
-                                ₹{{ item.subtotal|floatformat:2 }}
-                            </div>
-
+                        <div class="alert alert-warning small mt-4 mb-0">
+                            <i class="bi bi-cash-stack me-2"></i>
+                            Cash on Delivery: payment is due according to
+                            your order's delivery and payment terms.
                         </div>
 
+                        {% endif %}
+                        {% endif %}
 
-                        <!-- Buy Again -->
-                        <div class="col-12 col-sm-auto">
 
-                            {% if item.combo %}
+                        <!-- ACTIONS -->
+                        <div class="d-flex flex-wrap gap-2 mt-4">
 
-                                <a
-                                    href="{% url 'buy_now' item.combo.id %}"
-                                    class="btn btn-outline-primary btn-sm w-100"
-                                >
-                                    <i class="bi bi-cart-plus me-1"></i>
-                                    Buy Again
-                                </a>
+                            <a href="{% url 'order_success' order_id=order.pk %}"
+                               class="btn btn-primary">
+                                <i class="bi bi-eye me-1"></i>
+                                View Order
+                            </a>
 
-                            {% else %}
-
-                                <button
-                                    class="btn btn-secondary btn-sm w-100"
-                                    disabled
-                                >
-                                    Product Unavailable
-                                </button>
-
-                            {% endif %}
+                            <a href="{% url 'product_list' %}"
+                               class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-repeat me-1"></i>
+                                Shop Again
+                            </a>
 
                         </div>
 
@@ -214,38 +204,36 @@ My Orders | Camura.in
 
                 </div>
 
-                {% endfor %}
-
             </div>
+
+            {% endfor %}
 
         </div>
 
-        {% endfor %}
-
-
     {% else %}
 
-        <!-- No Orders -->
-        <div class="card border-0 shadow-sm">
+        <!-- EMPTY ORDERS -->
+        <div class="card border-0 shadow-sm rounded-4">
 
             <div class="card-body text-center py-5 px-3">
 
-                <div class="empty-order-icon mb-3">
+                <div class="empty-orders-icon mb-3">
                     <i class="bi bi-bag-x"></i>
                 </div>
 
-                <h5 class="fw-bold">
-                    No Orders Yet
-                </h5>
+                <h2 class="h4 fw-bold">
+                    You haven't placed any orders yet
+                </h2>
 
                 <p class="text-muted mb-4">
-                    You haven't placed any orders yet.
-                    Start shopping and your orders will appear here.
+                    Your orders will appear here after you place
+                    an order for your CCTV products.
                 </p>
 
-                <a href="{% url 'home' %}" class="btn btn-primary px-4">
+                <a href="{% url 'product_list' %}"
+                   class="btn btn-primary btn-lg">
                     <i class="bi bi-shop me-2"></i>
-                    Start Shopping
+                    Browse CCTV Products
                 </a>
 
             </div>
@@ -258,108 +246,71 @@ My Orders | Camura.in
 
 
 <style>
-
-    /* Order Card */
     .order-card {
         border-radius: 14px;
         overflow: hidden;
+        transition: box-shadow .2s ease;
     }
 
-
-    /* Product Image */
-    .order-product-img,
-    .order-product-placeholder {
-        width: 80px;
-        height: 80px;
-        border-radius: 10px;
+    .order-card:hover {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, .08) !important;
     }
 
-    .order-product-img {
-        object-fit: cover;
-        display: block;
-        border: 1px solid #e9ecef;
+    .order-card .card-header {
+        border-bottom: 1px solid #edf0f2;
     }
 
-
-    /* Image Placeholder */
-    .order-product-placeholder {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: #f8f9fa;
-        border: 1px solid #e9ecef;
-        color: #6c757d;
-        font-size: 1.7rem;
-    }
-
-
-    /* Product Name */
-    .order-product-name {
-        color: #212529;
+    .status-badge {
+        padding: 8px 12px;
+        background: #e7f1ff;
+        color: #084298;
+        font-size: .8rem;
         font-weight: 600;
-        text-decoration: none;
-        line-height: 1.4;
+        white-space: normal;
+        text-align: center;
     }
 
-    .order-product-name:hover {
-        color: #0d6efd;
+    .order-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 65px;
+        overflow-wrap: anywhere;
     }
 
-
-    /* Order Item */
-    .order-item {
-        transition: background-color 0.2s ease;
-        border-radius: 10px;
-    }
-
-    .order-item:hover {
-        background-color: #f8f9fa;
-    }
-
-
-    /* Empty Orders Icon */
-    .empty-order-icon {
-        width: 75px;
-        height: 75px;
-        margin: 0 auto;
+    .order-info-icon {
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 50%;
-        background: rgba(13, 110, 253, 0.08);
-        color: #0d6efd;
-        font-size: 2.2rem;
+        flex-shrink: 0;
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        background: #f5f7fa;
+        font-size: 1.2rem;
     }
 
-
-    /* Mobile */
-    @media (max-width: 576px) {
-
-        .order-product-img,
-        .order-product-placeholder {
-            width: 65px;
-            height: 65px;
-        }
-
-        .order-product-placeholder {
-            font-size: 1.4rem;
-        }
-
-        .order-item {
-            padding-top: 1rem !important;
-            padding-bottom: 1rem !important;
-        }
-
-        .order-card .card-header {
-            padding: 1rem !important;
-        }
-
-        .order-card .card-body {
-            padding: 0 1rem 1rem !important;
-        }
-
+    .empty-orders-icon {
+        color: #adb5bd;
+        font-size: 4rem;
     }
 
+    @media (max-width: 575.98px) {
+        .order-info {
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .order-info-icon {
+            width: 35px;
+            height: 35px;
+            font-size: 1rem;
+        }
+
+        .order-card .btn {
+            flex: 1 1 auto;
+        }
+    }
 </style>
 
 {% endblock %}

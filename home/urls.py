@@ -56,11 +56,11 @@ urlpatterns = [
     ),
 
     # Keep old registration URL if still used anywhere
-    path(
-        "registerold/",
-        views.registerold,
-        name="registerold",
-    ),
+    # path(
+    #     "registerold/",
+    #     views.registerold,
+    #     name="registerold",
+    # ),
 
 
     # =========================================================
@@ -79,47 +79,31 @@ urlpatterns = [
         name="product_detail",
     ),
 
-    path(
-        "accessories/",
-        views.accessories,
-        name="accessories",
-    ),
-
-    path(
-        "accessories/suggestions/",
-        views.accessory_suggestions,
-        name="accessory_suggestions",
-    ),
+    
+    # CCTV accessories - single products only
+    path( "accessories/", views.accessories, name="accessories", ), 
+    # Live product search suggestions 
+    path( "accessory-suggestions/", views.accessory_suggestions, name="accessory_suggestions", ),
+    
 
 
     # =========================================================
     # CART
     # =========================================================
 
-    path(
-        "add-to-cart/<str:product_type>/<int:product_id>/",
-        views.add_to_cart,
-        name="add_to_cart",
-    ),
+    path("add-to-cart/<str:product_type>/<int:product_id>/", views.add_to_cart, name="add_to_cart"),
+    
+    # View shopping cart
+    path("cart/", views.cart, name="cart"),
 
-    path(
-        "cart/",
-        views.cart,
-        name="cart",
-    ),
+    # Remove an individual cart item
+    path("remove-cart-item/<int:item_id>/", views.remove_cart_item, name="remove_cart_item"),
 
-    path(
-        "remove-cart-item/<int:item_id>/",
-        views.remove_cart_item,
-        name="remove_cart_item",
-    ),
-
-    path(
-        "clear-cart/",
-        views.clear_cart,
-        name="clear_cart",
-    ),
-
+    # Clear the entire cart
+    path("clear-cart/", views.clear_cart, name="clear_cart"),
+    
+    #cart item quantity increased or decreased
+    path("cart/update-quantity/<int:item_id>/", views.update_cart_quantity, name="update_cart_quantity",),
 
     # =========================================================
     # CHECKOUT & ORDERS
