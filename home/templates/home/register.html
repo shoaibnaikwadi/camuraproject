@@ -1,33 +1,403 @@
+```html
 {% extends 'base.html' %}
+
 {% block content %}
 
-<div class="container mt-5" style="max-width: 450px;">
-    <h3 class="text-center mb-4">Login & Register with Mobile OTP</h3>
+<style>
+    .camura-auth-section {
+        min-height: 75vh;
+        padding: 45px 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background:
+            radial-gradient(circle at top left, rgba(13, 110, 253, .09), transparent 38%),
+            linear-gradient(135deg, #f5f8ff 0%, #eef3fb 100%);
+    }
 
-    {% if stage == "mobile" %}
-    <!-- ============= MOBILE INPUT ============= -->
-    <form method="POST">
-        {% csrf_token %}
-        <label>Mobile Number</label>
-        <input type="text" name="mobile" class="form-control" required>
+    .camura-auth-card {
+        width: 100%;
+        max-width: 440px;
+        overflow: hidden;
+        background: #fff;
+        border: 1px solid rgba(226, 232, 240, .9);
+        border-radius: 24px;
+        box-shadow: 0 18px 55px rgba(30, 64, 120, .12);
+    }
 
-        <button class="btn btn-primary w-100 mt-3" name="send_otp">Send OTP</button>
-    </form>
+    .camura-auth-header {
+        padding: 30px 28px 24px;
+        text-align: center;
+        background: linear-gradient(135deg, #0d6efd, #084298);
+        color: #fff;
+    }
 
-    {% elif stage == "otp" %}
-    <!-- ============= OTP INPUT ============= -->
-    <form method="POST">
-        {% csrf_token %}
-        <label>Enter OTP</label>
-        <input type="text" name="otp" class="form-control" required>
+    .camura-auth-icon {
+        width: 76px;
+        height: 76px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 17px;
+        border-radius: 22px;
+        background: rgba(255, 255, 255, .16);
+        border: 1px solid rgba(255, 255, 255, .3);
+        font-size: 35px;
+    }
 
-        <button class="btn btn-success w-100 mt-3" name="verify_otp">Verify OTP</button>
+    .camura-auth-header h2 {
+        margin: 0 0 9px;
+        font-size: clamp(23px, 5vw, 28px);
+        font-weight: 800;
+        letter-spacing: -.5px;
+    }
 
-        <p class="text-center mt-3">
-            <a href="{% url 'register' %}">Change Number</a>
-        </p>
-    </form>
-    {% endif %}
-</div>
+    .camura-auth-header p {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.6;
+        color: rgba(255, 255, 255, .88);
+    }
+
+    .camura-auth-body {
+        padding: 30px;
+    }
+
+    .camura-step {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 23px;
+        color: #475569;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .camura-step-number {
+        display: inline-flex;
+        width: 28px;
+        height: 28px;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        border-radius: 50%;
+        background: #e8f1ff;
+        color: #0d6efd;
+        font-weight: 800;
+    }
+
+    .camura-auth-label {
+        display: block;
+        margin-bottom: 9px;
+        color: #1e293b;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .camura-input-group {
+        display: flex;
+        align-items: center;
+        min-height: 55px;
+        overflow: hidden;
+        border: 1.5px solid #dbe3ef;
+        border-radius: 13px;
+        background: #fff;
+        transition: border-color .2s, box-shadow .2s;
+    }
+
+    .camura-input-group:focus-within {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 4px rgba(13, 110, 253, .10);
+    }
+
+    .camura-input-prefix {
+        padding: 0 13px;
+        color: #64748b;
+        font-size: 19px;
+    }
+
+    .camura-input-group input {
+        width: 100%;
+        min-width: 0;
+        min-height: 52px;
+        padding: 12px 14px 12px 0;
+        border: 0;
+        outline: none;
+        background: transparent;
+        color: #0f172a;
+        font-size: 16px;
+        box-shadow: none !important;
+    }
+
+    .camura-input-group input::placeholder {
+        color: #94a3b8;
+    }
+
+    .camura-otp-input {
+        text-align: center;
+        letter-spacing: 8px;
+        font-size: 23px !important;
+        font-weight: 800;
+    }
+
+    .camura-auth-btn {
+        display: flex;
+        width: 100%;
+        min-height: 54px;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        margin-top: 22px;
+        padding: 13px 18px;
+        border: none;
+        border-radius: 13px;
+        color: #fff;
+        font-size: 16px;
+        font-weight: 750;
+        transition: transform .2s, box-shadow .2s, filter .2s;
+    }
+
+    .camura-auth-btn-primary {
+        background: linear-gradient(135deg, #0d6efd, #084298);
+        box-shadow: 0 7px 18px rgba(13, 110, 253, .22);
+    }
+
+    .camura-auth-btn-success {
+        background: linear-gradient(135deg, #16a34a, #15803d);
+        box-shadow: 0 7px 18px rgba(22, 163, 74, .20);
+    }
+
+    .camura-auth-btn:hover {
+        color: #fff;
+        filter: brightness(1.06);
+        transform: translateY(-2px);
+    }
+
+    .camura-auth-btn:active {
+        transform: translateY(0);
+    }
+
+    .camura-auth-help {
+        margin-top: 20px;
+        color: #64748b;
+        text-align: center;
+        font-size: 13px;
+        line-height: 1.7;
+    }
+
+    .camura-auth-help a {
+        color: #0d6efd;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .camura-auth-help a:hover {
+        text-decoration: underline;
+    }
+
+    .camura-auth-security {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        padding: 15px 12px;
+        border-top: 1px solid #eef2f7;
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 12px;
+        text-align: center;
+    }
+
+    .camura-auth-security span {
+        color: #16a34a;
+        font-size: 16px;
+    }
+
+    @media (max-width: 576px) {
+        .camura-auth-section {
+            min-height: auto;
+            padding: 22px 12px 30px;
+            background: #f5f8ff;
+        }
+
+        .camura-auth-card {
+            max-width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 12px 35px rgba(30, 64, 120, .10);
+        }
+
+        .camura-auth-header {
+            padding: 26px 20px 23px;
+        }
+
+        .camura-auth-icon {
+            width: 65px;
+            height: 65px;
+            margin-bottom: 14px;
+            border-radius: 19px;
+            font-size: 30px;
+        }
+
+        .camura-auth-body {
+            padding: 24px 21px 26px;
+        }
+
+        .camura-auth-btn {
+            min-height: 52px;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .camura-auth-btn,
+        .camura-input-group {
+            transition: none;
+        }
+    }
+</style>
+
+<section class="camura-auth-section">
+    <div class="camura-auth-card">
+
+        <!-- Header -->
+        <div class="camura-auth-header">
+            <div class="camura-auth-icon" aria-hidden="true">
+                {% if stage == "otp" %}
+                    🔐
+                {% else %}
+                    📱
+                {% endif %}
+            </div>
+
+            <h2>
+                {% if stage == "otp" %}
+                    Verify Your Number
+                {% else %}
+                    Welcome to Camura
+                {% endif %}
+            </h2>
+
+            <p>
+                {% if stage == "otp" %}
+                    Enter the OTP sent to your mobile number to continue securely.
+                {% else %}
+                    Login or register using your mobile number. Simple, fast and secure.
+                {% endif %}
+            </p>
+        </div>
+
+        <!-- Form -->
+        <div class="camura-auth-body">
+
+            {% if stage == "mobile" %}
+
+                <div class="camura-step">
+                    <span class="camura-step-number">1</span>
+                    <span>Enter your mobile number to get started</span>
+                </div>
+
+                <form method="POST" autocomplete="on">
+                    {% csrf_token %}
+
+                    <label for="camura-mobile" class="camura-auth-label">
+                        Mobile Number
+                    </label>
+
+                    <div class="camura-input-group">
+                        <span class="camura-input-prefix" aria-hidden="true">🇮🇳</span>
+
+                        <span style="padding-right: 12px; color: #334155; font-size: 14px; font-weight: 700;">
+                            +91
+                        </span>
+
+                        <input
+                            type="tel"
+                            id="camura-mobile"
+                            name="mobile"
+                            placeholder="Enter 10-digit number"
+                            inputmode="numeric"
+                            pattern="[0-9]{10}"
+                            minlength="10"
+                            maxlength="10"
+                            autocomplete="tel-national"
+                            aria-describedby="camura-mobile-help"
+                            required
+                        >
+                    </div>
+
+                    <div id="camura-mobile-help" class="camura-auth-help" style="margin-top: 10px;">
+                        Use your registered mobile number.
+                    </div>
+
+                    <button
+                        type="submit"
+                        name="send_otp"
+                        class="camura-auth-btn camura-auth-btn-primary"
+                    >
+                        Send OTP <span aria-hidden="true">→</span>
+                    </button>
+                </form>
+
+            {% elif stage == "otp" %}
+
+                <div class="camura-step">
+                    <span class="camura-step-number">2</span>
+                    <span>Confirm your mobile number</span>
+                </div>
+
+                <form method="POST" autocomplete="on">
+                    {% csrf_token %}
+
+                    <label for="camura-otp" class="camura-auth-label">
+                        One-Time Password (OTP)
+                    </label>
+
+                    <div class="camura-input-group">
+                        <span class="camura-input-prefix" aria-hidden="true">🔑</span>
+
+                        <input
+                            type="text"
+                            id="camura-otp"
+                            name="otp"
+                            class="camura-otp-input"
+                            placeholder="••••••"
+                            inputmode="numeric"
+                            autocomplete="one-time-code"
+                            aria-label="Enter the OTP received on your mobile"
+                            required
+                        >
+                    </div>
+
+                    <p class="camura-auth-help">
+                        Enter the verification code you received by SMS.
+                    </p>
+
+                    <button
+                        type="submit"
+                        name="verify_otp"
+                        class="camura-auth-btn camura-auth-btn-success"
+                    >
+                        Verify &amp; Continue <span aria-hidden="true">✓</span>
+                    </button>
+
+                    <div class="camura-auth-help">
+                        Entered the wrong number?
+                        <br>
+                        <a href="{% url 'register' %}">← Change Mobile Number</a>
+                    </div>
+                </form>
+
+            {% endif %}
+
+        </div>
+
+        <!-- Security Footer -->
+        <div class="camura-auth-security">
+            <span aria-hidden="true">🔒</span>
+            Your login is protected with mobile OTP verification.
+        </div>
+
+    </div>
+</section>
 
 {% endblock %}
+```
