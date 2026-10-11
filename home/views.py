@@ -23,7 +23,7 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from .stock import deduct_order_stock
-
+from affiliates.services import attach_referral_to_order
 from .models import (
     Order,
     OrderItem,
@@ -32,6 +32,8 @@ from .models import (
     CustomerProfile,
     Profile,
     ServiceBooking,
+    CCTVEngineer,
+    JobOpening,
 )
 
 from .forms import (
@@ -117,6 +119,64 @@ def get_or_create_user_profile(user):
 def home(request):
     return render(request, "home/index.html")
 
+
+# ============================================================
+# SEND OTP
+# ============================================================
+import random
+import requests
+from decouple import config
+
+
+SMS_API_KEY = config(
+    "SMS_API_KEY"
+)
+
+SMS_SENDER = config(
+    "SMS_SENDER"
+)
+
+SMS_MESSAGE = config(
+    "SMS_MESSAGE"
+)
+
+def send_otp(mobile):
+
+    otp = random.randint(
+        100000,
+        999999,
+    )
+
+    url = (
+        "https://www.smsalert.co.in/"
+        "api/push.json"
+    )
+
+    data = {
+        "apikey": SMS_API_KEY,
+        "sender": SMS_SENDER,
+        "mobileno": mobile,
+        "text": SMS_MESSAGE.format(
+            otp=otp
+        ),
+    }
+
+    try:
+
+        requests.post(
+            url,
+            data=data,
+            timeout=10,
+        )
+
+    except requests.RequestException as exc:
+
+        print(
+            "OTP SMS error:",
+            exc,
+        )
+
+    return otp
 
 # ============================================================
 # REGISTRATION
@@ -482,26 +542,30 @@ def register(request):
 
 
 from django.db.models import Q
+from affiliates.models import AffiliateProfile
 
+from django.db.models import Q
+from django.shortcuts import render, redirect
+
+from home.models import Product
+from affiliates.models import AffiliateProfile
 
 
 def product_list(request):
-    # Keep your existing profile-completion check.
+    # Preserve the existing profile-completion check.
     if request.user.is_authenticated:
         profile = get_or_create_user_profile(request.user)
 
         if not profile.full_name or not profile.email:
             return redirect("profile")
 
-    # Only active combo kits, not individual products.
+    # Only active combo kits.
     combos = Product.objects.filter(
         product_type=Product.ProductType.COMBO,
         is_active=True,
     ).select_related("category")
 
-    # ------------------------------------------
-    # 1. Search by name, SKU, description, brand
-    # ------------------------------------------
+    # Search by product name, SKU, description, brand, or category.
     query = request.GET.get("q", "").strip()
 
     if query:
@@ -513,17 +577,13 @@ def product_list(request):
             | Q(category__name__icontains=query)
         )
 
-    # ------------------------------------------
-    # 2. Filter by brand
-    # ------------------------------------------
+    # Filter by brand.
     selected_brand = request.GET.get("brand", "").strip()
 
     if selected_brand:
         combos = combos.filter(brand__iexact=selected_brand)
 
-    # ------------------------------------------
-    # 3. Filter by camera technology: HD or IP
-    # ------------------------------------------
+    # Filter by camera type, such as HD or IP.
     selected_camera_type = request.GET.get(
         "camera_type", ""
     ).strip()
@@ -531,15 +591,11 @@ def product_list(request):
     valid_camera_types = dict(Product.CameraType.choices)
 
     if selected_camera_type in valid_camera_types:
-        combos = combos.filter(
-            camera_type=selected_camera_type
-        )
+        combos = combos.filter(camera_type=selected_camera_type)
     else:
         selected_camera_type = ""
 
-    # ------------------------------------------
-    # 4. Filter by number of cameras
-    # ------------------------------------------
+    # Filter by camera quantity.
     selected_camera_quantity = request.GET.get(
         "camera_quantity", ""
     ).strip()
@@ -554,14 +610,13 @@ def product_list(request):
     else:
         selected_camera_quantity = ""
 
-    # ------------------------------------------
-    # 5. Sort results
-    # ------------------------------------------
+    # Sort combo products.
     sort_options = {
         "newest": ("-created_at",),
         "quantity_low": ("camera_quantity", "name"),
         "quantity_high": ("-camera_quantity", "name"),
         "brand_asc": ("brand", "name"),
+        "brand_desc": ("-brand", "name"),
         "price_low": ("price", "name"),
         "price_high": ("-price", "name"),
         "name_asc": ("name",),
@@ -574,9 +629,7 @@ def product_list(request):
 
     combos = combos.order_by(*sort_options[selected_sort])
 
-    # ------------------------------------------
-    # 6. Brand options for the filter dropdown
-    # ------------------------------------------
+    # Brand dropdown options.
     brands = (
         Product.objects.filter(
             product_type=Product.ProductType.COMBO,
@@ -588,7 +641,7 @@ def product_list(request):
         .order_by("brand")
     )
 
-    # Show only camera quantities actually used by active combos.
+    # Only quantities used by active combo kits.
     camera_quantities = (
         Product.objects.filter(
             product_type=Product.ProductType.COMBO,
@@ -600,11 +653,26 @@ def product_list(request):
         .order_by("camera_quantity")
     )
 
-    # Preserve your existing single-product context.
+    # Keep the existing individual-products context.
     products = Product.objects.filter(
         product_type=Product.ProductType.SINGLE,
         is_active=True,
     ).order_by("-created_at")
+
+    # Only approved and enabled affiliates receive a referral code
+    # for the Share buttons on this page.
+    affiliate_referral_code = ""
+
+    if request.user.is_authenticated:
+        affiliate_referral_code = (
+            AffiliateProfile.objects.filter(
+                user=request.user,
+                is_enabled=True,
+            )
+            .values_list("referral_code", flat=True)
+            .first()
+            or ""
+        )
 
     return render(
         request,
@@ -620,10 +688,9 @@ def product_list(request):
             "selected_camera_type": selected_camera_type,
             "selected_camera_quantity": selected_camera_quantity,
             "selected_sort": selected_sort,
+            "affiliate_referral_code": affiliate_referral_code,
         },
-    )
-    
-    
+    )    
     
 # ============================================================
 # PRODUCT DETAIL
@@ -1838,6 +1905,9 @@ def cod_payment(request):
         # Keep payment_status as Pending for COD.
         # The customer pays when the order is delivered.
         order.save(update_fields=["payment_method"])
+        
+        attach_referral_to_order(request, order)
+
 
         # Clear the cart only after the COD order is saved.
         for cart_item in get_cart_items(request.user):
@@ -2335,6 +2405,9 @@ Team Camura.in
             "message": message,
         },
     )
+
+
+
 
 
 

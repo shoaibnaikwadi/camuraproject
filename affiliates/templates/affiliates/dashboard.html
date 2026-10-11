@@ -1,0 +1,326 @@
+{% extends "base.html" %}
+
+{% block title %}Affiliate Dashboard | Camura{% endblock %}
+
+{% block content %}
+<div class="container py-4 py-md-5">
+
+    <header class="mb-4">
+        <span class="text-primary small fw-semibold text-uppercase">
+            Camura Partner Program
+        </span>
+        <h1 class="h2 fw-bold mt-2">Affiliate Dashboard</h1>
+        <p class="text-muted mb-0">
+            Track referrals, commissions and payouts.
+        </p>
+    </header>
+
+    {% if not profile.is_enabled %}
+
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4">
+                <h2 class="h5 fw-bold">Your affiliate account is not active yet</h2>
+
+                {% if profile.application_submitted %}
+                    <div class="alert alert-info mt-3 mb-3">
+                        Your application is awaiting administrator approval.
+                        You will be able to use referral links after approval.
+                    </div>
+                {% else %}
+                    <p class="text-muted mt-2">
+                        Submit an application to join the Camura affiliate program.
+                    </p>
+                {% endif %}
+
+                <a href="{% url 'affiliate:apply' %}"
+                   class="btn btn-primary">
+                    {% if profile.application_submitted %}
+                        Update Payout Details
+                    {% else %}
+                        Apply Now
+                    {% endif %}
+                </a>
+            </div>
+        </div>
+
+    {% else %}
+
+        <!-- REFERRAL LINK -->
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-body p-4">
+
+                <h2 class="h5 fw-bold">Your Referral Link</h2>
+
+                <p class="text-muted small">
+                    Share this link. Eligible purchases made through your
+                    referral are attributed to your affiliate account.
+                </p>
+
+                <div class="input-group">
+                    <input
+                        type="text"
+                        id="referral-link"
+                        class="form-control"
+                        value="{{ referral_url }}"
+                        readonly
+                    >
+
+                    <button type="button"
+                            class="btn btn-primary"
+                            onclick="copyAffiliateLink('referral-link')">
+                        <i class="bi bi-copy me-1"></i>
+                        Copy
+                    </button>
+                </div>
+
+                <p class="small text-muted mt-2 mb-0">
+                    Referral code: <strong>{{ profile.referral_code }}</strong>
+                </p>
+
+            </div>
+        </div>
+
+        <!-- EARNINGS SUMMARY -->
+        <div class="row g-3 mb-4">
+
+            <div class="col-12 col-md-4">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-body p-4">
+                        <p class="text-muted mb-2">Pending Commission</p>
+                        <div class="fs-3 fw-bold">
+                            ₹{{ total_pending|floatformat:2 }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-body p-4">
+                        <p class="text-muted mb-2">Approved, Awaiting Payout</p>
+                        <div class="fs-3 fw-bold text-primary">
+                            ₹{{ total_approved|floatformat:2 }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-body p-4">
+                        <p class="text-muted mb-2">Total Paid</p>
+                        <div class="fs-3 fw-bold text-success">
+                            ₹{{ total_paid|floatformat:2 }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- PRODUCT-SPECIFIC REFERRAL LINKS -->
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-body p-4">
+
+                <h2 class="h5 fw-bold mb-3">Share Individual Products</h2>
+
+                <p class="text-muted small">
+                    Copy a link for a particular CCTV combo or individual product.
+                </p>
+
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Type</th>
+                                <th>Referral Link</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for item in product_links %}
+                            <tr>
+                                <td>
+                                    <div class="fw-semibold">{{ item.name }}</div>
+                                    <small class="text-muted">{{ item.sku }}</small>
+                                </td>
+
+                                <td>{{ item.product_type }}</td>
+
+                                <td>
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-outline-primary"
+                                        data-copy-link="{{ item.url }}"
+                                        onclick="copyAffiliateText(this.dataset.copyLink)">
+                                        <i class="bi bi-copy me-1"></i>
+                                        Copy Link
+                                    </button>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-muted text-center">
+                                    No active products are available.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+    {% endif %}
+
+
+    
+<!-- REFERRED ORDERS -->
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-body p-4">
+
+        <h2 class="h5 fw-bold mb-2">Referred Orders</h2>
+
+        <p class="text-muted small mb-3">
+            Orders attributed to your affiliate referral link.
+            Commissions are shown separately below.
+        </p>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>Order</th>
+                        <th>Referral Date</th>
+                        <th>Order Amount</th>
+                        <th>Order Status</th>
+                        <th>Payment Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for attribution in attributions %}
+                    <tr>
+                        <td class="fw-semibold">
+                            #{{ attribution.order.order_number|default:attribution.order.pk }}
+                        </td>
+
+                        <td>
+                            {{ attribution.created_at|date:"d M Y, H:i" }}
+                        </td>
+
+                        <td>
+                            ₹{{ attribution.order.total_amount|default:"0.00" }}
+                        </td>
+
+                        <td>
+                            {{ attribution.order.status|default:attribution.order.order_status|default:"Unknown" }}
+                        </td>
+
+                        <td>
+                            {{ attribution.order.payment_status|default:"Unknown" }}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5"
+                            class="text-center text-muted py-4">
+                            No referred orders found yet.
+                            Share your affiliate links to get started.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+    <!-- COMMISSION HISTORY -->
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-4">
+
+            <h2 class="h5 fw-bold mb-3">Commission History</h2>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>Order</th>
+                            <th>Product</th>
+                            <th>Qty</th>
+                            <th>Commission</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for commission in commissions %}
+                        <tr>
+                            <td>
+                                #{{ commission.order.order_number|default:commission.order.pk }}
+                            </td>
+
+                            <td>{{ commission.product_name }}</td>
+
+                            <td>{{ commission.quantity }}</td>
+
+                            <td class="fw-semibold">
+                                ₹{{ commission.commission_amount|floatformat:2 }}
+                            </td>
+
+                            <td>
+                                {{ commission.get_status_display }}
+                            </td>
+
+                            <td>
+                                {{ commission.created_at|date:"d M Y" }}
+                            </td>
+                        </tr>
+
+                        {% empty %}
+                        <tr>
+                            <td colspan="6"
+                                class="text-center text-muted py-4">
+                                No commissions yet. Eligible commissions will
+                                appear after a referred order is delivered and paid.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+function copyAffiliateText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text)
+            .then(function () {
+                alert("Referral link copied!");
+            })
+            .catch(function () {
+                window.prompt("Copy your referral link:", text);
+            });
+    } else {
+        window.prompt("Copy your referral link:", text);
+    }
+}
+
+function copyAffiliateLink(inputId) {
+    const input = document.getElementById(inputId);
+
+    if (input) {
+        copyAffiliateText(input.value);
+    }
+}
+</script>
+{% endblock %}

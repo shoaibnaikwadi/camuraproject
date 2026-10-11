@@ -286,6 +286,7 @@ INSTALLED_APPS = [
     'home.apps.HomeConfig',  # profile after signup
     'blog',
     'django_ckeditor_5',
+    "affiliates.apps.AffiliatesConfig",
  
     
 ]
@@ -299,6 +300,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    "affiliates.middleware.AffiliateReferralMiddleware",
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
