@@ -22,12 +22,18 @@ from django.views.generic import TemplateView
 from blog.sitemaps import BlogSitemap
 from django.conf import settings
 from django.conf.urls.static import static
+from home.sitemaps import (
+    StaticViewSitemap,
+    ProductSitemap,
+    JobOpeningSitemap,
+)
 
 
 sitemaps = {
     'static': StaticViewSitemap,
     'products': ProductSitemap,
     'blog': BlogSitemap,
+    "jobs": JobOpeningSitemap,
 
 }
 

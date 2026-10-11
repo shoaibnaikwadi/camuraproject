@@ -1,24 +1,27 @@
 
 from django.contrib.sitemaps import Sitemap
+from django.db.models import Q
 from django.urls import reverse
 from django.utils import timezone
-from django.db.models import Q
 
 from .models import Product, JobOpening
 
 
+# ============================================================
+# STATIC PAGES
+# ============================================================
+
 class StaticViewSitemap(Sitemap):
-    priority = 0.8
-    changefreq = "weekly"
+    priority = 0.7
+    changefreq = "monthly"
 
     def items(self):
         return [
             "home",
+            "product_list",
+            "accessories",
             "about",
             "contact",
-            "login",
-            "register",
-            "accessories",
             "privacy_policy",
             "shipping_policy",
             "warranty",
@@ -31,44 +34,52 @@ class StaticViewSitemap(Sitemap):
         return reverse(item)
 
 
+# ============================================================
+# PRODUCTS AND CCTV COMBO KITS
+# ============================================================
+
 class ProductSitemap(Sitemap):
     priority = 0.9
     changefreq = "daily"
 
     def items(self):
-        # Include active products only
-        return Product.objects.filter(is_active=True)
+        return Product.objects.filter(
+            is_active=True
+        ).order_by("-updated_at")
 
     def location(self, obj):
-        return reverse(
-            "product_detail",
-            args=[obj.pk],
-        )
+        return reverse("product_detail", args=[obj.pk])
 
     def lastmod(self, obj):
-        # Use updated_at when the model provides it
         return getattr(obj, "updated_at", None)
 
 
+# ============================================================
+# CAREERS / JOB OPENINGS
+# ============================================================
+
 class JobOpeningSitemap(Sitemap):
-    priority = 0.8
-    changefreq = "daily"
+    priority = 0.7
+    changefreq = "weekly"
 
     def items(self):
+        today = timezone.localdate()
+
         return (
             JobOpening.objects
             .filter(is_active=True)
             .filter(
                 Q(last_date__isnull=True)
-                | Q(last_date__gte=timezone.localdate())
+                | Q(last_date__gte=today)
             )
+            .order_by("-created_at")
         )
 
     def location(self, obj):
-        return reverse(
-            "job_detail",
-            args=[obj.pk],
-        )
+        return reverse("job_detail", args=[obj.pk])
 
     def lastmod(self, obj):
-        return obj.created_at
+        return (
+            getattr(obj, "updated_at", None)
+            or getattr(obj, "created_at", None)
+        )

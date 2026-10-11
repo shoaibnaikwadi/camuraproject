@@ -335,7 +335,7 @@ urlpatterns = [
     
     path("careers/<int:job_id>/", views.job_detail, name="job_detail"),
     
-    path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="django_sitemap",),
+    # path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="django_sitemap",),
 ]
 
 
