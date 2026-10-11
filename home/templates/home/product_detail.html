@@ -331,103 +331,273 @@
     </div>
 
 
-    <!-- COMBO COMPONENTS -->
-    {% if product.product_type == "combo" %}
+    <!-- COMBO CONTENTS + PRODUCT SPECIFICATIONS: SIDE BY SIDE -->
+    <div class="row g-4 mt-4 product-info-columns align-items-stretch">
 
-    <section class="content-section mt-5">
+        {% if product.product_type == "combo" %}
+        <div class="col-12 col-lg-6">
+            <section class="content-section">
 
+                    <div class="section-heading">
+                        <h2 class="h4 fw-bold mb-1">
+                            <i class="bi bi-box-seam text-primary me-2"></i>
+                            What's Included in This Combo?
+                        </h2>
+
+                        <p class="text-muted mb-0">
+                            Individual products and quantities included in this package.
+                        </p>
+                    </div>
+
+                    <div class="card border-0 shadow-sm rounded-4 mt-3">
+                        <div class="card-body p-3 p-md-4">
+
+                            {% for component_item in product.components.all %}
+
+                            <div class="component-row">
+
+                                <div class="component-image">
+                                    {% if component_item.component.main_image %}
+                                    <img
+                                        src="{{ component_item.component.main_image.url }}"
+                                        alt="{{ component_item.component.name }}"
+                                        loading="lazy"
+                                        width="100"
+                                        height="100"
+                                    >
+                                    {% else %}
+                                    <img
+                                        src="{% static 'img/no-image.png' %}"
+                                        alt="{{ component_item.component.name }}"
+                                        loading="lazy"
+                                        width="100"
+                                        height="100"
+                                    >
+                                    {% endif %}
+                                </div>
+
+                                <div class="component-details">
+
+                                    <h3 class="h6 fw-bold mb-1">
+                                        {{ component_item.component.name }}
+                                    </h3>
+
+                                    <div class="small text-muted mb-1">
+                                        SKU: {{ component_item.component.sku }}
+                                    </div>
+
+                                    <div class="small text-muted">
+                                        Quantity included:
+                                        <strong>{{ component_item.quantity }}</strong>
+                                    </div>
+
+                                    <div class="small text-muted mt-1">
+                                        Unit price:
+                                        ₹{{ component_item.component.price|floatformat:2 }}
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            {% empty %}
+
+                            <div class="empty-state">
+                                <i class="bi bi-box-seam"></i>
+
+                                <h3 class="h6 fw-bold mt-3">
+                                    No Components Configured
+                                </h3>
+
+                                <p class="text-muted small mb-0">
+                                    No individual products have been configured
+                                    for this combo yet.
+                                </p>
+                            </div>
+
+                            {% endfor %}
+
+                            <div class="combo-total-row mt-3">
+                                <span class="fw-bold">Combo Price</span>
+
+                                <span class="fs-4 fw-bold text-success">
+                                    ₹{{ product.price|floatformat:2 }}
+                                </span>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </section>
+        </div>
+        {% endif %}
+
+        <div class="{% if product.product_type == 'combo' %}col-12 col-lg-6{% else %}col-12{% endif %}">
+            <section class="content-section">
+
+                    <div class="section-heading">
+                        <h2 class="h4 fw-bold mb-1">
+                            Product Specifications
+                        </h2>
+
+                        <p class="text-muted mb-0">
+                            Detailed information about this product.
+                        </p>
+                    </div>
+
+                    <div class="card border-0 shadow-sm rounded-4 mt-3">
+                        <div class="card-body p-3 p-md-4">
+
+                            <div class="row g-0">
+
+                                <div class="col-12 col-md-6">
+
+                                    <div class="detail-row">
+                                        <span>Product Name</span>
+                                        <strong>{{ product.name }}</strong>
+                                    </div>
+
+                                    <div class="detail-row">
+                                        <span>SKU</span>
+                                        <strong>{{ product.sku }}</strong>
+                                    </div>
+
+                                    <div class="detail-row">
+                                        <span>Product Type</span>
+                                        <strong>{{ product.get_product_type_display }}</strong>
+                                    </div>
+
+                                    {% if product.category %}
+                                    <div class="detail-row">
+                                        <span>Category</span>
+                                        <strong>{{ product.category.name }}</strong>
+                                    </div>
+                                    {% endif %}
+
+                                </div>
+
+                                <div class="col-12 col-md-6">
+
+                                    <div class="detail-row">
+                                        <span>Price</span>
+                                        <strong class="text-success">
+                                            ₹{{ product.price|floatformat:2 }}
+                                        </strong>
+                                    </div>
+
+                                    <div class="detail-row">
+                                        <span>Availability</span>
+                                        <strong>
+                                            {% if product.available_stock > 0 %}
+                                                In Stock
+                                            {% else %}
+                                                Out of Stock
+                                            {% endif %}
+                                        </strong>
+                                    </div>
+
+                                    {% if product.product_type == "combo" %}
+                                    <div class="detail-row">
+                                        <span>Component Types</span>
+                                        <strong>{{ product.components.count }}</strong>
+                                    </div>
+                                    {% endif %}
+
+                                    <div class="detail-row">
+                                        <span>Description</span>
+                                        <strong>
+                                            {{ product.description|default:"No description provided." }}
+                                        </strong>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                </section>
+        </div>
+
+    </div>
+
+
+    <!-- RECOMMENDED SINGLE-PRODUCT ADD-ONS: COMBO PACKAGES ONLY -->
+    {% if product.product_type == "combo" and suggested_products %}
+    <section class="content-section mt-5" aria-labelledby="recommended-addons-heading">
         <div class="section-heading">
-            <h2 class="h4 fw-bold mb-1">
-                <i class="bi bi-box-seam text-primary me-2"></i>
-                What's Included in This Combo?
+            <h2 id="recommended-addons-heading" class="h4 fw-bold mb-1">
+                <i class="bi bi-plus-circle text-primary me-2"></i>
+                Complete Your CCTV Setup
             </h2>
-
             <p class="text-muted mb-0">
-                Individual products and quantities included in this package.
+                Useful add-ons for your package, such as racks, UPS units and accessories.
+                These suggestions are individual products, not additional combo packages.
             </p>
         </div>
 
-        <div class="card border-0 shadow-sm rounded-4 mt-3">
-            <div class="card-body p-3 p-md-4">
-
-                {% for component_item in product.components.all %}
-
-                <div class="component-row">
-
-                    <div class="component-image">
-                        {% if component_item.component.main_image %}
-                        <img
-                            src="{{ component_item.component.main_image.url }}"
-                            alt="{{ component_item.component.name }}"
-                            loading="lazy"
-                            width="100"
-                            height="100"
-                        >
+        <div class="row g-3 mt-1">
+            {% for suggested in suggested_products %}
+            <div class="col-6 col-md-4 col-lg-3">
+                <article class="card recommended-product-card h-100 border-0 shadow-sm">
+                    <a href="{% url 'product_detail' suggested.pk %}"
+                       class="recommended-product-image"
+                       aria-label="View {{ suggested.name }}">
+                        {% if suggested.main_image %}
+                        <img src="{{ suggested.main_image.url }}"
+                             alt="{{ suggested.name }}"
+                             loading="lazy"
+                             width="320"
+                             height="220">
                         {% else %}
-                        <img
-                            src="{% static 'img/no-image.png' %}"
-                            alt="{{ component_item.component.name }}"
-                            loading="lazy"
-                            width="100"
-                            height="100"
-                        >
+                        <img src="{% static 'img/no-image.png' %}"
+                             alt="{{ suggested.name }} image unavailable"
+                             loading="lazy"
+                             width="320"
+                             height="220">
                         {% endif %}
-                    </div>
+                    </a>
 
-                    <div class="component-details">
+                    <div class="card-body d-flex flex-column">
+                        {% if suggested.category %}
+                        <div class="small text-muted mb-1">{{ suggested.category.name }}</div>
+                        {% else %}
+                        <div class="small text-muted mb-1">Accessory</div>
+                        {% endif %}
 
-                        <h3 class="h6 fw-bold mb-1">
-                            {{ component_item.component.name }}
+                        <h3 class="h6 fw-bold recommended-product-title">
+                            <a href="{% url 'product_detail' suggested.pk %}"
+                               class="text-decoration-none text-dark">
+                                {{ suggested.name }}
+                            </a>
                         </h3>
 
-                        <div class="small text-muted mb-1">
-                            SKU: {{ component_item.component.sku }}
+                        <div class="text-success fw-bold mb-3">
+                            ₹{{ suggested.price|floatformat:2 }}
                         </div>
 
-                        <div class="small text-muted">
-                            Quantity included:
-                            <strong>{{ component_item.quantity }}</strong>
+                        <div class="mt-auto d-grid gap-2">
+                            <a href="{% url 'product_detail' suggested.pk %}"
+                               class="btn btn-outline-secondary btn-sm">
+                                View Details
+                            </a>
+                            <form action="{% url 'add_to_cart' product_type=suggested.product_type product_id=suggested.pk %}"
+                                  method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="qty" value="1">
+                                <button type="submit" class="btn btn-primary btn-sm w-100">
+                                    <i class="bi bi-cart-plus me-1"></i>
+                                    Add to Cart
+                                </button>
+                            </form>
                         </div>
-
-                        <div class="small text-muted mt-1">
-                            Unit price:
-                            ₹{{ component_item.component.price|floatformat:2 }}
-                        </div>
-
                     </div>
-
-                </div>
-
-                {% empty %}
-
-                <div class="empty-state">
-                    <i class="bi bi-box-seam"></i>
-
-                    <h3 class="h6 fw-bold mt-3">
-                        No Components Configured
-                    </h3>
-
-                    <p class="text-muted small mb-0">
-                        No individual products have been configured
-                        for this combo yet.
-                    </p>
-                </div>
-
-                {% endfor %}
-
-                <div class="combo-total-row mt-3">
-                    <span class="fw-bold">Combo Price</span>
-
-                    <span class="fs-4 fw-bold text-success">
-                        ₹{{ product.price|floatformat:2 }}
-                    </span>
-                </div>
-
+                </article>
             </div>
+            {% endfor %}
         </div>
-
     </section>
-
     {% endif %}
 
 
@@ -497,94 +667,6 @@
 
             {% endfor %}
 
-        </div>
-
-    </section>
-
-
-    <!-- PRODUCT SPECIFICATIONS -->
-    <section class="content-section mt-5">
-
-        <div class="section-heading">
-            <h2 class="h4 fw-bold mb-1">
-                Product Specifications
-            </h2>
-
-            <p class="text-muted mb-0">
-                Detailed information about this product.
-            </p>
-        </div>
-
-        <div class="card border-0 shadow-sm rounded-4 mt-3">
-            <div class="card-body p-3 p-md-4">
-
-                <div class="row g-0">
-
-                    <div class="col-12 col-md-6">
-
-                        <div class="detail-row">
-                            <span>Product Name</span>
-                            <strong>{{ product.name }}</strong>
-                        </div>
-
-                        <div class="detail-row">
-                            <span>SKU</span>
-                            <strong>{{ product.sku }}</strong>
-                        </div>
-
-                        <div class="detail-row">
-                            <span>Product Type</span>
-                            <strong>{{ product.get_product_type_display }}</strong>
-                        </div>
-
-                        {% if product.category %}
-                        <div class="detail-row">
-                            <span>Category</span>
-                            <strong>{{ product.category.name }}</strong>
-                        </div>
-                        {% endif %}
-
-                    </div>
-
-                    <div class="col-12 col-md-6">
-
-                        <div class="detail-row">
-                            <span>Price</span>
-                            <strong class="text-success">
-                                ₹{{ product.price|floatformat:2 }}
-                            </strong>
-                        </div>
-
-                        <div class="detail-row">
-                            <span>Availability</span>
-                            <strong>
-                                {% if product.available_stock > 0 %}
-                                    In Stock
-                                {% else %}
-                                    Out of Stock
-                                {% endif %}
-                            </strong>
-                        </div>
-
-                        {% if product.product_type == "combo" %}
-                        <div class="detail-row">
-                            <span>Component Types</span>
-                            <strong>{{ product.components.count }}</strong>
-                        </div>
-                        {% endif %}
-
-                        <div class="detail-row">
-                            <span>Description</span>
-                            <strong>
-                                {{ product.description|default:"No description provided." }}
-                            </strong>
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
         </div>
 
     </section>
@@ -768,6 +850,44 @@
         scroll-margin-top: 90px;
     }
 
+    /* Side-by-side combo contents and product specifications.
+       Let the row grow naturally so the reviews section never overlaps it. */
+    .product-info-columns {
+        position: relative;
+        align-items: stretch;
+        isolation: isolate;
+    }
+
+    .product-info-columns > [class*="col-"] {
+        display: flex;
+        min-width: 0;
+    }
+
+    .product-info-columns .content-section {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .product-info-columns .content-section > .card {
+        flex: 1 1 auto;
+        height: auto;
+        min-height: 0;
+    }
+
+    .product-info-columns .card-body {
+        min-width: 0;
+    }
+
+    #reviews {
+        position: relative;
+        clear: both;
+        isolation: isolate;
+        margin-top: 3rem;
+    }
+
+
     .section-heading {
         padding-bottom: 13px;
         border-bottom: 1px solid #e9ecef;
@@ -817,6 +937,42 @@
         gap: 12px;
         padding-top: 18px;
         border-top: 1px solid #dee2e6;
+    }
+
+    .recommended-product-card {
+        overflow: hidden;
+        border-radius: 14px;
+        transition: transform .18s ease, box-shadow .18s ease;
+    }
+
+    .recommended-product-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, .09) !important;
+    }
+
+    .recommended-product-image {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 150px;
+        padding: 12px;
+        background: #f8f9fa;
+    }
+
+    .recommended-product-image img {
+        display: block;
+        width: 100%;
+        height: 150px;
+        object-fit: contain;
+    }
+
+    .recommended-product-title {
+        overflow-wrap: anywhere;
+        line-height: 1.4;
+    }
+
+    .recommended-product-card .card-body {
+        padding: 14px;
     }
 
     .review-card {

@@ -696,12 +696,45 @@ def product_list(request):
 # PRODUCT DETAIL
 # ============================================================
 
+from django.shortcuts import get_object_or_404, render
+from django.db.models import Q
+
+from .models import Product
+
+
 def product_detail(request, pk):
     product = get_object_or_404(
         Product,
         pk=pk,
         is_active=True,
     )
+
+    # Suggestions are shown only for combo/package products.
+    suggested_products = Product.objects.none()
+
+    if product.product_type == Product.ProductType.COMBO:
+
+        # Products already included in this package.
+        included_component_ids = product.components.values_list(
+            "component_id",
+            flat=True,
+        )
+
+        # Suggest complementary single products only.
+        suggested_products = (
+            Product.objects.filter(
+                Q(name__icontains="rack")
+                | Q(name__icontains="ups")
+                | Q(name__icontains="accessory")
+                | Q(category__name__icontains="accessor"),
+                product_type=Product.ProductType.SINGLE,
+                is_active=True,
+                stock__gt=0,
+            )
+            .exclude(pk__in=included_component_ids)
+            .select_related("category")
+            .order_by("name")[:8]
+        )
 
     return render(
         request,
@@ -711,6 +744,7 @@ def product_detail(request, pk):
             "product": product,
             "price": product.price,
             "available_stock": product.available_stock,
+            "suggested_products": suggested_products,
         },
     )
 
