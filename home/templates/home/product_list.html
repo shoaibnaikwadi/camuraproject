@@ -296,12 +296,31 @@
                         </p>
                     {% endif %}
 
-                    <!-- PRICE -->
-                    <div class="product-price mt-auto mb-3">
+                    <!-- PRICE & DISCOUNT -->
+                <div class="product-price mt-auto mb-3">
+                    <div class="d-flex align-items-center flex-wrap gap-2">
+                        <!-- DISCOUNTED PRICE -->
                         <span class="text-success fw-bold fs-4">
                             ₹{{ combo.price|floatformat:2 }}
                         </span>
+
+                        <!-- MRP & DISCOUNT PERCENTAGE (Shown only if MRP exists and is greater than price) -->
+                        {% if combo.mrp and combo.mrp > combo.price %}
+                            <span class="text-muted text-decoration-line-through small">
+                              ₹{{ combo.mrp|floatformat:2 }}
+                            </span>
+
+                            {% with discount=combo.mrp|add:"-"|add:combo.price %}
+                                <!-- Using custom template math or pre-calculated property in models.py is recommended, 
+                                     alternatively you can compute discount percentage directly in your view/model -->
+                            {% endwith %}
+
+                            <span class="badge bg-danger text-white px-2 py-1 small fw-semibold">
+                                {{ combo.discount_percentage }}% off
+                            </span>
+                        {% endif %}
                     </div>
+                </div>
 
                     <!-- STOCK STATUS -->
                     {% if combo.available_stock > 0 %}

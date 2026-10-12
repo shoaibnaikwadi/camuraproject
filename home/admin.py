@@ -98,7 +98,6 @@ class ComboComponentInline(admin.TabularInline):
 
 
 
-
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
 
@@ -112,6 +111,7 @@ class ProductAdmin(admin.ModelAdmin):
         "camera_quantity",
         "category",
         "price",
+        "mrp",              # Added MRP to the list view
         "available_stock",
         "is_active",
     )
@@ -136,6 +136,7 @@ class ProductAdmin(admin.ModelAdmin):
         "camera_type",
         "camera_quantity",
         "price",
+        "mrp",              # Added MRP here so you can edit it inline from the list view
         "is_active",
     )
 
@@ -175,6 +176,7 @@ class ProductAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "price",
+                    "mrp",          # Added MRP here in the detailed product form layout
                     "stock",
                     "available_stock",
                     "is_active",
@@ -192,9 +194,7 @@ class ProductAdmin(admin.ModelAdmin):
                 'style="object-fit:cover;border-radius:6px;" />',
                 obj.main_image.url,
             )
-        return "-"
-    
-    
+        return "-"    
     
     
     

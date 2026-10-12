@@ -60,6 +60,7 @@ class Product(models.Model):
         decimal_places=2,
         validators=[MinValueValidator(Decimal("0.01"))],
     )
+    mrp = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     brand = models.CharField(
         max_length=100,
         blank=True,
@@ -108,6 +109,15 @@ class Product(models.Model):
             ),
         ]
 
+    
+    @property
+    def discount_percentage(self):
+        if self.mrp and self.mrp > self.price:
+            discount = ((self.mrp - self.price) / self.mrp) * 100
+            return round(discount)
+        return 0
+    
+    
     @property
     def available_stock(self):
         if self.product_type == self.ProductType.SINGLE:
