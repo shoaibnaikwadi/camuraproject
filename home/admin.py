@@ -98,6 +98,124 @@ class ComboComponentInline(admin.TabularInline):
 
 
 
+# @admin.register(Product)
+# class ProductAdmin(admin.ModelAdmin):
+
+#     list_display = (
+#         "thumbnail",
+#         "name",
+#         "sku",
+#         "product_type",
+#         "brand",
+#         "camera_type",
+#         "camera_quantity",
+#         "category",
+#         "price",
+#         "mrp",              # Added MRP to the list view
+#         "available_stock",
+#         "is_active",
+#     )
+
+#     list_filter = (
+#         "product_type",
+#         "brand",
+#         "camera_type",
+#         "category",
+#         "is_active",
+#     )
+
+#     search_fields = (
+#         "name",
+#         "sku",
+#         "brand",
+#         "description",
+#     )
+
+#     list_editable = (
+#         "brand",
+#         "camera_type",
+#         "camera_quantity",
+#         "price",
+#         "mrp",              # Added MRP here so you can edit it inline from the list view
+#         "is_active",
+#     )
+
+#     prepopulated_fields = {"slug": ("name",)}
+
+#     readonly_fields = ("thumbnail", "available_stock")
+
+#     inlines = (ComboComponentInline,)
+
+#     fieldsets = (
+#         (
+#             "Product Information",
+#             {
+#                 "fields": (
+#                     "name",
+#                     "slug",
+#                     "sku",
+#                     "product_type",
+#                     "category",
+#                     "description",
+#                     "main_image",
+#                 )
+#             },
+#         ),
+#         (
+#             "Brand and Camera Filters",
+#             {
+#                 "fields": (
+#                     "brand",
+#                     "camera_type",
+#                     "camera_quantity",
+#                 )
+#             },
+#         ),
+#         (
+#             "Pricing and Inventory",
+#             {
+#                 "fields": (
+#                     "price",
+#                     "mrp",          # Added MRP here in the detailed product form layout
+#                     "stock",
+#                     "available_stock",
+#                     "is_active",
+#                 )
+#             },
+#         ),
+#         ("Image Preview", {"fields": ("thumbnail",)}),
+#     )
+
+#     @admin.display(description="Image")
+#     def thumbnail(self, obj):
+#         if obj and obj.main_image:
+#             return format_html(
+#                 '<img src="{}" width="55" height="55" '
+#                 'style="object-fit:cover;border-radius:6px;" />',
+#                 obj.main_image.url,
+#             )
+#         return "-"    
+    
+
+
+
+
+
+
+
+
+
+
+from copy import deepcopy
+
+from django.contrib import admin, messages
+from django.db import transaction
+from django.utils.html import format_html
+from django.utils.text import slugify
+
+from .models import Product, ComboComponent
+
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
 
@@ -111,7 +229,7 @@ class ProductAdmin(admin.ModelAdmin):
         "camera_quantity",
         "category",
         "price",
-        "mrp",              # Added MRP to the list view
+        "mrp",
         "available_stock",
         "is_active",
     )
@@ -136,7 +254,7 @@ class ProductAdmin(admin.ModelAdmin):
         "camera_type",
         "camera_quantity",
         "price",
-        "mrp",              # Added MRP here so you can edit it inline from the list view
+        "mrp",
         "is_active",
     )
 
@@ -145,6 +263,8 @@ class ProductAdmin(admin.ModelAdmin):
     readonly_fields = ("thumbnail", "available_stock")
 
     inlines = (ComboComponentInline,)
+
+    actions = ("copy_products",)
 
     fieldsets = (
         (
@@ -176,7 +296,7 @@ class ProductAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "price",
-                    "mrp",          # Added MRP here in the detailed product form layout
+                    "mrp",
                     "stock",
                     "available_stock",
                     "is_active",
@@ -194,8 +314,79 @@ class ProductAdmin(admin.ModelAdmin):
                 'style="object-fit:cover;border-radius:6px;" />',
                 obj.main_image.url,
             )
-        return "-"    
-    
+        return "-"
+
+    @admin.action(description="Copy selected products (including combo components)")
+    def copy_products(self, request, queryset):
+        copied_count = 0
+
+        with transaction.atomic():
+            for original in queryset.prefetch_related(
+                "components"
+            ).order_by("pk"):
+
+                # Generate unique name, slug and SKU.
+                base_name = f"{original.name} (Copy)"
+                base_slug = slugify(base_name)[:200] or "product-copy"
+
+                new_slug = base_slug
+                suffix = 1
+
+                while Product.objects.filter(slug=new_slug).exists():
+                    suffix += 1
+                    ending = f"-{suffix}"
+                    new_slug = f"{base_slug[:220-len(ending)]}{ending}"
+
+                base_sku = f"{original.sku}-COPY"
+                new_sku = base_sku[:100]
+                suffix = 1
+
+                while Product.objects.filter(sku=new_sku).exists():
+                    suffix += 1
+                    ending = f"-{suffix}"
+                    new_sku = f"{base_sku[:100-len(ending)]}{ending}"
+
+                # Copy all concrete model fields except the primary key
+                # and auto-generated timestamps.
+                clone = deepcopy(original)
+                clone.pk = None
+                clone._state.adding = True
+                clone._state.db = None
+
+                clone.name = base_name
+                clone.slug = new_slug
+                clone.sku = new_sku
+
+                # Start the copied product inactive and with zero stock.
+                # Combo availability is calculated from its components.
+                clone.is_active = False
+                clone.stock = 0
+
+                clone.save()
+
+                # Copy the combo's component configuration.
+                if original.product_type == Product.ProductType.COMBO:
+                    for item in original.components.all():
+                        ComboComponent.objects.create(
+                            combo=clone,
+                            component=item.component,
+                            quantity=item.quantity,
+                        )
+
+                copied_count += 1
+
+        self.message_user(
+            request,
+            f"{copied_count} product(s) copied successfully. "
+            "Copies are inactive with zero stock. "
+            "Review the SKU, slug, price and components before publishing.",
+            messages.SUCCESS,
+        )
+
+
+
+
+
     
     
     
