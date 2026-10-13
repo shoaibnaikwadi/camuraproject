@@ -2038,6 +2038,14 @@ def my_orders(request):
 # PROFILE
 # ============================================================
 
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.db import IntegrityError, transaction
+from django.shortcuts import render, redirect
+
+from .models import Profile
+
+
 @login_required
 def profile(request):
     profile_obj = get_or_create_user_profile(request.user)
@@ -2050,9 +2058,40 @@ def profile(request):
             messages.error(request, "Full name is required.")
             return redirect("profile")
 
-        profile_obj.full_name = full_name
-        profile_obj.email = email
-        profile_obj.save()
+        if not email:
+            messages.error(request, "Email address is required.")
+            return redirect("profile")
+
+        # Check if another user's profile already uses this email.
+        email_exists = Profile.objects.filter(
+            email__iexact=email
+        ).exclude(
+            pk=profile_obj.pk
+        ).exists()
+
+        if email_exists:
+            messages.error(
+                request,
+                "This email address is already registered. "
+                "Please use another email address."
+            )
+            return redirect("profile")
+
+        try:
+            with transaction.atomic():
+                profile_obj.full_name = full_name
+                profile_obj.email = email
+                profile_obj.save()
+
+        except IntegrityError:
+            # Handles a duplicate email if another request saves it
+            # between our initial check and the database save.
+            messages.error(
+                request,
+                "This email address is already registered. "
+                "Please use another email address."
+            )
+            return redirect("profile")
 
         messages.success(request, "Profile updated successfully.")
         return redirect("product_list")
@@ -2062,7 +2101,6 @@ def profile(request):
         "home/profile.html",
         {"profile": profile_obj},
     )
-
 
 # ============================================================
 # CUSTOMER ADDRESSES
