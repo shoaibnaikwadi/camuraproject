@@ -1,36 +1,1000 @@
+
 {% extends "base.html" %}
-{% block title %}Privacy Policy - Camura{% endblock %}
+{% load static %}
+
+{% block title %}Privacy Policy | Camura CCTV - camura.in{% endblock %}
 
 {% block content %}
-<h1>Privacy Policy</h1>
-<p><strong>Last Updated:</strong> 09-12-2025</p>
 
-<p>At <strong>Camura (N S CORPORATION)</strong>, accessible from camura.in, your privacy is extremely important to us.</p>
+<style>
+    .camura-policy {
+        --policy-primary: #0d6efd;
+        --policy-dark: #10213a;
+        --policy-muted: #64748b;
+        color: #334155;
+        background: #f6f8fc;
+        padding-bottom: 65px;
+    }
 
-<h3>Information We Collect</h3>
-<ul>
-    <li>Name, phone number, email</li>
-    <li>Billing and installation address</li>
-    <li>Device and IP data</li>
-    <li>Order and payment details</li>
-</ul>
+    .policy-hero {
+        padding: 65px 15px 60px;
+        color: #fff;
+        text-align: center;
+        background: linear-gradient(125deg, #10213a, #0d6efd);
+    }
 
-<h3>How We Use Your Information</h3>
-<ul>
-    <li>Process orders and schedule installation</li>
-    <li>Customer support</li>
-    <li>Fraud prevention</li>
-    <li>Website improvement</li>
-</ul>
+    .policy-hero .policy-label {
+        display: inline-block;
+        padding: 8px 15px;
+        border: 1px solid rgba(255,255,255,.3);
+        border-radius: 30px;
+        background: rgba(255,255,255,.1);
+        font-size: .82rem;
+        font-weight: 700;
+        letter-spacing: .7px;
+    }
 
-<h3>Sharing of Information</h3>
-<p>We share your data only with delivery partners, installation staff, payment gateways, or legal authorities when
-    required.</p>
+    .policy-hero h1 {
+        font-size: clamp(2rem, 5vw, 3.4rem);
+        font-weight: 850;
+        letter-spacing: -1px;
+        margin: 20px 0 12px;
+    }
 
-<h3>Your Rights</h3>
-<p>You can request correction or deletion of your data anytime at:</p>
+    .policy-hero p {
+        max-width: 650px;
+        margin: auto;
+        color: rgba(255,255,255,.85);
+        line-height: 1.8;
+    }
 
-<p>Email: <strong>support@camura.in</strong><br>
-    Phone: <strong>9766052176</strong></p>
+    .policy-meta {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 22px;
+        padding: 9px 14px;
+        border-radius: 9px;
+        background: rgba(255,255,255,.12);
+        font-size: .88rem;
+    }
+
+    .policy-layout {
+        display: grid;
+        grid-template-columns: 260px minmax(0, 1fr);
+        gap: 25px;
+        align-items: start;
+        margin-top: 35px;
+    }
+
+    .policy-sidebar,
+    .policy-content {
+        background: #fff;
+        border: 1px solid #e6ebf3;
+        border-radius: 17px;
+        box-shadow: 0 8px 28px rgba(16,33,58,.045);
+    }
+
+    .policy-sidebar {
+        padding: 22px 16px;
+        position: sticky;
+        top: 20px;
+    }
+
+    .policy-sidebar h2 {
+        padding: 0 10px;
+        margin-bottom: 14px;
+        color: var(--policy-dark);
+        font-size: 1rem;
+        font-weight: 800;
+    }
+
+    .policy-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .policy-nav a {
+        display: block;
+        padding: 10px 11px;
+        border-radius: 8px;
+        text-decoration: none;
+        color: #526178;
+        font-size: .88rem;
+        line-height: 1.5;
+        transition: .2s ease;
+    }
+
+    .policy-nav a:hover {
+        color: var(--policy-primary);
+        background: #edf4ff;
+    }
+
+    .policy-content {
+        padding: clamp(22px, 4vw, 42px);
+        min-width: 0;
+    }
+
+    .policy-intro {
+        padding: 20px;
+        margin-bottom: 28px;
+        border: 1px solid #cfe0ff;
+        border-radius: 13px;
+        background: #f0f6ff;
+        line-height: 1.8;
+    }
+
+    .policy-intro strong {
+        color: #174ea6;
+    }
+
+    .policy-section {
+        padding: 26px 0;
+        border-bottom: 1px solid #edf0f5;
+        scroll-margin-top: 25px;
+    }
+
+    .policy-section:first-of-type {
+        padding-top: 0;
+    }
+
+    .policy-section:last-of-type {
+        border-bottom: 0;
+    }
+
+    .policy-section h2 {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        color: var(--policy-dark);
+        font-size: 1.25rem;
+        font-weight: 800;
+        line-height: 1.5;
+        margin-bottom: 15px;
+    }
+
+    .policy-section h2 i {
+        display: inline-grid;
+        place-items: center;
+        flex-shrink: 0;
+        width: 37px;
+        height: 37px;
+        border-radius: 10px;
+        color: var(--policy-primary);
+        background: #eaf2ff;
+        font-size: 1.05rem;
+    }
+
+    .policy-section p,
+    .policy-section li {
+        color: #566579;
+        font-size: .95rem;
+        line-height: 1.9;
+    }
+
+    .policy-section p {
+        margin-bottom: 12px;
+    }
+
+    .policy-section ul {
+        padding-left: 22px;
+        margin-bottom: 12px;
+    }
+
+    .policy-section li {
+        padding-left: 3px;
+        margin-bottom: 7px;
+    }
+
+    .policy-section a {
+        color: var(--policy-primary);
+        text-decoration: none;
+        overflow-wrap: anywhere;
+    }
+
+    .policy-section a:hover {
+        text-decoration: underline;
+    }
+
+    .policy-note {
+        margin-top: 15px;
+        padding: 16px 18px;
+        border-left: 4px solid var(--policy-primary);
+        border-radius: 0 10px 10px 0;
+        background: #f3f7ff;
+        color: #43536a;
+        font-size: .9rem;
+        line-height: 1.8;
+    }
+
+    .policy-contact-card {
+        margin-top: 25px;
+        padding: 25px;
+        border-radius: 14px;
+        background: linear-gradient(125deg, #10213a, #174ea6);
+        color: #fff;
+    }
+
+    .policy-contact-card h2 {
+        font-size: 1.3rem;
+        font-weight: 800;
+        margin-bottom: 12px;
+    }
+
+    .policy-contact-card p {
+        color: rgba(255,255,255,.83);
+        line-height: 1.8;
+    }
+
+    .policy-contact-card a {
+        color: #fff;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+    }
+
+    .policy-contact-card .btn {
+        color: #10213a;
+        background: #fff;
+        border-radius: 9px;
+        padding: 10px 17px;
+        font-weight: 750;
+    }
+
+    @media (max-width: 991.98px) {
+        .policy-layout {
+            grid-template-columns: 1fr;
+            gap: 18px;
+        }
+
+        .policy-sidebar {
+            position: static;
+        }
+
+        .policy-nav {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        .policy-hero {
+            padding: 48px 15px;
+        }
+
+        .policy-layout {
+            margin-top: 20px;
+        }
+
+        .policy-sidebar {
+            padding: 18px 12px;
+        }
+
+        .policy-nav {
+            grid-template-columns: 1fr;
+        }
+
+        .policy-content {
+            padding: 22px 18px;
+        }
+
+        .policy-section {
+            padding: 23px 0;
+        }
+
+        .policy-section h2 {
+            font-size: 1.1rem;
+        }
+
+        .policy-section p,
+        .policy-section li {
+            font-size: .92rem;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .camura-policy *,
+        .camura-policy *::before,
+        .camura-policy *::after {
+            scroll-behavior: auto !important;
+            transition: none !important;
+        }
+    }
+</style>
+
+<div class="camura-policy">
+
+    <!-- Hero -->
+    <section class="policy-hero">
+        <div class="container">
+
+            <div class="policy-label">
+                <i class="bi bi-shield-lock me-1"></i>
+                Your Privacy Matters
+            </div>
+
+            <h1>Privacy Policy</h1>
+
+            <p>
+                Learn how Camura collects, uses, stores and protects
+                information when you visit our website, place an order
+                or request CCTV services.
+            </p>
+
+            <div class="policy-meta">
+                <i class="bi bi-calendar3"></i>
+                Last Updated: 14 October 2026
+            </div>
+
+        </div>
+    </section>
+
+    <div class="container">
+
+        <div class="policy-layout">
+
+            <!-- Table of Contents -->
+            <aside class="policy-sidebar">
+                <h2>
+                    <i class="bi bi-list-ul me-2"></i>
+                    On This Page
+                </h2>
+
+                <nav class="policy-nav" aria-label="Privacy policy sections">
+                    <a href="#introduction">1. Introduction</a>
+                    <a href="#information">2. Information We Collect</a>
+                    <a href="#collection">3. How We Collect Data</a>
+                    <a href="#usage">4. How We Use Information</a>
+                    <a href="#orders">5. Orders & Payments</a>
+                    <a href="#cookies">6. Cookies & Analytics</a>
+                    <a href="#otp">7. OTP & Account Security</a>
+                    <a href="#cctv">8. CCTV Service Privacy</a>
+                    <a href="#sharing">9. Information Sharing</a>
+                    <a href="#affiliates">10. Referral Programme</a>
+                    <a href="#retention">11. Data Retention</a>
+                    <a href="#security">12. Data Security</a>
+                    <a href="#rights">13. Your Privacy Rights</a>
+                    <a href="#children">14. Children's Privacy</a>
+                    <a href="#third-party">15. Third-Party Links</a>
+                    <a href="#changes">16. Policy Changes</a>
+                    <a href="#contact">17. Contact Us</a>
+                </nav>
+            </aside>
+
+            <!-- Policy Content -->
+            <main class="policy-content">
+
+                <div class="policy-intro">
+                    <i class="bi bi-info-circle-fill me-2 text-primary"></i>
+                    <strong>Privacy commitment:</strong>
+                    Camura aims to handle personal information responsibly
+                    and use it only for legitimate business purposes,
+                    providing services and meeting applicable legal
+                    requirements. Please read this policy to understand
+                    our practices.
+                </div>
+
+                <!-- 1 -->
+                <section class="policy-section" id="introduction">
+                    <h2>
+                        <i class="bi bi-building"></i>
+                        1. Introduction
+                    </h2>
+
+                    <p>
+                        This Privacy Policy applies to
+                        <strong>Camura (N S Corporation)</strong>,
+                        operating through
+                        <a href="https://camura.in/">camura.in</a>,
+                        and explains how we handle information relating
+                        to website visitors, customers and people who
+                        contact us.
+                    </p>
+
+                    <p>
+                        Camura provides CCTV products and related
+                        installation, configuration, repair and technical
+                        support services. Our on-site service area is
+                        limited to Dharashiv city.
+                    </p>
+
+                    <p>
+                        By using our website or submitting information
+                        to us, you acknowledge that you have had an
+                        opportunity to read this policy. Where applicable
+                        law requires consent, we will seek consent as
+                        required by that law.
+                    </p>
+                </section>
+
+                <!-- 2 -->
+                <section class="policy-section" id="information">
+                    <h2>
+                        <i class="bi bi-card-list"></i>
+                        2. Information We Collect
+                    </h2>
+
+                    <p>Depending on how you use our website and services, we may collect:</p>
+
+                    <ul>
+                        <li>
+                            <strong>Contact details:</strong>
+                            name, mobile number, email address and other
+                            details you provide.
+                        </li>
+                        <li>
+                            <strong>Order information:</strong>
+                            products purchased, quantities, order history,
+                            billing details and delivery address.
+                        </li>
+                        <li>
+                            <strong>Service information:</strong>
+                            installation address, service requests,
+                            reported technical issues, appointment details
+                            and relevant communications.
+                        </li>
+                        <li>
+                            <strong>Account information:</strong>
+                            account identifiers, profile details and
+                            information needed to manage your account.
+                        </li>
+                        <li>
+                            <strong>Payment references:</strong>
+                            transaction identifiers, payment status,
+                            refund information and related records.
+                        </li>
+                        <li>
+                            <strong>Technical information:</strong>
+                            IP address, browser type, device information,
+                            access logs and website usage data, where
+                            collected by our systems or service providers.
+                        </li>
+                        <li>
+                            <strong>Communication information:</strong>
+                            messages, feedback, enquiries and information
+                            you voluntarily provide to customer support.
+                        </li>
+                        <li>
+                            <strong>Referral information:</strong>
+                            referral codes and qualifying order information
+                            needed to administer an affiliate programme,
+                            where applicable.
+                        </li>
+                    </ul>
+
+                    <p>
+                        Please provide only information reasonably
+                        necessary for your enquiry, order or service request.
+                    </p>
+                </section>
+
+                <!-- 3 -->
+                <section class="policy-section" id="collection">
+                    <h2>
+                        <i class="bi bi-clipboard-check"></i>
+                        3. How We Collect Information
+                    </h2>
+
+                    <p>Information may be collected when you:</p>
+
+                    <ul>
+                        <li>Create or update an account.</li>
+                        <li>Place an order or make a payment.</li>
+                        <li>Submit a service booking or contact form.</li>
+                        <li>Contact us by telephone, email or WhatsApp.</li>
+                        <li>Participate in a referral programme.</li>
+                        <li>Browse our website, where analytics or technical logs are enabled.</li>
+                    </ul>
+
+                    <p>
+                        We may also receive limited transaction or delivery
+                        information from payment providers, delivery partners
+                        and other service providers involved in fulfilling
+                        your request.
+                    </p>
+                </section>
+
+                <!-- 4 -->
+                <section class="policy-section" id="usage">
+                    <h2>
+                        <i class="bi bi-gear"></i>
+                        4. How We Use Your Information
+                    </h2>
+
+                    <p>We may use relevant information to:</p>
+
+                    <ul>
+                        <li>Process orders, deliveries, cancellations and refunds.</li>
+                        <li>Respond to questions and provide customer support.</li>
+                        <li>Arrange and manage eligible CCTV service bookings.</li>
+                        <li>Verify accounts and deliver OTPs when applicable.</li>
+                        <li>Provide order updates and important service notifications.</li>
+                        <li>Maintain records for accounting, taxation and legal compliance.</li>
+                        <li>Detect suspicious activity, prevent fraud and protect our website.</li>
+                        <li>Understand website performance and improve our services.</li>
+                        <li>Administer referral commissions and resolve related disputes.</li>
+                        <li>Meet applicable legal obligations or respond to lawful requests.</li>
+                    </ul>
+
+                    <p>
+                        We do not intend to use personal information for
+                        purposes incompatible with the reason it was
+                        collected without an appropriate legal basis.
+                    </p>
+                </section>
+
+                <!-- 5 -->
+                <section class="policy-section" id="orders">
+                    <h2>
+                        <i class="bi bi-credit-card"></i>
+                        5. Orders, Payments & Refunds
+                    </h2>
+
+                    <p>
+                        When you purchase CCTV products, we use relevant
+                        information to process the order, confirm payment,
+                        arrange delivery and provide after-sales support.
+                    </p>
+
+                    <p>
+                        Online payments may be handled by third-party
+                        payment gateways. Such providers may process
+                        transaction information under their own privacy
+                        policies and applicable terms.
+                    </p>
+
+                    <ul>
+                        <li>
+                            We may retain order numbers, payment references,
+                            payment status and refund records.
+                        </li>
+                        <li>
+                            Your bank or payment provider may independently
+                            retain information about your transaction.
+                        </li>
+                        <li>
+                            We do not intend to store complete card
+                            credentials, CVV numbers or payment passwords
+                            on our website.
+                        </li>
+                        <li>
+                            Cash-on-delivery orders may require contact and
+                            delivery information to fulfil the purchase.
+                        </li>
+                    </ul>
+
+                    <p>
+                        Payment processing, cancellations, delivery and
+                        refund eligibility are also subject to our applicable
+                        terms and policies.
+                    </p>
+                </section>
+
+                <!-- 6 -->
+                <section class="policy-section" id="cookies">
+                    <h2>
+                        <i class="bi bi-cookie"></i>
+                        6. Cookies & Website Analytics
+                    </h2>
+
+                    <p>
+                        Our website may use cookies or similar technologies
+                        to support essential website functions, maintain
+                        shopping sessions, improve security and understand
+                        website performance.
+                    </p>
+
+                    <p>
+                        If Google Analytics or similar analytics tools are
+                        enabled, they may process technical and usage
+                        information according to their settings and
+                        applicable privacy terms.
+                    </p>
+
+                    <ul>
+                        <li>Essential cookies may be needed for login, cart and session functionality.</li>
+                        <li>Analytics technologies may help us understand website visits and performance.</li>
+                        <li>You can manage or block cookies through your browser settings.</li>
+                    </ul>
+
+                    <p>
+                        Blocking certain cookies may affect some website
+                        features. Where consent is legally required for
+                        non-essential technologies, we will handle them
+                        according to applicable requirements.
+                    </p>
+                </section>
+
+                <!-- 7 -->
+                <section class="policy-section" id="otp">
+                    <h2>
+                        <i class="bi bi-phone"></i>
+                        7. OTP Verification & Account Security
+                    </h2>
+
+                    <p>
+                        If mobile OTP login or registration is available,
+                        your mobile number may be used to send verification
+                        codes and help protect access to your account.
+                    </p>
+
+                    <ul>
+                        <li>Never share your OTP with another person.</li>
+                        <li>We may use verification and security logs to investigate suspicious activity.</li>
+                        <li>SMS delivery may involve third-party messaging providers.</li>
+                        <li>We may retain relevant authentication records for security and operational purposes.</li>
+                    </ul>
+
+                    <p>
+                        Camura staff should not need your OTP, account
+                        password or payment PIN to provide ordinary
+                        customer support.
+                    </p>
+                </section>
+
+                <!-- 8 -->
+                <section class="policy-section" id="cctv">
+                    <h2>
+                        <i class="bi bi-camera-video"></i>
+                        8. CCTV Installation & Service Privacy
+                    </h2>
+
+                    <p>
+                        To provide CCTV installation, configuration, repair
+                        or maintenance, we may need your contact details,
+                        service address, equipment information and a
+                        description of the issue.
+                    </p>
+
+                    <p>
+                        Customers are responsible for ensuring they have
+                        appropriate authority to install and operate CCTV
+                        equipment at their premises and to record people
+                        where legally permitted.
+                    </p>
+
+                    <ul>
+                        <li>
+                            Customers should not share CCTV passwords,
+                            administrator credentials or OTPs through
+                            ordinary contact forms.
+                        </li>
+                        <li>
+                            Access to devices or recordings, if needed
+                            for troubleshooting, should be limited to
+                            what is necessary and appropriately authorised.
+                        </li>
+                        <li>
+                            Customers should change default device
+                            passwords and control who can access their
+                            cameras and recordings.
+                        </li>
+                        <li>
+                            Any customer footage or recordings that we
+                            may access during a service should be handled
+                            responsibly and in accordance with applicable
+                            law and the agreed service scope.
+                        </li>
+                    </ul>
+
+                    <div class="policy-note">
+                        <strong>Important:</strong>
+                        CCTV footage is not automatically collected by
+                        Camura merely because you purchase a camera.
+                        Any access to recordings depends on the actual
+                        service provided and the circumstances involved.
+                    </div>
+                </section>
+
+                <!-- 9 -->
+                <section class="policy-section" id="sharing">
+                    <h2>
+                        <i class="bi bi-people"></i>
+                        9. Sharing of Information
+                    </h2>
+
+                    <p>
+                        We do not intend to sell customers' personal
+                        information to third parties. We may share
+                        information where reasonably necessary with:
+                    </p>
+
+                    <ul>
+                        <li>
+                            <strong>Delivery partners:</strong>
+                            to deliver products and manage delivery issues.
+                        </li>
+                        <li>
+                            <strong>Payment providers:</strong>
+                            to process transactions, refunds and payment verification.
+                        </li>
+                        <li>
+                            <strong>Messaging providers:</strong>
+                            to send OTPs and transactional messages, where enabled.
+                        </li>
+                        <li>
+                            <strong>Technical service providers:</strong>
+                            to host, maintain, secure or operate our website.
+                        </li>
+                        <li>
+                            <strong>Service personnel:</strong>
+                            to arrange authorised installation, repairs or
+                            technical support where necessary.
+                        </li>
+                        <li>
+                            <strong>Professional advisers:</strong>
+                            where reasonably needed for legal, accounting
+                            or compliance purposes.
+                        </li>
+                        <li>
+                            <strong>Authorities:</strong>
+                            where disclosure is required by applicable law
+                            or a valid legal process.
+                        </li>
+                    </ul>
+
+                    <p>
+                        Information shared with service providers should
+                        be limited to what is appropriate for the relevant
+                        purpose, subject to applicable legal requirements
+                        and the arrangements in place with those providers.
+                    </p>
+                </section>
+
+                <!-- 10 -->
+                <section class="policy-section" id="affiliates">
+                    <h2>
+                        <i class="bi bi-link-45deg"></i>
+                        10. Affiliate & Referral Programme
+                    </h2>
+
+                    <p>
+                        If you participate in the Camura affiliate or
+                        referral programme, we may process your referral
+                        code, qualifying order information and commission
+                        records to attribute eligible purchases and
+                        administer payouts.
+                    </p>
+
+                    <p>
+                        Referral links may contain an identifier that
+                        helps associate a visit or order with a referring
+                        participant. Customers can contact us if they
+                        have questions about how a referral is attributed.
+                    </p>
+
+                    <p>
+                        Affiliate access, commission eligibility, approval,
+                        reversals and payouts are governed by the applicable
+                        programme terms. Participation does not necessarily
+                        guarantee a commission.
+                    </p>
+                </section>
+
+                <!-- 11 -->
+                <section class="policy-section" id="retention">
+                    <h2>
+                        <i class="bi bi-archive"></i>
+                        11. Data Retention & Deletion
+                    </h2>
+
+                    <p>
+                        We retain personal information only for as long
+                        as reasonably necessary for the purposes described
+                        in this policy, subject to applicable legal
+                        retention requirements.
+                    </p>
+
+                    <p>This may include retaining information to:</p>
+
+                    <ul>
+                        <li>Fulfil orders, warranties and service commitments.</li>
+                        <li>Maintain tax, accounting and transaction records.</li>
+                        <li>Resolve complaints, disputes, chargebacks or fraud investigations.</li>
+                        <li>Meet legal obligations and establish or defend legal claims.</li>
+                    </ul>
+
+                    <p>
+                        When information is no longer required, we will
+                        take appropriate steps to delete it, anonymise it
+                        or otherwise handle it according to applicable
+                        law and our operational capabilities.
+                    </p>
+
+                    <p>
+                        You can contact us to request deletion of eligible
+                        personal information. Some records may need to be
+                        retained where the law requires it or a valid
+                        exception applies.
+                    </p>
+                </section>
+
+                <!-- 12 -->
+                <section class="policy-section" id="security">
+                    <h2>
+                        <i class="bi bi-shield-check"></i>
+                        12. Data Security
+                    </h2>
+
+                    <p>
+                        We aim to use reasonable technical and
+                        organisational safeguards to protect personal
+                        information against unauthorised access,
+                        disclosure, alteration or loss.
+                    </p>
+
+                    <p>
+                        No website, electronic transmission or storage
+                        system can be guaranteed to be completely secure.
+                        We therefore cannot promise absolute security.
+                    </p>
+
+                    <p>
+                        If a personal data breach occurs, we will assess
+                        the circumstances and take steps required by
+                        applicable law, including any required notices
+                        to affected individuals or authorities.
+                    </p>
+                </section>
+
+                <!-- 13 -->
+                <section class="policy-section" id="rights">
+                    <h2>
+                        <i class="bi bi-person-check"></i>
+                        13. Your Privacy Rights
+                    </h2>
+
+                    <p>
+                        Subject to applicable law, you may be able to
+                        request access to, correction of or deletion of
+                        personal information associated with you.
+                        You may also have rights relating to consent,
+                        grievances and the handling of your information.
+                    </p>
+
+                    <p>
+                        To make a request, contact us using the details
+                        provided below. We may need to verify your
+                        identity before processing a request.
+                    </p>
+
+                    <ul>
+                        <li>Ask us to correct inaccurate contact details.</li>
+                        <li>Request information about how your personal data is handled.</li>
+                        <li>Request deletion of eligible information, subject to legal retention requirements.</li>
+                        <li>Raise a concern or grievance about our handling of personal information.</li>
+                    </ul>
+
+                    <p>
+                        We will review and respond to requests in accordance
+                        with applicable law. Certain requests may be
+                        restricted where a legal obligation or permitted
+                        exception applies.
+                    </p>
+                </section>
+
+                <!-- 14 -->
+                <section class="policy-section" id="children">
+                    <h2>
+                        <i class="bi bi-person-lock"></i>
+                        14. Children's Privacy
+                    </h2>
+
+                    <p>
+                        Our website and CCTV shopping services are not
+                        specifically directed at children. Individuals
+                        should not submit another person's personal
+                        information without appropriate authority.
+                    </p>
+
+                    <p>
+                        If you believe a child has provided personal
+                        information in circumstances where it should not
+                        have been collected, contact us so we can review
+                        the situation and take appropriate steps.
+                    </p>
+                </section>
+
+                <!-- 15 -->
+                <section class="policy-section" id="third-party">
+                    <h2>
+                        <i class="bi bi-box-arrow-up-right"></i>
+                        15. Third-Party Websites & Services
+                    </h2>
+
+                    <p>
+                        Our website may link to third-party services,
+                        including payment providers, maps, messaging
+                        platforms and external websites.
+                    </p>
+
+                    <p>
+                        These services may have their own privacy policies,
+                        cookie practices and terms. Camura does not control
+                        the independent privacy practices of third parties.
+                        Review their policies before providing information
+                        directly to them.
+                    </p>
+                </section>
+
+                <!-- 16 -->
+                <section class="policy-section" id="changes">
+                    <h2>
+                        <i class="bi bi-arrow-repeat"></i>
+                        16. Changes to This Policy
+                    </h2>
+
+                    <p>
+                        We may update this policy when our services,
+                        technology, business practices or legal obligations
+                        change.
+                    </p>
+
+                    <p>
+                        The updated version will be published on this page
+                        with a revised "Last Updated" date. Where required
+                        by law, we will provide additional notice or obtain
+                        consent for relevant changes.
+                    </p>
+                </section>
+
+                <!-- 17 -->
+                <section class="policy-section" id="contact">
+                    <h2>
+                        <i class="bi bi-envelope-paper"></i>
+                        17. Contact Us & Privacy Grievances
+                    </h2>
+
+                    <p>
+                        For privacy questions, correction or deletion
+                        requests, or concerns about the handling of your
+                        personal information, contact Camura:
+                    </p>
+
+                    <p>
+                        <strong>Business:</strong> Camura (N S Corporation)<br>
+                        <strong>Website:</strong>
+                        <a href="https://camura.in/">https://camura.in/</a><br>
+                        <strong>Email:</strong>
+                        <a href="mailto:support@camura.in">support@camura.in</a><br>
+                        <strong>Phone:</strong>
+                        <a href="tel:+919766052176">+91 97660 52176</a><br>
+                        <strong>Address:</strong>
+                        Pawar Complex, Shop No. 1, Behind Tuljabhawani Stadium,
+                        Dharashiv, Maharashtra - 413501, India
+                    </p>
+
+                    <p>
+                        Please describe your concern clearly and include
+                        relevant order or account details only when
+                        necessary. Do not email passwords, OTPs or
+                        payment PINs.
+                    </p>
+                </section>
+
+                <!-- Contact Card -->
+                <div class="policy-contact-card">
+                    <h2>
+                        <i class="bi bi-shield-check me-2"></i>
+                        Questions About Your Privacy?
+                    </h2>
+
+                    <p>
+                        Contact our team if you need clarification about
+                        your personal information, an order or a CCTV
+                        service request.
+                    </p>
+
+                    <a href="mailto:support@camura.in"
+                       class="btn">
+                        <i class="bi bi-envelope me-2"></i>
+                        Email Camura Support
+                    </a>
+                </div>
+
+            </main>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

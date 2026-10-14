@@ -1,19 +1,846 @@
+
 {% extends "base.html" %}
-{% block title %}Shipping & Delivery Policy - Camura{% endblock %}
+{% load static %}
+
+{% block title %}Shipping & Delivery Policy | Camura CCTV{% endblock %}
 
 {% block content %}
-<h1>Shipping & Delivery Policy</h1>
 
-<h3>Delivery Locations</h3>
-<p>We deliver locally in Dharashiv and pan-India.</p>
+<style>
+    .camura-shipping {
+        --ship-primary: #0d6efd;
+        --ship-dark: #10213a;
+        --ship-muted: #64748b;
+        color: #334155;
+        background: #f6f8fc;
+        padding-bottom: 65px;
+    }
 
-<h3>Delivery Time</h3>
-<ul>
-    <li>Local: 1–2 days</li>
-    <li>India: 3–7 days</li>
-</ul>
+    .shipping-hero {
+        padding: 65px 15px;
+        color: #fff;
+        text-align: center;
+        background: linear-gradient(125deg, #10213a, #0d6efd);
+    }
 
-<h3>Installation Scheduling</h3>
-<p>Installation is scheduled after product delivery based on customer and technician availability.</p>
+    .shipping-hero .hero-label {
+        display: inline-block;
+        padding: 8px 15px;
+        border: 1px solid rgba(255,255,255,.3);
+        border-radius: 30px;
+        background: rgba(255,255,255,.1);
+        font-size: .82rem;
+        font-weight: 700;
+        letter-spacing: .7px;
+    }
+
+    .shipping-hero h1 {
+        font-size: clamp(2rem, 5vw, 3.4rem);
+        font-weight: 850;
+        letter-spacing: -1px;
+        margin: 20px 0 12px;
+    }
+
+    .shipping-hero p {
+        max-width: 680px;
+        margin: auto;
+        color: rgba(255,255,255,.85);
+        line-height: 1.8;
+    }
+
+    .shipping-layout {
+        display: grid;
+        grid-template-columns: 255px minmax(0, 1fr);
+        gap: 25px;
+        align-items: start;
+        margin-top: 35px;
+    }
+
+    .shipping-sidebar,
+    .shipping-content {
+        background: #fff;
+        border: 1px solid #e6ebf3;
+        border-radius: 17px;
+        box-shadow: 0 8px 28px rgba(16,33,58,.045);
+    }
+
+    .shipping-sidebar {
+        padding: 22px 16px;
+        position: sticky;
+        top: 20px;
+    }
+
+    .shipping-sidebar h2 {
+        color: var(--ship-dark);
+        font-size: 1rem;
+        font-weight: 800;
+        padding: 0 10px;
+        margin-bottom: 14px;
+    }
+
+    .shipping-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .shipping-nav a {
+        display: block;
+        padding: 10px 11px;
+        border-radius: 8px;
+        color: #526178;
+        text-decoration: none;
+        font-size: .89rem;
+        line-height: 1.5;
+    }
+
+    .shipping-nav a:hover {
+        color: var(--ship-primary);
+        background: #edf4ff;
+    }
+
+    .shipping-content {
+        padding: clamp(22px, 4vw, 42px);
+        min-width: 0;
+    }
+
+    .shipping-intro {
+        padding: 20px;
+        margin-bottom: 27px;
+        border: 1px solid #cfe0ff;
+        border-radius: 13px;
+        background: #f0f6ff;
+        color: #43536a;
+        line-height: 1.8;
+    }
+
+    .shipping-intro strong {
+        color: #174ea6;
+    }
+
+    .shipping-estimates {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 15px;
+        margin: 25px 0;
+    }
+
+    .estimate-card {
+        padding: 23px 20px;
+        border: 1px solid #e4eaf3;
+        border-radius: 14px;
+        background: #fff;
+    }
+
+    .estimate-icon {
+        width: 47px;
+        height: 47px;
+        display: grid;
+        place-items: center;
+        margin-bottom: 15px;
+        border-radius: 13px;
+        background: #eaf2ff;
+        color: var(--ship-primary);
+        font-size: 1.4rem;
+    }
+
+    .estimate-card h3 {
+        color: var(--ship-dark);
+        font-size: 1rem;
+        font-weight: 750;
+        margin-bottom: 8px;
+    }
+
+    .estimate-time {
+        color: var(--ship-primary);
+        font-size: 1.4rem;
+        font-weight: 850;
+        margin-bottom: 7px;
+    }
+
+    .estimate-card p {
+        color: var(--ship-muted);
+        font-size: .9rem;
+        line-height: 1.7;
+        margin: 0;
+    }
+
+    .shipping-section {
+        padding: 25px 0;
+        border-bottom: 1px solid #edf0f5;
+        scroll-margin-top: 25px;
+    }
+
+    .shipping-section:first-of-type {
+        padding-top: 0;
+    }
+
+    .shipping-section:last-of-type {
+        border-bottom: 0;
+    }
+
+    .shipping-section h2 {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        color: var(--ship-dark);
+        font-size: 1.2rem;
+        font-weight: 800;
+        line-height: 1.5;
+        margin-bottom: 15px;
+    }
+
+    .shipping-section h2 i {
+        width: 37px;
+        height: 37px;
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+        border-radius: 10px;
+        background: #eaf2ff;
+        color: var(--ship-primary);
+        font-size: 1.05rem;
+    }
+
+    .shipping-section p,
+    .shipping-section li {
+        color: #566579;
+        font-size: .95rem;
+        line-height: 1.9;
+    }
+
+    .shipping-section p {
+        margin-bottom: 12px;
+    }
+
+    .shipping-section ul {
+        padding-left: 22px;
+        margin-bottom: 12px;
+    }
+
+    .shipping-section li {
+        padding-left: 3px;
+        margin-bottom: 7px;
+    }
+
+    .shipping-section a {
+        color: var(--ship-primary);
+        text-decoration: none;
+        overflow-wrap: anywhere;
+    }
+
+    .shipping-section a:hover {
+        text-decoration: underline;
+    }
+
+    .shipping-notice {
+        display: flex;
+        gap: 12px;
+        padding: 16px 18px;
+        margin: 18px 0;
+        border-left: 4px solid #e0a000;
+        border-radius: 0 10px 10px 0;
+        background: #fff8e8;
+        color: #755c20;
+        font-size: .91rem;
+        line-height: 1.8;
+    }
+
+    .shipping-notice i {
+        flex-shrink: 0;
+        font-size: 1.2rem;
+    }
+
+    .shipping-contact {
+        padding: 26px;
+        border-radius: 15px;
+        color: #fff;
+        background: linear-gradient(125deg, #10213a, #174ea6);
+    }
+
+    .shipping-contact h2 {
+        font-size: 1.3rem;
+        font-weight: 800;
+        margin-bottom: 12px;
+    }
+
+    .shipping-contact p {
+        color: rgba(255,255,255,.85);
+        line-height: 1.8;
+    }
+
+    .shipping-contact a {
+        color: #fff;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+    }
+
+    .shipping-contact .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #10213a;
+        background: #fff;
+        border-radius: 9px;
+        padding: 10px 17px;
+        font-weight: 750;
+        text-decoration: none;
+    }
+
+    @media (max-width: 991.98px) {
+        .shipping-layout {
+            grid-template-columns: 1fr;
+            gap: 18px;
+        }
+
+        .shipping-sidebar {
+            position: static;
+        }
+
+        .shipping-nav {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        .shipping-hero {
+            padding: 48px 15px;
+        }
+
+        .shipping-layout {
+            margin-top: 20px;
+        }
+
+        .shipping-sidebar {
+            padding: 18px 12px;
+        }
+
+        .shipping-nav {
+            grid-template-columns: 1fr;
+        }
+
+        .shipping-content {
+            padding: 22px 18px;
+        }
+
+        .shipping-estimates {
+            grid-template-columns: 1fr;
+        }
+
+        .shipping-section h2 {
+            font-size: 1.08rem;
+        }
+
+        .shipping-section p,
+        .shipping-section li {
+            font-size: .92rem;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .camura-shipping *,
+        .camura-shipping *::before,
+        .camura-shipping *::after {
+            scroll-behavior: auto !important;
+            transition: none !important;
+        }
+    }
+</style>
+
+<div class="camura-shipping">
+
+    <!-- Hero -->
+    <section class="shipping-hero">
+        <div class="container">
+
+            <div class="hero-label">
+                <i class="bi bi-truck me-1"></i>
+                Shipping Information
+            </div>
+
+            <h1>Shipping & Delivery Policy</h1>
+
+            <p>
+                Find out how Camura processes orders, delivers CCTV
+                products and coordinates installation and service
+                appointments.
+            </p>
+
+        </div>
+    </section>
+
+    <div class="container">
+
+        <div class="shipping-layout">
+
+            <!-- Navigation -->
+            <aside class="shipping-sidebar">
+                <h2>
+                    <i class="bi bi-list-ul me-2"></i>
+                    On This Page
+                </h2>
+
+                <nav class="shipping-nav"
+                     aria-label="Shipping policy sections">
+                    <a href="#coverage">1. Delivery Locations</a>
+                    <a href="#estimates">2. Delivery Time</a>
+                    <a href="#processing">3. Order Processing</a>
+                    <a href="#charges">4. Shipping Charges</a>
+                    <a href="#tracking">5. Tracking & Updates</a>
+                    <a href="#delivery">6. Delivery Requirements</a>
+                    <a href="#damage">7. Damaged or Missing Items</a>
+                    <a href="#installation">8. Installation Scheduling</a>
+                    <a href="#failed">9. Failed Delivery</a>
+                    <a href="#delays">10. Delays & Exceptions</a>
+                    <a href="#contact">11. Contact Us</a>
+                </nav>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="shipping-content">
+
+                <div class="shipping-intro">
+                    <i class="bi bi-info-circle-fill me-2 text-primary"></i>
+                    <strong>Important:</strong>
+                    Delivery timelines are estimates and may vary by
+                    destination, product availability, courier operations
+                    and other circumstances. Please check the delivery
+                    estimate and charges shown for your order, where available.
+                </div>
+
+                <!-- 1 -->
+                <section class="shipping-section" id="coverage">
+                    <h2>
+                        <i class="bi bi-geo-alt"></i>
+                        1. Delivery Locations
+                    </h2>
+
+                    <p>
+                        Camura offers local delivery in Dharashiv and
+                        delivery to other locations across India where
+                        shipping service is available for the product
+                        and destination.
+                    </p>
+
+                    <ul>
+                        <li>
+                            <strong>Dharashiv:</strong>
+                            Local delivery availability depends on the
+                            delivery address, stock and arrangements.
+                        </li>
+                        <li>
+                            <strong>Other locations in India:</strong>
+                            Delivery depends on courier coverage,
+                            product availability and serviceability of
+                            the destination PIN code.
+                        </li>
+                    </ul>
+
+                    <div class="shipping-notice">
+                        <i class="bi bi-tools"></i>
+                        <div>
+                            <strong>Important service-area restriction:</strong>
+                            On-site CCTV installation, repair and technical
+                            services are available in Dharashiv city only.
+                            Product delivery outside Dharashiv does not
+                            mean that on-site installation is available
+                            at that location.
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2 -->
+                <section class="shipping-section" id="estimates">
+                    <h2>
+                        <i class="bi bi-clock-history"></i>
+                        2. Estimated Delivery Time
+                    </h2>
+
+                    <p>
+                        The following are indicative estimates from our
+                        existing delivery policy. Actual delivery times
+                        should be confirmed against your shipping method
+                        and order details.
+                    </p>
+
+                    <div class="shipping-estimates">
+
+                        <div class="estimate-card">
+                            <div class="estimate-icon">
+                                <i class="bi bi-shop"></i>
+                            </div>
+
+                            <h3>Local Delivery</h3>
+
+                            <div class="estimate-time">1–2 days</div>
+
+                            <p>
+                                Indicative estimate for eligible local
+                                deliveries in Dharashiv, subject to
+                                stock and scheduling.
+                            </p>
+                        </div>
+
+                        <div class="estimate-card">
+                            <div class="estimate-icon">
+                                <i class="bi bi-truck"></i>
+                            </div>
+
+                            <h3>Pan-India Delivery</h3>
+
+                            <div class="estimate-time">3–7 days</div>
+
+                            <p>
+                                Indicative estimate for serviceable
+                                destinations across India, subject to
+                                courier coverage and dispatch.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <p>
+                        Delivery estimates may be affected by weekends,
+                        public holidays, remote destinations, courier
+                        capacity, weather, stock availability or other
+                        events beyond our reasonable control.
+                    </p>
+
+                    <p>
+                        Unless expressly confirmed otherwise, these
+                        estimates are not guaranteed delivery dates.
+                    </p>
+                </section>
+
+                <!-- 3 -->
+                <section class="shipping-section" id="processing">
+                    <h2>
+                        <i class="bi bi-box-seam"></i>
+                        3. Order Processing & Dispatch
+                    </h2>
+
+                    <p>
+                        After you place an order, we may review the order,
+                        confirm product availability, verify payment
+                        status where applicable and prepare the items
+                        for dispatch.
+                    </p>
+
+                    <ul>
+                        <li>
+                            Orders are processed according to product
+                            availability and the applicable payment method.
+                        </li>
+                        <li>
+                            Orders requiring payment confirmation may
+                            not be dispatched until the payment is verified.
+                        </li>
+                        <li>
+                            We may contact you to clarify an incomplete
+                            address or other delivery information.
+                        </li>
+                        <li>
+                            If a product becomes unavailable or a material
+                            issue affects fulfilment, we will contact you
+                            about the available options.
+                        </li>
+                    </ul>
+
+                    <p>
+                        An order confirmation does not necessarily mean
+                        that the parcel has already been dispatched.
+                        Dispatch status should be checked through any
+                        order updates provided by Camura.
+                    </p>
+                </section>
+
+                <!-- 4 -->
+                <section class="shipping-section" id="charges">
+                    <h2>
+                        <i class="bi bi-currency-rupee"></i>
+                        4. Shipping Charges
+                    </h2>
+
+                    <p>
+                        Shipping charges, if applicable, may depend on
+                        the delivery address, package size, product
+                        weight, courier service and order value.
+                    </p>
+
+                    <ul>
+                        <li>
+                            Any shipping fee shown during checkout or
+                            separately communicated for your order will
+                            apply to that order.
+                        </li>
+                        <li>
+                            Additional charges will be communicated
+                            before they are collected.
+                        </li>
+                        <li>
+                            Installation, configuration, inspection and
+                            repair charges are separate from product
+                            shipping charges unless explicitly stated
+                            otherwise.
+                        </li>
+                    </ul>
+
+                    <p>
+                        If shipping charges are not displayed online,
+                        please contact us to confirm the applicable
+                        delivery cost before placing the order.
+                    </p>
+                </section>
+
+                <!-- 5 -->
+                <section class="shipping-section" id="tracking">
+                    <h2>
+                        <i class="bi bi-upc-scan"></i>
+                        5. Shipment Tracking & Updates
+                    </h2>
+
+                    <p>
+                        Where tracking is available, we may provide
+                        shipment details or order-status updates through
+                        the contact information associated with your order.
+                    </p>
+
+                    <ul>
+                        <li>Keep your registered mobile number and email address accessible.</li>
+                        <li>Check any courier tracking link supplied for your order.</li>
+                        <li>Contact us if the tracking information appears incorrect or has not updated for an extended period.</li>
+                    </ul>
+
+                    <p>
+                        Tracking information may be delayed while the
+                        courier updates its systems. Actual parcel
+                        movement is handled by the relevant delivery
+                        provider.
+                    </p>
+                </section>
+
+                <!-- 6 -->
+                <section class="shipping-section" id="delivery">
+                    <h2>
+                        <i class="bi bi-house-check"></i>
+                        6. Delivery Requirements
+                    </h2>
+
+                    <p>To help ensure successful delivery, please:</p>
+
+                    <ul>
+                        <li>Provide a complete and accurate delivery address and PIN code.</li>
+                        <li>Provide a reachable mobile number for delivery coordination.</li>
+                        <li>Ensure someone authorised is available to receive the parcel.</li>
+                        <li>Check the parcel packaging and product count at delivery, where possible.</li>
+                        <li>Retain the invoice, packaging and order details in case support is needed.</li>
+                    </ul>
+
+                    <p>
+                        Please do not share OTPs, payment PINs or account
+                        passwords with anyone claiming to be a courier
+                        or Camura representative unless you have verified
+                        the request through an appropriate official process.
+                    </p>
+                </section>
+
+                <!-- 7 -->
+                <section class="shipping-section" id="damage">
+                    <h2>
+                        <i class="bi bi-box2-heart"></i>
+                        7. Damaged, Missing or Incorrect Items
+                    </h2>
+
+                    <p>
+                        If a product arrives damaged, an item is missing
+                        or you receive an incorrect product, contact
+                        Camura as soon as reasonably possible.
+                    </p>
+
+                    <ul>
+                        <li>Provide your order number and a description of the issue.</li>
+                        <li>Share clear photographs of the parcel, packaging and product if available.</li>
+                        <li>Retain the original packaging and invoice until the issue is resolved.</li>
+                    </ul>
+
+                    <p>
+                        We will review the circumstances and explain the
+                        available resolution under the applicable return,
+                        replacement, refund and warranty terms.
+                    </p>
+
+                    <p>
+                        Nothing in this policy is intended to exclude
+                        consumer rights or remedies that cannot lawfully
+                        be excluded.
+                    </p>
+                </section>
+
+                <!-- 8 -->
+                <section class="shipping-section" id="installation">
+                    <h2>
+                        <i class="bi bi-tools"></i>
+                        8. Installation & Service Scheduling
+                    </h2>
+
+                    <p>
+                        Purchasing a CCTV product does not automatically
+                        include installation unless installation is
+                        expressly included in the product listing,
+                        order confirmation or a separate agreement.
+                    </p>
+
+                    <ul>
+                        <li>
+                            Installation is scheduled after product
+                            delivery or availability is confirmed, as applicable.
+                        </li>
+                        <li>
+                            Appointment timing depends on customer
+                            availability, technician availability and
+                            the nature of the work.
+                        </li>
+                        <li>
+                            Installation or repair charges will depend
+                            on the agreed service scope and applicable
+                            charges communicated to the customer.
+                        </li>
+                        <li>
+                            The customer should arrange safe access to
+                            the installation location and disclose
+                            relevant site restrictions.
+                        </li>
+                    </ul>
+
+                    <div class="shipping-notice">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <div>
+                            <strong>Dharashiv city only:</strong>
+                            Camura's on-site installation and repair
+                            services are limited to Dharashiv city.
+                            Confirm service availability before booking
+                            an installation or repair appointment.
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 9 -->
+                <section class="shipping-section" id="failed">
+                    <h2>
+                        <i class="bi bi-arrow-return-left"></i>
+                        9. Failed or Undeliverable Shipments
+                    </h2>
+
+                    <p>
+                        A delivery may fail because of an incorrect
+                        address, an unavailable recipient, restricted
+                        access or courier-related circumstances.
+                    </p>
+
+                    <p>
+                        If a parcel cannot be delivered, we may contact
+                        you to arrange a suitable next step, subject to
+                        the courier's procedures and the circumstances
+                        of the order.
+                    </p>
+
+                    <p>
+                        Any additional delivery cost, cancellation,
+                        refund or reshipment will be handled under the
+                        applicable order terms and consumer law.
+                        We will communicate relevant charges before
+                        collecting them.
+                    </p>
+                </section>
+
+                <!-- 10 -->
+                <section class="shipping-section" id="delays">
+                    <h2>
+                        <i class="bi bi-exclamation-triangle"></i>
+                        10. Delivery Delays & Exceptions
+                    </h2>
+
+                    <p>
+                        Delivery may be delayed by circumstances such as:
+                    </p>
+
+                    <ul>
+                        <li>Unexpected stock shortages or supplier delays.</li>
+                        <li>Severe weather, transport disruption or other emergencies.</li>
+                        <li>Courier capacity limitations or service interruptions.</li>
+                        <li>Incorrect or incomplete delivery details.</li>
+                        <li>Remote delivery locations or other logistical constraints.</li>
+                    </ul>
+
+                    <p>
+                        Where we become aware of a significant issue
+                        affecting your order, we will make reasonable
+                        efforts to communicate relevant updates and
+                        available options.
+                    </p>
+
+                    <p>
+                        Statutory consumer rights and any applicable
+                        cancellation or refund obligations remain unaffected.
+                    </p>
+                </section>
+
+                <!-- 11 -->
+                <section class="shipping-section" id="contact">
+                    <h2>
+                        <i class="bi bi-envelope-paper"></i>
+                        11. Contact Us
+                    </h2>
+
+                    <p>
+                        For delivery questions, shipment tracking,
+                        damaged parcels or installation scheduling,
+                        contact Camura using the details below.
+                    </p>
+
+                    <p>
+                        <strong>Business:</strong> Camura (N S Corporation)<br>
+                        <strong>Website:</strong>
+                        <a href="https://camura.in/">https://camura.in/</a><br>
+                        <strong>Email:</strong>
+                        <a href="mailto:support@camura.in">support@camura.in</a><br>
+                        <strong>Phone:</strong>
+                        <a href="tel:+919766052176">+91 97660 52176</a><br>
+                        <strong>Address:</strong>
+                        Pawar Complex, Shop No. 1, Behind Tuljabhawani Stadium,
+                        Dharashiv, Maharashtra - 413501, India
+                    </p>
+                </section>
+
+                <!-- Contact Card -->
+                <div class="shipping-contact">
+                    <h2>
+                        <i class="bi bi-headset me-2"></i>
+                        Need Help With Your Delivery?
+                    </h2>
+
+                    <p>
+                        Contact us with your order number and delivery
+                        question so our team can review the details.
+                    </p>
+
+                    <a href="mailto:support@camura.in" class="btn">
+                        <i class="bi bi-envelope"></i>
+                        Email Support
+                    </a>
+
+                    <a href="tel:+919766052176"
+                       class="btn ms-2 mt-2 mt-sm-0">
+                        <i class="bi bi-telephone"></i>
+                        Call Camura
+                    </a>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+</div>
 
 {% endblock %}

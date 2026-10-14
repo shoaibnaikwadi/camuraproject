@@ -1,25 +1,437 @@
+
 {% extends "base.html" %}
-{% block title %}Warranty Policy - Camura{% endblock %}
+
+{% block title %}CCTV Warranty Policy | Camura.in{% endblock %}
+
+{% block meta_description %}
+Read Camura.in's CCTV warranty policy covering cameras, DVRs, NVRs, hard drives, installation workmanship, warranty exclusions, and claim procedures.
+{% endblock %}
 
 {% block content %}
-<h1>Warranty Policy</h1>
 
-<h3>Product Warranty</h3>
-<ul>
-    <li>Cameras: 1–2 years</li>
-    <li>DVR/NVR: 1–2 years</li>
-    <li>Hard drives: Up to 3 years</li>
-</ul>
+<style>
+    .warranty-page {
+        --w-primary: #0d6efd;
+        --w-dark: #10233f;
+        --w-muted: #64748b;
+        color: #253247;
+        padding-bottom: 45px;
+    }
 
-<h3>Installation Warranty</h3>
-<p>30 days workmanship warranty.</p>
+    .warranty-hero {
+        background: linear-gradient(135deg, #0b1f3a, #1456a0, #087f8c);
+        color: #fff;
+        border-radius: 22px;
+        padding: 45px 25px;
+        margin: 20px 0 30px;
+        position: relative;
+        overflow: hidden;
+    }
 
-<h3>Not Covered</h3>
-<ul>
-    <li>Physical damage</li>
-    <li>Wire cuts</li>
-    <li>Rodent damage</li>
-    <li>Electric surges</li>
-</ul>
+    .warranty-hero::after {
+        content: "";
+        position: absolute;
+        width: 220px;
+        height: 220px;
+        border: 35px solid rgba(255,255,255,.08);
+        border-radius: 50%;
+        right: -55px;
+        top: -65px;
+    }
+
+    .warranty-hero .hero-icon {
+        display: inline-flex;
+        width: 65px;
+        height: 65px;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255,255,255,.14);
+        border: 1px solid rgba(255,255,255,.2);
+        border-radius: 18px;
+        font-size: 32px;
+        margin-bottom: 18px;
+    }
+
+    .warranty-hero h1 {
+        font-size: clamp(2rem, 5vw, 2.8rem);
+        font-weight: 800;
+        margin-bottom: 12px;
+    }
+
+    .warranty-hero p {
+        max-width: 650px;
+        margin: 0;
+        color: rgba(255,255,255,.88);
+        line-height: 1.8;
+    }
+
+    .warranty-card {
+        height: 100%;
+        padding: 24px;
+        background: #fff;
+        border: 1px solid #e8edf4;
+        border-radius: 18px;
+        box-shadow: 0 7px 24px rgba(16,35,63,.05);
+    }
+
+    .warranty-icon {
+        display: inline-flex;
+        width: 48px;
+        height: 48px;
+        align-items: center;
+        justify-content: center;
+        background: #eaf2ff;
+        color: #0d6efd;
+        border-radius: 14px;
+        font-size: 23px;
+        margin-bottom: 15px;
+    }
+
+    .warranty-card h2,
+    .warranty-section h2 {
+        color: var(--w-dark);
+        font-size: 1.3rem;
+        font-weight: 750;
+        margin-bottom: 14px;
+    }
+
+    .warranty-section {
+        background: #fff;
+        border: 1px solid #e8edf4;
+        border-radius: 18px;
+        padding: 26px;
+        margin-bottom: 22px;
+        box-shadow: 0 5px 20px rgba(16,35,63,.035);
+        scroll-margin-top: 100px;
+    }
+
+    .warranty-section p,
+    .warranty-section li {
+        color: #526176;
+        line-height: 1.85;
+    }
+
+    .warranty-section ul,
+    .warranty-section ol {
+        padding-left: 22px;
+        margin-bottom: 0;
+    }
+
+    .warranty-section li {
+        margin-bottom: 8px;
+    }
+
+    .warranty-badge {
+        display: inline-block;
+        padding: 7px 12px;
+        border-radius: 30px;
+        background: #e8f7ef;
+        color: #167447;
+        font-size: .82rem;
+        font-weight: 700;
+    }
+
+    .warranty-table-wrap {
+        overflow-x: auto;
+        border: 1px solid #e8edf4;
+        border-radius: 14px;
+    }
+
+    .warranty-table {
+        width: 100%;
+        min-width: 430px;
+        border-collapse: collapse;
+        margin: 0;
+    }
+
+    .warranty-table th {
+        background: #f1f6fc;
+        color: #233752;
+        font-weight: 700;
+    }
+
+    .warranty-table th,
+    .warranty-table td {
+        padding: 15px;
+        border-bottom: 1px solid #e8edf4;
+        text-align: left;
+        vertical-align: top;
+    }
+
+    .warranty-table tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .warranty-note {
+        padding: 17px 18px;
+        border-radius: 12px;
+        background: #fff8e6;
+        border: 1px solid #ffe4a3;
+        color: #79591b;
+        line-height: 1.75;
+    }
+
+    .warranty-contact {
+        background: linear-gradient(135deg, #edf5ff, #eafaf7);
+        border: 1px solid #dcecf6;
+        border-radius: 18px;
+        padding: 27px;
+    }
+
+    .warranty-contact a {
+        color: #0d5fba;
+        font-weight: 650;
+        text-decoration: none;
+        overflow-wrap: anywhere;
+    }
+
+    .warranty-contact a:hover {
+        text-decoration: underline;
+    }
+
+    .warranty-toc {
+        position: sticky;
+        top: 90px;
+    }
+
+    .warranty-toc a {
+        display: block;
+        color: #526176;
+        text-decoration: none;
+        padding: 9px 12px;
+        border-radius: 9px;
+        margin-bottom: 4px;
+        font-size: .94rem;
+    }
+
+    .warranty-toc a:hover {
+        background: #edf5ff;
+        color: #0d6efd;
+    }
+
+    @media (max-width: 767px) {
+        .warranty-hero {
+            padding: 32px 22px;
+            border-radius: 16px;
+        }
+
+        .warranty-section,
+        .warranty-card,
+        .warranty-contact {
+            padding: 20px;
+        }
+
+        .warranty-toc {
+            position: static;
+        }
+    }
+</style>
+
+<div class="container warranty-page">
+
+    <!-- Hero -->
+    <section class="warranty-hero">
+        <div class="hero-icon">
+            <i class="bi bi-shield-check"></i>
+        </div>
+        <h1>Warranty Policy</h1>
+        <p>
+            At Camura, we want you to feel confident about your CCTV security
+            products and installation services. Read this policy to understand
+            warranty coverage, exclusions, and how to request assistance.
+        </p>
+    </section>
+
+    <div class="row g-4">
+
+        <!-- Table of contents -->
+        <div class="col-lg-3">
+            <div class="warranty-card warranty-toc">
+                <h2 class="h6">On this page</h2>
+                <a href="#product-warranty">Product Warranty</a>
+                <a href="#installation-warranty">Installation Warranty</a>
+                <a href="#not-covered">Warranty Exclusions</a>
+                <a href="#claim-process">How to Claim</a>
+                <a href="#conditions">Important Conditions</a>
+                <a href="#contact">Contact Us</a>
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+
+            <!-- Product warranty -->
+            <section class="warranty-section" id="product-warranty">
+                <div class="warranty-icon">
+                    <i class="bi bi-camera-video"></i>
+                </div>
+                <h2>1. Product Warranty</h2>
+                <p>
+                    Warranty coverage depends on the product, manufacturer,
+                    model, and applicable warranty terms. The periods below
+                    are general guidance only and are not a guarantee for
+                    every product sold by Camura.
+                </p>
+
+                <div class="warranty-table-wrap">
+                    <table class="warranty-table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Indicative Warranty</th>
+                                <th>Important Note</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><i class="bi bi-camera me-2 text-primary"></i>CCTV Cameras</td>
+                                <td><span class="warranty-badge">1–2 years</span></td>
+                                <td>As specified by the manufacturer.</td>
+                            </tr>
+                            <tr>
+                                <td><i class="bi bi-hdd-stack me-2 text-primary"></i>DVR / NVR</td>
+                                <td><span class="warranty-badge">1–2 years</span></td>
+                                <td>Subject to model and warranty terms.</td>
+                            </tr>
+                            <tr>
+                                <td><i class="bi bi-device-hdd me-2 text-primary"></i>Hard Drives</td>
+                                <td><span class="warranty-badge">Up to 3 years</span></td>
+                                <td>Exact coverage varies by product.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="warranty-note mt-3">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <strong>Please note:</strong> Always check the invoice,
+                    product warranty card, or manufacturer's warranty terms
+                    for the exact coverage period. The actual warranty may be
+                    shorter or longer than the indicative periods shown above.
+                </div>
+            </section>
+
+            <!-- Installation warranty -->
+            <section class="warranty-section" id="installation-warranty">
+                <div class="warranty-icon">
+                    <i class="bi bi-tools"></i>
+                </div>
+                <h2>2. Installation Warranty</h2>
+                <p>
+                    Camura provides a <strong>30-day workmanship warranty</strong>
+                    for eligible CCTV installation work carried out by our
+                    technicians.
+                </p>
+                <ul>
+                    <li>Coverage applies to eligible issues directly caused by installation workmanship.</li>
+                    <li>Customers should contact us and explain the problem so we can assess it.</li>
+                    <li>Product defects are handled according to the applicable manufacturer warranty.</li>
+                    <li>Additional work, replacement parts, or repairs outside the coverage may incur charges after inspection and approval.</li>
+                </ul>
+            </section>
+
+            <!-- Exclusions -->
+            <section class="warranty-section" id="not-covered">
+                <div class="warranty-icon">
+                    <i class="bi bi-shield-exclamation"></i>
+                </div>
+                <h2>3. What Is Not Covered?</h2>
+                <p>
+                    Unless the applicable manufacturer warranty or service
+                    agreement states otherwise, the following issues are
+                    generally excluded from installation workmanship coverage:
+                </p>
+                <ul>
+                    <li><strong>Physical damage:</strong> Broken cameras, damaged connectors, cracked housings, or impact damage.</li>
+                    <li><strong>Wire cuts or tampering:</strong> Cables disconnected, cut, or altered after installation.</li>
+                    <li><strong>Rodent or pest damage:</strong> Cables or equipment damaged by rats or other animals.</li>
+                    <li><strong>Electrical surges:</strong> Damage caused by voltage fluctuations, lightning, or electrical faults.</li>
+                    <li><strong>Unauthorized repairs:</strong> Damage caused by unauthorized opening, modification, or repair.</li>
+                    <li><strong>Environmental damage:</strong> Water ingress, fire, corrosion, or other external causes not covered by the applicable warranty.</li>
+                    <li><strong>Third-party changes:</strong> Changes to wiring, networking, routers, or equipment made by others that cause the problem.</li>
+                </ul>
+                <p class="mt-3 mb-0">
+                    These exclusions do not override any mandatory rights or
+                    protections available under applicable law.
+                </p>
+            </section>
+
+            <!-- Claim process -->
+            <section class="warranty-section" id="claim-process">
+                <div class="warranty-icon">
+                    <i class="bi bi-clipboard-check"></i>
+                </div>
+                <h2>4. How to Request Warranty Service</h2>
+                <p>Follow these steps to help us assess your warranty request:</p>
+                <ol>
+                    <li>Keep your purchase invoice and warranty card, if supplied.</li>
+                    <li>Contact Camura and explain the fault or installation issue.</li>
+                    <li>Share the product model, serial number, and photos or videos of the issue when requested.</li>
+                    <li>Allow us to assess whether the issue falls under product warranty or installation workmanship coverage.</li>
+                    <li>If manufacturer service is required, we will guide you on the applicable process, subject to the manufacturer's terms.</li>
+                </ol>
+
+                <div class="warranty-note mt-3">
+                    <i class="bi bi-exclamation-circle me-2"></i>
+                    Do not open or attempt to repair equipment under warranty
+                    before checking the manufacturer's terms. Unauthorized
+                    repairs may affect warranty eligibility.
+                </div>
+            </section>
+
+            <!-- Conditions -->
+            <section class="warranty-section" id="conditions">
+                <div class="warranty-icon">
+                    <i class="bi bi-file-earmark-text"></i>
+                </div>
+                <h2>5. Important Warranty Conditions</h2>
+                <ul>
+                    <li>Warranty periods and coverage are determined by the applicable invoice, manufacturer policy, and service agreement.</li>
+                    <li>Keep your invoice and product serial numbers for reference.</li>
+                    <li>Inspection may be required before warranty eligibility can be confirmed.</li>
+                    <li>Warranty does not automatically include relocation, rewiring, upgrades, or unrelated maintenance.</li>
+                    <li>Any applicable inspection, transport, or out-of-warranty service charges will be explained before chargeable work proceeds.</li>
+                    <li>Camura's installation workmanship warranty is separate from the manufacturer's product warranty.</li>
+                </ul>
+            </section>
+
+            <!-- Contact -->
+            <section class="warranty-contact" id="contact">
+                <div class="d-flex align-items-start gap-3">
+                    <div class="warranty-icon mb-0 flex-shrink-0">
+                        <i class="bi bi-headset"></i>
+                    </div>
+                    <div>
+                        <h2 class="h4 fw-bold mb-2">Need Warranty Assistance?</h2>
+                        <p class="text-secondary mb-3">
+                            Contact our team with your invoice and product details.
+                            Service availability is limited to Dharashiv city.
+                        </p>
+
+                        <p class="mb-2">
+                            <i class="bi bi-telephone me-2"></i>
+                            <a href="tel:+919766052176">+91 97660 52176</a>
+                        </p>
+                        <p class="mb-2">
+                            <i class="bi bi-envelope me-2"></i>
+                            <a href="mailto:support@camura.in">support@camura.in</a>
+                        </p>
+                        <p class="mb-0">
+                            <i class="bi bi-geo-alt me-2"></i>
+                            Camura, Pawar Complex, Shop No. 1, Behind Tuljabhawani Stadium, Dharashiv – 413501, Maharashtra, India.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <p class="text-secondary small mt-4 mb-0">
+                <i class="bi bi-calendar3 me-1"></i>
+                This policy is intended to explain general warranty practices.
+                Please refer to your invoice, product warranty documents, and
+                applicable service terms for the coverage applicable to your purchase.
+            </p>
+
+        </div>
+    </div>
+</div>
 
 {% endblock %}

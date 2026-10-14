@@ -1,34 +1,433 @@
+
 {% extends "base.html" %}
-{% block title %}Refund Policy - Camura{% endblock %}
+
+{% block title %}Refund, Return & Cancellation Policy | Camura.in{% endblock %}
+
+{% block meta_description %}
+Read Camura.in's refund, return, and cancellation policy for CCTV cameras, DVRs, NVRs, accessories, online orders, and installation services.
+{% endblock %}
 
 {% block content %}
-<h1>Refund Return  & cancelation Policy</h1>
 
-<h3>Return Eligibility</h3>
-<ul>
-    <li>Returns accepted within 7 days</li>
-    <li>Product must be unused and in original packaging</li>
-    <li>Manufacturing defects are eligible</li>
-</ul>
+<style>
+    .refund-page {
+        --r-primary: #0d6efd;
+        --r-dark: #10233f;
+        --r-muted: #64748b;
+        color: #253247;
+        padding-bottom: 45px;
+    }
 
-<h3>Non-returnable Items</h3>
-<ul>
-    <li>Installed CCTV cameras</li>
-    <li>Opened DVR/NVR systems</li>
-    <li>Wires & accessories</li>
-    <li>Physically damaged items</li>
-</ul>
+    .refund-hero {
+        background: linear-gradient(135deg, #10233f, #1558a6, #087f8c);
+        color: #fff;
+        border-radius: 22px;
+        padding: 45px 25px;
+        margin: 20px 0 30px;
+        position: relative;
+        overflow: hidden;
+    }
 
-<h3>Refund Time</h3>
-<p>Refunds are processed within 5–7 days after inspection.</p>
+    .refund-hero::after {
+        content: "";
+        position: absolute;
+        width: 220px;
+        height: 220px;
+        border: 35px solid rgba(255,255,255,.08);
+        border-radius: 50%;
+        right: -55px;
+        top: -65px;
+    }
 
+    .refund-hero-icon {
+        display: inline-flex;
+        width: 65px;
+        height: 65px;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255,255,255,.14);
+        border: 1px solid rgba(255,255,255,.2);
+        border-radius: 18px;
+        font-size: 32px;
+        margin-bottom: 18px;
+    }
 
-<h1>Cancellation Policy</h1>
+    .refund-hero h1 {
+        font-size: clamp(1.9rem, 5vw, 2.7rem);
+        font-weight: 800;
+        margin-bottom: 12px;
+    }
 
-<h3>Order Cancellation</h3>
-<p>Orders can be cancelled before shipping only.</p>
+    .refund-hero p {
+        max-width: 680px;
+        color: rgba(255,255,255,.88);
+        line-height: 1.8;
+        margin: 0;
+    }
 
-<h3>Installation Cancellation</h3>
-<p>If a technician is already dispatched, a cancellation fee may apply.</p>
+    .refund-card {
+        height: 100%;
+        padding: 23px;
+        background: #fff;
+        border: 1px solid #e8edf4;
+        border-radius: 18px;
+        box-shadow: 0 7px 24px rgba(16,35,63,.05);
+    }
+
+    .refund-icon {
+        display: inline-flex;
+        width: 48px;
+        height: 48px;
+        align-items: center;
+        justify-content: center;
+        background: #eaf2ff;
+        color: #0d6efd;
+        border-radius: 14px;
+        font-size: 23px;
+        margin-bottom: 15px;
+    }
+
+    .refund-section {
+        background: #fff;
+        border: 1px solid #e8edf4;
+        border-radius: 18px;
+        padding: 26px;
+        margin-bottom: 22px;
+        box-shadow: 0 5px 20px rgba(16,35,63,.035);
+        scroll-margin-top: 100px;
+    }
+
+    .refund-section h2 {
+        color: var(--r-dark);
+        font-size: 1.3rem;
+        font-weight: 750;
+        margin-bottom: 14px;
+    }
+
+    .refund-section p,
+    .refund-section li {
+        color: #526176;
+        line-height: 1.85;
+    }
+
+    .refund-section ul,
+    .refund-section ol {
+        padding-left: 22px;
+        margin-bottom: 0;
+    }
+
+    .refund-section li {
+        margin-bottom: 8px;
+    }
+
+    .refund-toc {
+        position: sticky;
+        top: 90px;
+    }
+
+    .refund-toc a {
+        display: block;
+        color: #526176;
+        text-decoration: none;
+        padding: 9px 12px;
+        border-radius: 9px;
+        margin-bottom: 4px;
+        font-size: .94rem;
+    }
+
+    .refund-toc a:hover {
+        background: #edf5ff;
+        color: #0d6efd;
+    }
+
+    .refund-badge {
+        display: inline-block;
+        background: #e8f7ef;
+        color: #167447;
+        padding: 7px 12px;
+        border-radius: 30px;
+        font-size: .82rem;
+        font-weight: 700;
+    }
+
+    .refund-warning {
+        padding: 17px 18px;
+        border-radius: 12px;
+        background: #fff8e6;
+        border: 1px solid #ffe4a3;
+        color: #79591b;
+        line-height: 1.75;
+    }
+
+    .refund-info {
+        padding: 17px 18px;
+        border-radius: 12px;
+        background: #edf5ff;
+        border: 1px solid #d6e7ff;
+        color: #244d80;
+        line-height: 1.75;
+    }
+
+    .refund-contact {
+        background: linear-gradient(135deg, #edf5ff, #eafaf7);
+        border: 1px solid #dcecf6;
+        border-radius: 18px;
+        padding: 27px;
+    }
+
+    .refund-contact a {
+        color: #0d5fba;
+        font-weight: 650;
+        text-decoration: none;
+        overflow-wrap: anywhere;
+    }
+
+    .refund-contact a:hover {
+        text-decoration: underline;
+    }
+
+    @media (max-width: 767px) {
+        .refund-hero {
+            padding: 32px 22px;
+            border-radius: 16px;
+        }
+
+        .refund-section,
+        .refund-card,
+        .refund-contact {
+            padding: 20px;
+        }
+
+        .refund-toc {
+            position: static;
+        }
+    }
+</style>
+
+<div class="container refund-page">
+
+    <!-- Hero -->
+    <section class="refund-hero">
+        <div class="refund-hero-icon">
+            <i class="bi bi-arrow-counterclockwise"></i>
+        </div>
+        <h1>Refund, Return & Cancellation Policy</h1>
+        <p>
+            We want you to shop with confidence at Camura. Please read our
+            policy to understand return eligibility, refund processing,
+            order cancellation, and CCTV installation service cancellations.
+        </p>
+    </section>
+
+    <div class="row g-4">
+
+        <!-- Table of contents -->
+        <div class="col-lg-3">
+            <div class="refund-card refund-toc">
+                <h2 class="h6 fw-bold">On this page</h2>
+                <a href="#return-eligibility">Return Eligibility</a>
+                <a href="#non-returnable">Non-returnable Products</a>
+                <a href="#refund-process">Refund Process & Timeline</a>
+                <a href="#order-cancellation">Order Cancellation</a>
+                <a href="#installation-cancellation">Installation Cancellation</a>
+                <a href="#damaged-products">Damaged or Defective Items</a>
+                <a href="#contact">Contact Us</a>
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+
+            <!-- Return eligibility -->
+            <section class="refund-section" id="return-eligibility">
+                <div class="refund-icon">
+                    <i class="bi bi-box-seam"></i>
+                </div>
+                <h2>1. Return Eligibility</h2>
+                <p>
+                    Return requests may be made within
+                    <span class="refund-badge">7 days of delivery</span>,
+                    subject to inspection and the conditions below.
+                </p>
+
+                <ul>
+                    <li>The product must generally be unused and in its original packaging, with supplied accessories and documentation.</li>
+                    <li>Eligible manufacturing defects may qualify for a return, replacement, repair, or other remedy after assessment.</li>
+                    <li>Customers should provide the order number, invoice, and a description or photos of the issue.</li>
+                    <li>Return approval is subject to product condition, applicable manufacturer terms, and applicable law.</li>
+                </ul>
+
+                <div class="refund-info mt-3">
+                    <i class="bi bi-info-circle me-2"></i>
+                    Please contact Camura before sending any product back.
+                    Returns sent without prior instructions may take longer to assess.
+                </div>
+            </section>
+
+            <!-- Non-returnable -->
+            <section class="refund-section" id="non-returnable">
+                <div class="refund-icon">
+                    <i class="bi bi-shield-lock"></i>
+                </div>
+                <h2>2. Non-returnable Products</h2>
+                <p>
+                    The following products may not be eligible for a change-of-mind
+                    return, subject to applicable law and the circumstances of the case:
+                </p>
+
+                <ul>
+                    <li><strong>Installed CCTV cameras:</strong> Products already installed or used, except where a valid defect or other legally applicable remedy applies.</li>
+                    <li><strong>Opened DVR/NVR systems:</strong> Opened, configured, or used equipment, except for eligible defects or other applicable remedies.</li>
+                    <li><strong>Wires and accessories:</strong> Cut cables, used wiring, or accessories that cannot reasonably be resold in their original condition.</li>
+                    <li><strong>Physically damaged products:</strong> Items damaged after delivery due to mishandling, unauthorized modification, or other causes not attributable to the seller.</li>
+                    <li><strong>Specially configured products:</strong> Items configured or supplied specifically to a customer's requirements, where return restrictions are permitted by law.</li>
+                </ul>
+
+                <p class="mt-3 mb-0">
+                    These restrictions do not exclude remedies available for
+                    manufacturing defects, incorrect products, transit damage,
+                    or other circumstances where a remedy is required by law.
+                </p>
+            </section>
+
+            <!-- Refund process -->
+            <section class="refund-section" id="refund-process">
+                <div class="refund-icon">
+                    <i class="bi bi-wallet2"></i>
+                </div>
+                <h2>3. Refund Process & Timeline</h2>
+                <p>
+                    Once an approved return is received and inspected, we will
+                    inform you of the outcome and any applicable refund or
+                    replacement arrangement.
+                </p>
+
+                <ol>
+                    <li>Contact our support team and request a return or refund.</li>
+                    <li>Provide your order details, invoice, and relevant evidence of the issue.</li>
+                    <li>Follow the return instructions and submit the product for inspection, where required.</li>
+                    <li>After approval, the refund will generally be processed within <strong>5–7 business days</strong>.</li>
+                    <li>The time taken for the amount to appear in your account may depend on your bank, card issuer, or payment provider.</li>
+                </ol>
+
+                <div class="refund-warning mt-3">
+                    <i class="bi bi-clock-history me-2"></i>
+                    The 5–7 business day period refers to our intended processing
+                    time after inspection and approval. It does not necessarily
+                    include shipping, inspection, or bank processing time.
+                </div>
+            </section>
+
+            <!-- Order cancellation -->
+            <section class="refund-section" id="order-cancellation">
+                <div class="refund-icon">
+                    <i class="bi bi-cart-x"></i>
+                </div>
+                <h2>4. Order Cancellation Policy</h2>
+                <p>
+                    Customers may request cancellation before an order is shipped.
+                    Cancellation is subject to the order's current processing status.
+                </p>
+
+                <ul>
+                    <li><strong>Before shipment:</strong> Contact us as soon as possible to request cancellation.</li>
+                    <li><strong>Already shipped:</strong> Cancellation may no longer be possible. Please contact us for instructions on the available options.</li>
+                    <li><strong>Prepaid orders:</strong> If cancellation is approved, any applicable refund will be processed using the original payment method where possible.</li>
+                    <li><strong>Delivered orders:</strong> Return requests are assessed under the return policy rather than the pre-shipment cancellation policy.</li>
+                </ul>
+
+                <p class="mt-3 mb-0">
+                    Submitting a cancellation request does not mean it has been
+                    approved. Please wait for confirmation from Camura.
+                </p>
+            </section>
+
+            <!-- Installation cancellation -->
+            <section class="refund-section" id="installation-cancellation">
+                <div class="refund-icon">
+                    <i class="bi bi-tools"></i>
+                </div>
+                <h2>5. CCTV Installation Cancellation</h2>
+                <p>
+                    If you need to cancel or reschedule a CCTV installation or
+                    service appointment, please contact us as early as possible.
+                </p>
+
+                <ul>
+                    <li><strong>Before technician dispatch:</strong> Contact us to request cancellation or rescheduling.</li>
+                    <li><strong>After technician dispatch:</strong> A reasonable, disclosed cancellation or visit charge may apply where permitted, based on the service arrangements and costs incurred.</li>
+                    <li><strong>After work begins:</strong> Charges may apply for work already completed, materials used, or other costs previously communicated and agreed to.</li>
+                    <li><strong>Service inspection charges:</strong> Any inspection charge communicated at the time of booking will be governed by the terms shown before payment.</li>
+                </ul>
+
+                <div class="refund-info mt-3">
+                    <i class="bi bi-info-circle me-2"></i>
+                    We will explain any applicable cancellation charges before
+                    collecting them. Charges will not override any rights or
+                    remedies available under applicable law.
+                </div>
+            </section>
+
+            <!-- Damaged or defective -->
+            <section class="refund-section" id="damaged-products">
+                <div class="refund-icon">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+                <h2>6. Damaged, Incorrect or Defective Products</h2>
+                <p>
+                    If your order arrives damaged, you receive an incorrect item,
+                    or a product appears to have a manufacturing defect, please
+                    contact us promptly.
+                </p>
+
+                <ul>
+                    <li>Keep the product, packaging, invoice, and accessories until the issue is reviewed.</li>
+                    <li>Share clear photos or videos of the product and any visible damage, where possible.</li>
+                    <li>Do not discard packaging or attempt repairs before receiving instructions, if practical.</li>
+                    <li>We will assess the issue and explain the available remedy, which may include repair, replacement, return, or refund as appropriate.</li>
+                </ul>
+            </section>
+
+            <!-- Contact -->
+            <section class="refund-contact" id="contact">
+                <div class="d-flex align-items-start gap-3">
+                    <div class="refund-icon mb-0 flex-shrink-0">
+                        <i class="bi bi-headset"></i>
+                    </div>
+                    <div>
+                        <h2 class="h4 fw-bold mb-2">Need Help With a Return or Refund?</h2>
+                        <p class="text-secondary mb-3">
+                            Contact our team with your order number and details.
+                            Our service area for local service visits is Dharashiv city.
+                        </p>
+
+                        <p class="mb-2">
+                            <i class="bi bi-telephone me-2"></i>
+                            <a href="tel:+919766052176">+91 97660 52176</a>
+                        </p>
+
+                        <p class="mb-2">
+                            <i class="bi bi-envelope me-2"></i>
+                            <a href="mailto:support@camura.in">support@camura.in</a>
+                        </p>
+
+                        <p class="mb-0">
+                            <i class="bi bi-geo-alt me-2"></i>
+                            Camura, Pawar Complex, Shop No. 1, Behind Tuljabhawani Stadium,
+                            Dharashiv – 413501, Maharashtra, India.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <p class="text-secondary small mt-4 mb-0">
+                This policy should be read along with Camura's Terms and Conditions,
+                Shipping & Delivery Policy, and Warranty Policy. Nothing in this
+                policy is intended to limit any mandatory consumer rights under
+                applicable Indian law.
+            </p>
+
+        </div>
+    </div>
+</div>
 
 {% endblock %}

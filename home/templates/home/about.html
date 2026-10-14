@@ -1,117 +1,714 @@
+
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
 
-<!-- Hero Section -->
-<section class="about-hero text-center text-white d-flex align-items-center justify-content-center">
-    <div class="overlay"></div>
-    <div class="container position-relative">
-        <h1 class="display-5 fw-bold">About Camura</h1>
-        <p class="lead">Your trusted partner in advanced CCTV and security solutions.</p>
-    </div>
-</section>
+<style>
+    /* ===== About Camura Page ===== */
+    .about-page {
+        --camura-primary: #0d6efd;
+        --camura-dark: #10213a;
+        color: #334155;
+        overflow: hidden;
+    }
 
-<!-- Company Overview -->
-<section class="container py-5">
-    <div class="row align-items-center">
-        <div class="col-md-6 mb-4 mb-md-0">
-            <img src="{% static 'img/about-us.jpg' %}" class="img-fluid rounded shadow" alt="Camura CCTV Store">
-        </div>
-        <div class="col-md-6">
-            <h2 class="fw-bold mb-3">Who We Are</h2>
-            <p>
-                Founded with a mission to make safety affordable and accessible, <strong>Camura</strong> provides
-                premium CCTV and surveillance systems for homes, businesses, and industries.
-            </p>
-            <p>
-                From compact 2MP camera setups to high-performance 32-channel DVR solutions, we offer end-to-end
-                security
-                products — including installation and technical support. Our commitment to innovation and reliability
-                has
-                Camura is a Dharashiv-based CCTV and security solutions company providing CCTV sales, installation, configuration, repair and technical support for homes, shops, offices and businesses. Mainly focusing only on service only.
-            </p>
-        </div>
-    </div>
-</section>
+    .about-page .section-label {
+        display: inline-block;
+        color: var(--camura-primary);
+        background: #eaf2ff;
+        padding: 7px 15px;
+        border-radius: 30px;
+        font-size: .82rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-bottom: 15px;
+    }
 
-<!-- Our Values -->
-<section class="bg-light py-5">
-    <div class="container text-center">
-        <h2 class="fw-bold mb-4">Our Core Values</h2>
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="card h-100 shadow-sm border-0">
-                    <div class="card-body">
-                        <i class="bi bi-shield-lock display-5 text-primary mb-3"></i>
-                        <h5>Security & Trust</h5>
-                        <p>We prioritize your safety with reliable, certified, and high-quality security solutions.</p>
+    .about-page .section-heading {
+        color: var(--camura-dark);
+        font-weight: 800;
+        letter-spacing: -.7px;
+    }
+
+    /* Hero */
+    .about-hero {
+        min-height: 410px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        background:
+            linear-gradient(115deg, rgba(8, 24, 48, .95),
+            rgba(13, 110, 253, .65)),
+            url("{% static 'img/about-bg.jpg' %}") center/cover no-repeat;
+        padding: 85px 0;
+    }
+
+    .about-hero .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 780px;
+        margin: auto;
+    }
+
+    .about-hero .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 16px;
+        border: 1px solid rgba(255,255,255,.35);
+        background: rgba(255,255,255,.12);
+        border-radius: 50px;
+        font-size: .85rem;
+        margin-bottom: 22px;
+    }
+
+    .about-hero h1 {
+        font-size: clamp(2.3rem, 6vw, 4.2rem);
+        font-weight: 850;
+        letter-spacing: -1.5px;
+        line-height: 1.12;
+    }
+
+    .about-hero p {
+        max-width: 620px;
+        margin: 20px auto 28px;
+        color: rgba(255,255,255,.88);
+        font-size: clamp(1rem, 2.5vw, 1.2rem);
+        line-height: 1.8;
+    }
+
+    .about-page .btn-camura {
+        background: var(--camura-primary);
+        border: 1px solid var(--camura-primary);
+        color: #fff;
+        padding: 13px 23px;
+        font-weight: 700;
+        border-radius: 10px;
+        transition: all .25s ease;
+    }
+
+    .about-page .btn-camura:hover {
+        background: #0b5ed7;
+        border-color: #0b5ed7;
+        color: #fff;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(13,110,253,.2);
+    }
+
+    .about-page .btn-outline-light {
+        padding: 13px 23px;
+        border-radius: 10px;
+        font-weight: 700;
+    }
+
+    /* Overview */
+    .about-overview {
+        padding: 85px 0;
+    }
+
+    .about-image-wrap {
+        position: relative;
+        padding: 0 12px 18px 0;
+    }
+
+    .about-image-wrap::before {
+        content: "";
+        position: absolute;
+        inset: 22px 0 0 22px;
+        background: #e7f0ff;
+        border-radius: 22px;
+        z-index: 0;
+    }
+
+    .about-image {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        min-height: 300px;
+        max-height: 440px;
+        object-fit: cover;
+        border-radius: 20px;
+        box-shadow: 0 16px 40px rgba(15, 35, 65, .13);
+        background: #eef3fa;
+    }
+
+    .about-image-note {
+        position: relative;
+        z-index: 2;
+        margin: -35px 15px 0;
+        padding: 17px 20px;
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 8px 30px rgba(15, 35, 65, .12);
+        display: flex;
+        align-items: center;
+        gap: 13px;
+    }
+
+    .about-image-note .note-icon {
+        width: 45px;
+        height: 45px;
+        flex-shrink: 0;
+        display: grid;
+        place-items: center;
+        background: #eaf2ff;
+        color: var(--camura-primary);
+        border-radius: 12px;
+        font-size: 1.35rem;
+    }
+
+    .about-copy {
+        font-size: 1rem;
+        line-height: 1.9;
+        color: #64748b;
+    }
+
+    .about-check-list {
+        list-style: none;
+        padding: 0;
+        margin: 22px 0;
+    }
+
+    .about-check-list li {
+        display: flex;
+        align-items: flex-start;
+        gap: 11px;
+        margin-bottom: 13px;
+        line-height: 1.6;
+    }
+
+    .about-check-list i {
+        color: #198754;
+        font-size: 1.15rem;
+        margin-top: 2px;
+    }
+
+    /* Service area notice */
+    .service-notice {
+        display: flex;
+        gap: 15px;
+        align-items: flex-start;
+        background: #fff8e7;
+        border: 1px solid #ffe2a6;
+        border-radius: 15px;
+        padding: 19px 20px;
+        margin-top: 24px;
+    }
+
+    .service-notice > i {
+        color: #b77900;
+        font-size: 1.5rem;
+    }
+
+    .service-notice strong {
+        display: block;
+        color: #694b00;
+        margin-bottom: 4px;
+    }
+
+    .service-notice p {
+        margin: 0;
+        font-size: .93rem;
+        color: #755c20;
+        line-height: 1.7;
+    }
+
+    /* Values */
+    .about-values {
+        background: linear-gradient(180deg, #f5f8ff 0%, #fff 100%);
+        padding: 80px 0;
+    }
+
+    .value-card {
+        height: 100%;
+        padding: 30px 24px;
+        background: #fff;
+        border: 1px solid #e8edf5;
+        border-radius: 18px;
+        box-shadow: 0 7px 25px rgba(16, 33, 58, .045);
+        transition: transform .25s ease, box-shadow .25s ease;
+    }
+
+    .value-card:hover {
+        transform: translateY(-7px);
+        box-shadow: 0 16px 35px rgba(16, 33, 58, .10);
+    }
+
+    .value-icon {
+        width: 62px;
+        height: 62px;
+        display: grid;
+        place-items: center;
+        border-radius: 17px;
+        font-size: 1.8rem;
+        margin-bottom: 23px;
+    }
+
+    .value-icon.blue {
+        color: #0d6efd;
+        background: #eaf2ff;
+    }
+
+    .value-icon.orange {
+        color: #d97706;
+        background: #fff4df;
+    }
+
+    .value-icon.green {
+        color: #198754;
+        background: #e5f7ed;
+    }
+
+    .value-card h3 {
+        color: var(--camura-dark);
+        font-size: 1.15rem;
+        font-weight: 750;
+        margin-bottom: 13px;
+    }
+
+    .value-card p {
+        color: #64748b;
+        font-size: .95rem;
+        line-height: 1.8;
+        margin: 0;
+    }
+
+    /* Services */
+    .about-services {
+        padding: 80px 0;
+    }
+
+    .service-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        height: 100%;
+        padding: 19px;
+        border: 1px solid #e8edf5;
+        border-radius: 14px;
+        background: #fff;
+    }
+
+    .service-item i {
+        font-size: 1.4rem;
+        color: var(--camura-primary);
+        flex-shrink: 0;
+    }
+
+    .service-item h3 {
+        font-size: 1rem;
+        color: var(--camura-dark);
+        font-weight: 750;
+        margin-bottom: 6px;
+    }
+
+    .service-item p {
+        font-size: .9rem;
+        color: #64748b;
+        line-height: 1.7;
+        margin: 0;
+    }
+
+    /* CTA */
+    .about-cta {
+        padding: 0 0 80px;
+    }
+
+    .cta-inner {
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+        padding: 55px 25px;
+        border-radius: 24px;
+        color: #fff;
+        background: linear-gradient(125deg, #10213a, #0d6efd);
+    }
+
+    .cta-inner h2 {
+        font-size: clamp(1.8rem, 4vw, 2.6rem);
+        font-weight: 800;
+        margin-bottom: 16px;
+    }
+
+    .cta-inner p {
+        color: rgba(255,255,255,.85);
+        max-width: 650px;
+        margin: 0 auto 25px;
+        line-height: 1.8;
+    }
+
+    .about-page a:focus-visible {
+        outline: 3px solid #ffbf47;
+        outline-offset: 4px;
+    }
+
+    @media (max-width: 767.98px) {
+        .about-hero {
+            min-height: 350px;
+            padding: 65px 0;
+        }
+
+        .about-hero h1 {
+            letter-spacing: -.7px;
+        }
+
+        .about-overview,
+        .about-values,
+        .about-services {
+            padding: 55px 0;
+        }
+
+        .about-image-wrap {
+            margin-bottom: 28px;
+        }
+
+        .value-card {
+            padding: 25px 22px;
+        }
+
+        .about-cta {
+            padding-bottom: 50px;
+        }
+
+        .cta-inner {
+            padding: 40px 22px;
+            border-radius: 18px;
+        }
+
+        .about-page .hero-actions .btn {
+            width: 100%;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .about-page *,
+        .about-page *::before,
+        .about-page *::after {
+            transition: none !important;
+            scroll-behavior: auto !important;
+        }
+    }
+</style>
+
+<div class="about-page">
+
+    <!-- Hero Section -->
+    <section class="about-hero text-center text-white">
+        <div class="container hero-content">
+            <div class="hero-badge">
+                <i class="bi bi-shield-check"></i>
+                CCTV & Security Solutions
+            </div>
+
+            <h1>About Camura</h1>
+
+            <p>
+                Helping homes, shops and businesses improve their security
+                with dependable CCTV products, installation and technical support
+                in Dharashiv.
+            </p>
+
+            <div class="hero-actions d-flex justify-content-center
+                        flex-wrap gap-3">
+                <a href="{% url 'product_list' %}" class="btn btn-camura">
+                    <i class="bi bi-camera-video me-2"></i>
+                    Explore Products
+                </a>
+
+                <a href="{% url 'book_service' %}"
+                   class="btn btn-outline-light">
+                    <i class="bi bi-tools me-2"></i>
+                    Book a Service
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Company Overview -->
+    <section class="about-overview">
+        <div class="container">
+            <div class="row align-items-center g-5">
+
+                <div class="col-lg-5">
+                    <div class="about-image-wrap">
+                        <img
+                            src="{% static 'img/about-us.jpg' %}"
+                            class="about-image"
+                            alt="Camura CCTV camera and security solutions"
+                            loading="lazy"
+                            onerror="this.style.display='none';"
+                        >
+
+                        <div class="about-image-note">
+                            <div class="note-icon">
+                                <i class="bi bi-shield-lock"></i>
+                            </div>
+                            <div>
+                                <strong class="d-block text-dark">
+                                    Your Security Matters
+                                </strong>
+                                <span class="text-secondary small">
+                                    Practical CCTV solutions and local support
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
+                <div class="col-lg-7">
+                    <span class="section-label">Get to Know Us</span>
+
+                    <h2 class="section-heading display-6 mb-4">
+                        Who We Are
+                    </h2>
+
+                    <p class="about-copy">
+                        <strong class="text-dark">Camura</strong> is a
+                        Dharashiv-based CCTV and security solutions business
+                        operated by N S Corporation. We help homeowners,
+                        shopkeepers, offices and other businesses choose and
+                        maintain suitable surveillance systems.
+                    </p>
+
+                    <p class="about-copy">
+                        Whether you need a new CCTV setup, help configuring
+                        your DVR or NVR, mobile viewing assistance, or repair
+                        of an existing system, our focus is on practical
+                        solutions and dependable technical support.
+                    </p>
+
+                    <ul class="about-check-list">
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>CCTV camera and surveillance product guidance</span>
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>CCTV installation and DVR/NVR configuration</span>
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Mobile viewing setup and technical troubleshooting</span>
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Repair and maintenance support for existing systems</span>
+                        </li>
+                    </ul>
+
+                    <div class="service-notice">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <div>
+                            <strong>Our Service Area: Dharashiv City Only</strong>
+                            <p>
+                                Our on-site CCTV service and repair support
+                                is limited to Dharashiv city. Please contact
+                                us to confirm service availability before booking.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
             </div>
-            <div class="col-md-4">
-                <div class="card h-100 shadow-sm border-0">
-                    <div class="card-body">
-                        <i class="bi bi-lightning-charge display-5 text-warning mb-3"></i>
-                        <h5>Innovation</h5>
-                        <p>We continually upgrade our product range with the latest security technologies and trends.
+        </div>
+    </section>
+
+    <!-- Core Values -->
+    <section class="about-values">
+        <div class="container">
+
+            <div class="text-center mb-5">
+                <span class="section-label">What Guides Us</span>
+                <h2 class="section-heading display-6">
+                    Our Core Values
+                </h2>
+                <p class="text-secondary mt-3 mx-auto"
+                   style="max-width: 620px; line-height: 1.8;">
+                    Our approach is built around reliable security solutions,
+                    honest guidance and helpful technical support.
+                </p>
+            </div>
+
+            <div class="row g-4">
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="value-card">
+                        <div class="value-icon blue">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                        <h3>Security & Trust</h3>
+                        <p>
+                            We help customers understand their CCTV options
+                            and choose solutions suited to their property,
+                            requirements and budget.
                         </p>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card h-100 shadow-sm border-0">
-                    <div class="card-body">
-                        <i class="bi bi-people display-5 text-success mb-3"></i>
-                        <h5>Customer Satisfaction</h5>
-                        <p>Our customers are at the heart of everything we do — from product design to after-sales
-                            support.</p>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="value-card">
+                        <div class="value-icon orange">
+                            <i class="bi bi-tools"></i>
+                        </div>
+                        <h3>Practical Expertise</h3>
+                        <p>
+                            From installation and system configuration to
+                            troubleshooting, we focus on making CCTV systems
+                            useful and easier to manage.
+                        </p>
                     </div>
                 </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="value-card">
+                        <div class="value-icon green">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <h3>Customer Support</h3>
+                        <p>
+                            We aim to provide clear communication, useful
+                            guidance and responsive technical assistance
+                            throughout your service experience.
+                        </p>
+                    </div>
+                </div>
+
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- Team / Call to Action -->
-<section class="container py-5 text-center">
-    <h2 class="fw-bold mb-4">Why Choose Camura?</h2>
-    <p class="lead mb-4">
-        With years of experience, expert installation teams, and thousands of satisfied customers,
-        <strong>Camura</strong> stands as a trusted name in CCTV and surveillance systems.
-    </p>
-    <a href="{% url 'product_list' %}" class="btn btn-primary btn-lg">
-        <i class="bi bi-shop"></i> Explore Our Products
-    </a>
-</section>
+    <!-- Our Services -->
+    <section class="about-services">
+        <div class="container">
 
-<!-- Styles -->
-<style>
-    .about-hero {
-        background: url("{% static 'img/about-bg.jpg' %}") center/cover no-repeat;
-        height: 60vh;
-        position: relative;
-    }
+            <div class="text-center mb-5">
+                <span class="section-label">How We Can Help</span>
+                <h2 class="section-heading display-6">
+                    CCTV Services & Solutions
+                </h2>
+                <p class="text-secondary mt-3">
+                    Security products and technical services for your property.
+                </p>
+            </div>
 
-    .about-hero .overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.55);
-    }
+            <div class="row g-3">
 
-    .about-hero .container {
-        z-index: 2;
-    }
+                <div class="col-md-6 col-lg-4">
+                    <div class="service-item">
+                        <i class="bi bi-camera-video"></i>
+                        <div>
+                            <h3>CCTV Cameras & Systems</h3>
+                            <p>
+                                Explore cameras, recording systems and
+                                surveillance equipment for different needs.
+                            </p>
+                        </div>
+                    </div>
+                </div>
 
-    .card i {
-        transition: transform 0.3s ease;
-    }
+                <div class="col-md-6 col-lg-4">
+                    <div class="service-item">
+                        <i class="bi bi-wrench-adjustable-circle"></i>
+                        <div>
+                            <h3>Installation & Configuration</h3>
+                            <p>
+                                Assistance with camera installation,
+                                DVR/NVR setup and system configuration.
+                            </p>
+                        </div>
+                    </div>
+                </div>
 
-    .card:hover i {
-        transform: scale(1.1);
-    }
-</style>
+                <div class="col-md-6 col-lg-4">
+                    <div class="service-item">
+                        <i class="bi bi-phone"></i>
+                        <div>
+                            <h3>Mobile Viewing Setup</h3>
+                            <p>
+                                Help configuring supported CCTV systems
+                                for viewing on your mobile phone.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="service-item">
+                        <i class="bi bi-gear"></i>
+                        <div>
+                            <h3>Repair & Troubleshooting</h3>
+                            <p>
+                                Technical assistance for CCTV connectivity,
+                                recording and other system issues.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="service-item">
+                        <i class="bi bi-hdd-stack"></i>
+                        <div>
+                            <h3>Recording & Storage</h3>
+                            <p>
+                                Guidance on DVRs, NVRs, hard disks and
+                                compatible CCTV accessories.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="service-item">
+                        <i class="bi bi-headset"></i>
+                        <div>
+                            <h3>Technical Support</h3>
+                            <p>
+                                Get help understanding your CCTV setup
+                                and identifying the next troubleshooting step.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="about-cta">
+        <div class="container">
+            <div class="cta-inner">
+
+                <i class="bi bi-camera-video display-4 mb-3 d-inline-block"></i>
+
+                <h2>Looking for CCTV Solutions?</h2>
+
+                <p>
+                    Explore our CCTV products or book a service for your
+                    existing system. We are here to help customers in
+                    Dharashiv city with their security needs.
+                </p>
+
+                <div class="d-flex justify-content-center flex-wrap gap-3">
+                    <a href="{% url 'product_list' %}"
+                       class="btn btn-light btn-lg fw-bold">
+                        <i class="bi bi-shop me-2"></i>
+                        Shop CCTV Products
+                    </a>
+
+                    <a href="{% url 'book_service' %}"
+                       class="btn btn-outline-light btn-lg fw-bold">
+                        <i class="bi bi-calendar-check me-2"></i>
+                        Book CCTV Service
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+</div>
 
 {% endblock %}

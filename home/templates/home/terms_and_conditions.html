@@ -1,127 +1,636 @@
-```html
+
 {% extends "base.html" %}
-{% block title %}Terms & Conditions - Camura{% endblock %}
+
+{% block title %}Terms & Conditions | Camura CCTV, Dharashiv{% endblock %}
+
+{% block meta_description %}
+Read Camura.in Terms and Conditions for CCTV sales, installation, repair, inspection charges, payments, cancellations, warranty, and service availability in Dharashiv.
+{% endblock %}
 
 {% block content %}
 
-<div class="container py-4">
+<style>
+    .terms-page {
+        --t-primary: #0d6efd;
+        --t-dark: #10233f;
+        --t-muted: #64748b;
+        color: #253247;
+        padding-bottom: 45px;
+    }
 
-    <h1 class="mb-4">Terms & Conditions</h1>
+    .terms-hero {
+        background: linear-gradient(135deg, #10233f, #1558a6, #087f8c);
+        color: #fff;
+        border-radius: 22px;
+        padding: 45px 25px;
+        margin: 20px 0 30px;
+        position: relative;
+        overflow: hidden;
+    }
 
-    <h3>Business Information</h3>
-    <p>
-        <b>N S Corporation</b><br>
-        GST: <b>27CBEPN0057R2Z5</b><br>
-        Address: Pawar Complex Shop No.1, Opp. Judge Quarter,
-        Behind Tuljabhawani Stadium, Dharashiv – 413501
-    </p>
+    .terms-hero::after {
+        content: "";
+        position: absolute;
+        width: 220px;
+        height: 220px;
+        border: 35px solid rgba(255,255,255,.08);
+        border-radius: 50%;
+        right: -55px;
+        top: -65px;
+        pointer-events: none;
+    }
 
-    <hr>
+    .terms-hero-icon {
+        display: inline-flex;
+        width: 65px;
+        height: 65px;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255,255,255,.14);
+        border: 1px solid rgba(255,255,255,.2);
+        border-radius: 18px;
+        font-size: 32px;
+        margin-bottom: 18px;
+    }
 
-    <h3>Service Area</h3>
-    <ul>
-        <li>Our CCTV inspection, installation, repair and related services are currently available <b>only within Dharashiv city limits</b>.</li>
-        <li>Service requests from locations outside Dharashiv city may not be accepted.</li>
-        <li>For locations outside our service area, please contact us before making a booking.</li>
-        <li>Service availability may also depend on technician availability and the nature of the work.</li>
-    </ul>
+    .terms-hero h1 {
+        font-size: clamp(2rem, 5vw, 2.8rem);
+        font-weight: 800;
+        margin-bottom: 12px;
+    }
 
-    <h3>Products & Services</h3>
-    <p>
-        We sell CCTV cameras, DVR/NVR devices, hard drives, accessories and
-        provide CCTV installation, inspection, troubleshooting, repair and
-        related services.
-    </p>
+    .terms-hero p {
+        max-width: 720px;
+        color: rgba(255,255,255,.9);
+        line-height: 1.8;
+        margin: 0;
+    }
 
-    <h3>Service Booking & Inspection Charges</h3>
-    <ul>
-        <li>The amount paid at the time of service booking is <b>only for inspection/visit charges</b>.</li>
-        <li>The inspection charge does <b>not include CCTV repair, replacement, installation, wiring, configuration or other technical work</b>.</li>
-        <li>During the inspection, our technician will examine the CCTV system and identify the possible problem or required work.</li>
-        <li>After inspecting the system, the customer will be informed about the required work and applicable charges.</li>
-        <li>Additional service, repair, replacement, installation, wiring and material charges will be charged separately as applicable.</li>
-        <li>The final cost may vary depending on the actual condition of the CCTV system and the work required.</li>
-        <li>Customers are requested not to consider the booking/inspection amount as an advance payment towards the complete repair or installation cost.</li>
-    </ul>
+    .terms-card {
+        background: #fff;
+        border: 1px solid #e8edf4;
+        border-radius: 18px;
+        padding: 24px;
+        box-shadow: 0 7px 24px rgba(16,35,63,.045);
+    }
 
-    <h3>Inspection & Diagnosis</h3>
-    <ul>
-        <li>Inspection is performed to identify the possible cause of the reported CCTV problem.</li>
-        <li>In some cases, complete diagnosis may require testing of cameras, DVR/NVR, hard disk, power supply, network equipment, cables or other components.</li>
-        <li>Some faults may not be identifiable without additional testing or opening/testing of equipment.</li>
-        <li>If any equipment or component needs to be replaced, the replacement cost will be communicated separately.</li>
-    </ul>
+    .terms-toc {
+        position: sticky;
+        top: 90px;
+    }
 
-    <h3>Repair & Additional Work</h3>
-    <ul>
-        <li>Repair work will be started only after the customer agrees to the applicable charges.</li>
-        <li>Additional charges may apply for replacement parts, connectors, power supplies, cables, hard disks, cameras, DVR/NVR units, networking equipment and other materials.</li>
-        <li>Wiring, cable replacement, conduit, drilling, mounting, ladder work and other installation-related work may attract additional charges.</li>
-        <li>If the customer does not approve the repair or additional work, only the applicable inspection/visit charges will be payable.</li>
-    </ul>
+    .terms-toc h2 {
+        color: var(--t-dark);
+        font-size: 1rem;
+        font-weight: 800;
+        margin-bottom: 14px;
+    }
 
-    <h3>Installation Terms</h3>
-    <ul>
-        <li>Final installation charges may vary depending on the number of cameras, cable length, installation location and site conditions.</li>
-        <li>Additional charges may apply for extra wiring, conduit, connectors, power supplies, switches, racks, accessories and other materials.</li>
-        <li>Customer must provide safe and reasonable access to the installation location.</li>
-        <li>Customer is responsible for providing suitable electrical power and internet/network connectivity where required.</li>
-        <li>Any civil work, major drilling, wall cutting, painting or other construction work is not included unless specifically agreed.</li>
-    </ul>
+    .terms-toc a {
+        display: block;
+        color: #526176;
+        text-decoration: none;
+        padding: 9px 11px;
+        border-radius: 9px;
+        margin-bottom: 3px;
+        font-size: .92rem;
+        line-height: 1.45;
+        transition: background .2s ease, color .2s ease;
+    }
 
-    <h3>Payment Terms</h3>
-    <ul>
-        <li>Inspection/booking charges must be paid at the time of booking.</li>
-        <li>Additional charges for repair, installation, materials or replacement parts must be paid as communicated by our technician/company.</li>
-        <li>Prices quoted for additional work may depend on the actual site condition and required materials.</li>
-        <li>Applicable taxes, if any, will be charged separately as per the invoice.</li>
-    </ul>
+    .terms-toc a:hover {
+        background: #edf5ff;
+        color: #0d6efd;
+    }
 
-    <h3>Cancellation & Refund</h3>
-    <ul>
-        <li>Customers should contact us as early as possible if they need to cancel or reschedule a booking.</li>
-        <li>Once a technician visit has been scheduled or completed, the inspection/visit charge may not be refundable.</li>
-        <li>Refund eligibility, if applicable, will be decided based on the circumstances of the booking.</li>
-        <li>If the customer is unavailable at the agreed location/time, an additional visit charge may apply for rescheduling.</li>
-    </ul>
+    .terms-section {
+        background: #fff;
+        border: 1px solid #e8edf4;
+        border-radius: 18px;
+        padding: 26px;
+        margin-bottom: 22px;
+        box-shadow: 0 5px 20px rgba(16,35,63,.035);
+        scroll-margin-top: 100px;
+    }
 
-    <h3>Warranty</h3>
-    <ul>
-        <li>Manufacturer warranty applies to eligible products as per the manufacturer's warranty terms.</li>
-        <li>Installation workmanship warranty is <b>30 days</b>, unless otherwise specified on the invoice.</li>
-        <li>Warranty does not cover damage caused by voltage fluctuation, lightning, water, physical damage, rodents, improper handling, unauthorized repair or other external causes.</li>
-        <li>Warranty on replacement parts, if any, will be subject to the respective manufacturer's/supplier's warranty terms.</li>
-    </ul>
+    .terms-section h2 {
+        color: var(--t-dark);
+        font-size: 1.28rem;
+        font-weight: 750;
+        margin-bottom: 15px;
+    }
 
-    <h3>Customer Responsibility</h3>
-    <ul>
-        <li>The customer must provide accurate information about the CCTV system and reported problem.</li>
-        <li>The customer should keep important recordings and data backed up before allowing repair, replacement or formatting of storage devices.</li>
-        <li>We are not responsible for loss of CCTV recordings or data resulting from hard-disk failure, DVR/NVR replacement, formatting, resetting or other technical work.</li>
-        <li>The customer must ensure that they have the necessary authority to access and modify the CCTV system installed at the premises.</li>
-    </ul>
+    .terms-section p {
+        color: #526176;
+        line-height: 1.85;
+    }
 
-    <h3>Third-Party Equipment</h3>
-    <ul>
-        <li>We may provide service for CCTV equipment from different manufacturers, subject to technical feasibility.</li>
-        <li>For old, damaged, discontinued or incompatible equipment, repair or service may not always be possible.</li>
-        <li>If replacement is recommended, the customer will be informed about the applicable product and charges.</li>
-    </ul>
+    .terms-section ul,
+    .terms-section ol {
+        padding-left: 22px;
+        margin-bottom: 0;
+    }
 
-    <h3>Service Limitations</h3>
-    <ul>
-        <li>Service depends on technician availability and site accessibility.</li>
-        <li>We reserve the right to refuse a service request where the site is unsafe, inaccessible or outside our service area.</li>
-        <li>Estimated repair time may vary depending on the availability of spare parts and the complexity of the problem.</li>
-    </ul>
+    .terms-section li {
+        color: #526176;
+        line-height: 1.8;
+        margin-bottom: 9px;
+    }
 
-    <h3>Acceptance of Terms</h3>
-    <p>
-        By placing a service booking, the customer confirms that they have
-        read, understood and agreed to these Terms & Conditions.
-    </p>
+    .terms-section li:last-child {
+        margin-bottom: 0;
+    }
 
+    .terms-section strong {
+        color: #263a56;
+    }
+
+    .terms-icon {
+        display: inline-flex;
+        width: 48px;
+        height: 48px;
+        align-items: center;
+        justify-content: center;
+        background: #eaf2ff;
+        color: #0d6efd;
+        border-radius: 14px;
+        font-size: 23px;
+        margin-bottom: 15px;
+    }
+
+    .terms-notice {
+        padding: 17px 18px;
+        border-radius: 12px;
+        background: #edf5ff;
+        border: 1px solid #d6e7ff;
+        color: #244d80;
+        line-height: 1.8;
+    }
+
+    .terms-warning {
+        padding: 17px 18px;
+        border-radius: 12px;
+        background: #fff8e6;
+        border: 1px solid #ffe4a3;
+        color: #79591b;
+        line-height: 1.8;
+    }
+
+    .terms-business-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 18px;
+    }
+
+    .terms-business-item {
+        background: #f6f9fd;
+        border: 1px solid #e7edf5;
+        border-radius: 12px;
+        padding: 15px;
+        min-width: 0;
+    }
+
+    .terms-business-item .label {
+        display: block;
+        color: #718096;
+        font-size: .8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        margin-bottom: 5px;
+    }
+
+    .terms-business-item .value {
+        color: #203550;
+        font-weight: 650;
+        line-height: 1.7;
+        overflow-wrap: anywhere;
+    }
+
+    .terms-contact {
+        background: linear-gradient(135deg, #edf5ff, #eafaf7);
+        border: 1px solid #dcecf6;
+        border-radius: 18px;
+        padding: 27px;
+        scroll-margin-top: 100px;
+    }
+
+    .terms-contact h2 {
+        color: var(--t-dark);
+        font-size: 1.35rem;
+        font-weight: 800;
+    }
+
+    .terms-contact a {
+        color: #0d5fba;
+        font-weight: 650;
+        text-decoration: none;
+        overflow-wrap: anywhere;
+    }
+
+    .terms-contact a:hover {
+        text-decoration: underline;
+    }
+
+    @media (max-width: 767px) {
+        .terms-hero {
+            padding: 32px 22px;
+            border-radius: 16px;
+        }
+
+        .terms-section,
+        .terms-card,
+        .terms-contact {
+            padding: 20px;
+        }
+
+        .terms-toc {
+            position: static;
+        }
+
+        .terms-business-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="container terms-page">
+
+    <!-- Hero -->
+    <section class="terms-hero">
+        <div class="terms-hero-icon">
+            <i class="bi bi-file-earmark-check"></i>
+        </div>
+
+        <h1>Terms & Conditions</h1>
+
+        <p>
+            Please review these terms before purchasing CCTV products or
+            booking installation, inspection, repair, or other services
+            through Camura.in.
+        </p>
+    </section>
+
+    <div class="row g-4">
+
+        <!-- Table of contents -->
+        <div class="col-lg-3">
+            <aside class="terms-card terms-toc">
+                <h2>Quick Navigation</h2>
+                <a href="#business-information">Business Information</a>
+                <a href="#service-area">Service Area</a>
+                <a href="#products-services">Products & Services</a>
+                <a href="#inspection-charges">Booking & Inspection Charges</a>
+                <a href="#inspection-diagnosis">Inspection & Diagnosis</a>
+                <a href="#repair-work">Repair & Additional Work</a>
+                <a href="#installation">Installation Terms</a>
+                <a href="#payment">Payment Terms</a>
+                <a href="#cancellation">Cancellation & Refunds</a>
+                <a href="#warranty">Warranty</a>
+                <a href="#customer-responsibility">Customer Responsibilities</a>
+                <a href="#third-party">Third-Party Equipment</a>
+                <a href="#limitations">Service Limitations</a>
+                <a href="#acceptance">Acceptance of Terms</a>
+                <a href="#contact">Contact Us</a>
+            </aside>
+        </div>
+
+        <div class="col-lg-9">
+
+            <!-- Business information -->
+            <section class="terms-section" id="business-information">
+                <div class="terms-icon">
+                    <i class="bi bi-building"></i>
+                </div>
+
+                <h2>1. Business Information</h2>
+
+                <p>
+                    Camura is operated by <strong>N S Corporation</strong>,
+                    which provides CCTV products and related services.
+                </p>
+
+                <div class="terms-business-grid">
+                    <div class="terms-business-item">
+                        <span class="label">Business Name</span>
+                        <div class="value">N S Corporation</div>
+                    </div>
+
+                    <div class="terms-business-item">
+                        <span class="label">GSTIN</span>
+                        <div class="value">27CBEPN0057R2Z5</div>
+                    </div>
+
+                    <div class="terms-business-item" style="grid-column: 1 / -1;">
+                        <span class="label">Business Address</span>
+                        <div class="value">
+                            Pawar Complex, Shop No. 1, Opp. Judge Quarter,
+                            Behind Tuljabhawani Stadium, Dharashiv – 413501,
+                            Maharashtra, India.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Service area -->
+            <section class="terms-section" id="service-area">
+                <div class="terms-icon">
+                    <i class="bi bi-geo-alt"></i>
+                </div>
+
+                <h2>2. Service Area</h2>
+
+                <div class="terms-notice mb-3">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <strong>Important:</strong> CCTV inspection, installation,
+                    repair, and related on-site services are currently available
+                    only within Dharashiv city limits.
+                </div>
+
+                <ul>
+                    <li>Service requests from outside Dharashiv city may not be accepted.</li>
+                    <li>Customers outside our service area should contact us before making a service booking or payment.</li>
+                    <li>Service availability depends on technician availability, site accessibility, and the nature of the work.</li>
+                    <li>Product delivery availability is subject to the shipping options and service terms displayed for the order.</li>
+                </ul>
+            </section>
+
+            <!-- Products and services -->
+            <section class="terms-section" id="products-services">
+                <div class="terms-icon">
+                    <i class="bi bi-camera-video"></i>
+                </div>
+
+                <h2>3. Products & Services</h2>
+
+                <p>Camura offers CCTV-related products and services, including:</p>
+
+                <ul>
+                    <li>CCTV cameras, DVR/NVR devices, hard drives, cables, and accessories.</li>
+                    <li>CCTV combo kits and related security products.</li>
+                    <li>CCTV inspection, installation, troubleshooting, repair, and maintenance.</li>
+                    <li>System configuration, networking assistance, and mobile viewing setup, where available.</li>
+                </ul>
+
+                <p class="mt-3 mb-0">
+                    Product specifications, availability, prices, and included
+                    components are based on the information displayed on the
+                    product page, quotation, or invoice, as applicable.
+                </p>
+            </section>
+
+            <!-- Inspection charges -->
+            <section class="terms-section" id="inspection-charges">
+                <div class="terms-icon">
+                    <i class="bi bi-clipboard-check"></i>
+                </div>
+
+                <h2>4. Service Booking & Inspection Charges</h2>
+
+                <p>
+                    The amount paid at the time of a service booking is for
+                    the inspection or visit charge specified during booking.
+                    It does not automatically cover repair or installation work.
+                </p>
+
+                <ul>
+                    <li>The inspection charge does <strong>not include CCTV repair, replacement, installation, wiring, configuration, or other technical work</strong> unless explicitly stated.</li>
+                    <li>The technician will inspect the system and assess the reported problem to the extent reasonably possible during the visit.</li>
+                    <li>After inspection, the customer will be informed of the recommended work and applicable charges.</li>
+                    <li>Additional charges may apply for repair, installation, replacement parts, wiring, and materials.</li>
+                    <li>The final cost may vary depending on the actual system condition and work required.</li>
+                    <li>Customers should not consider the inspection payment to be an advance towards the full repair or installation cost unless explicitly agreed.</li>
+                </ul>
+            </section>
+
+            <!-- Inspection and diagnosis -->
+            <section class="terms-section" id="inspection-diagnosis">
+                <div class="terms-icon">
+                    <i class="bi bi-search"></i>
+                </div>
+
+                <h2>5. Inspection & Diagnosis</h2>
+
+                <ul>
+                    <li>Inspection is intended to identify the possible cause of the reported CCTV issue.</li>
+                    <li>Diagnosis may require testing cameras, DVR/NVR devices, hard disks, power supplies, cables, networking equipment, or other components.</li>
+                    <li>Some faults may require additional testing, equipment access, or component testing before a cause can be confirmed.</li>
+                    <li>If replacement equipment or components are recommended, the applicable charges will be communicated separately.</li>
+                    <li>An inspection does not guarantee that every fault can be identified or repaired during the initial visit.</li>
+                </ul>
+            </section>
+
+            <!-- Repair and additional work -->
+            <section class="terms-section" id="repair-work">
+                <div class="terms-icon">
+                    <i class="bi bi-tools"></i>
+                </div>
+
+                <h2>6. Repair & Additional Work</h2>
+
+                <ul>
+                    <li>Repair work will begin after the customer agrees to the applicable charges.</li>
+                    <li>Additional charges may apply for connectors, power supplies, cables, hard disks, cameras, DVR/NVR units, networking equipment, and other materials.</li>
+                    <li>Wiring, cable replacement, conduit, drilling, mounting, ladder work, and other installation-related work may incur additional charges.</li>
+                    <li>If the customer declines the proposed repair, the applicable inspection or visit charge remains payable according to the booking terms.</li>
+                    <li>If a fault cannot be repaired due to unavailable parts, equipment condition, or technical limitations, the customer will be informed.</li>
+                </ul>
+            </section>
+
+            <!-- Installation terms -->
+            <section class="terms-section" id="installation">
+                <div class="terms-icon">
+                    <i class="bi bi-hammer"></i>
+                </div>
+
+                <h2>7. Installation Terms</h2>
+
+                <ul>
+                    <li>Final installation charges may depend on the number of cameras, cable length, mounting height, site layout, and installation conditions.</li>
+                    <li>Extra wiring, conduit, connectors, power supplies, switches, racks, and other materials may incur additional charges.</li>
+                    <li>The customer must provide safe and reasonable access to the installation location.</li>
+                    <li>The customer is responsible for providing suitable electrical power and internet or network connectivity where required.</li>
+                    <li>Civil work, major drilling, wall cutting, painting, and other construction work are excluded unless specifically agreed.</li>
+                    <li>Any additional work outside the agreed scope will be discussed with the customer before proceeding.</li>
+                </ul>
+            </section>
+
+            <!-- Payment terms -->
+            <section class="terms-section" id="payment">
+                <div class="terms-icon">
+                    <i class="bi bi-credit-card"></i>
+                </div>
+
+                <h2>8. Payment Terms</h2>
+
+                <ul>
+                    <li>Inspection or booking charges must be paid as specified at the time of booking.</li>
+                    <li>Additional repair, installation, material, and replacement charges are payable according to the quotation or payment terms communicated to the customer.</li>
+                    <li>Prices for additional work may change if site conditions or required materials differ from the initial assessment.</li>
+                    <li>Applicable taxes, where required, will be reflected in the invoice.</li>
+                    <li>Customers should verify the order or booking details before completing payment and retain their payment confirmation.</li>
+                </ul>
+            </section>
+
+            <!-- Cancellation -->
+            <section class="terms-section" id="cancellation">
+                <div class="terms-icon">
+                    <i class="bi bi-arrow-counterclockwise"></i>
+                </div>
+
+                <h2>9. Cancellation & Refunds</h2>
+
+                <ul>
+                    <li>Customers should contact us as early as possible to cancel or reschedule a service booking.</li>
+                    <li>If a technician has already been dispatched or a visit has been completed, a disclosed visit or cancellation charge may apply where permitted.</li>
+                    <li>Refund eligibility depends on the circumstances of the booking and the applicable Refund, Return & Cancellation Policy.</li>
+                    <li>If the customer is unavailable at the agreed location and time, an additional visit charge may apply if communicated and applicable.</li>
+                    <li>Product order cancellations and returns are governed by the applicable cancellation and return terms displayed on Camura.in.</li>
+                </ul>
+
+                <p class="mt-3 mb-0">
+                    For complete details, please refer to our
+                    <a href="/refund-policy/" class="fw-semibold">Refund, Return & Cancellation Policy</a>.
+                    Update this URL if your refund policy uses a different path.
+                </p>
+            </section>
+
+            <!-- Warranty -->
+            <section class="terms-section" id="warranty">
+                <div class="terms-icon">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+
+                <h2>10. Warranty</h2>
+
+                <ul>
+                    <li>Manufacturer warranty applies to eligible products according to the manufacturer's terms and the warranty information supplied with the product.</li>
+                    <li>Installation workmanship warranty is <strong>30 days</strong>, unless otherwise specified on the invoice or service agreement.</li>
+                    <li>Damage caused by voltage fluctuations, lightning, water, physical damage, rodents, improper handling, unauthorized repairs, or other external causes may be excluded from warranty coverage, subject to the applicable warranty terms.</li>
+                    <li>Warranty on replacement parts is governed by the applicable manufacturer or supplier warranty.</li>
+                    <li>Inspection may be required to assess whether a reported issue qualifies for warranty service.</li>
+                </ul>
+
+                <p class="mt-3 mb-0">
+                    See our <a href="/warranty-policy/" class="fw-semibold">Warranty Policy</a>
+                    for more information. Update this URL if your warranty page
+                    uses a different path.
+                </p>
+            </section>
+
+            <!-- Customer responsibility -->
+            <section class="terms-section" id="customer-responsibility">
+                <div class="terms-icon">
+                    <i class="bi bi-person-check"></i>
+                </div>
+
+                <h2>11. Customer Responsibilities</h2>
+
+                <ul>
+                    <li>The customer must provide accurate contact information, address details, and information about the CCTV system and reported issue.</li>
+                    <li>Customers should back up important recordings before repair, replacement, formatting, resetting, or other work involving storage devices or recording equipment.</li>
+                    <li>CCTV recordings may be lost due to hard-disk failure, equipment replacement, formatting, resetting, or other technical operations. We will take reasonable care during service but cannot guarantee recovery of all recordings or data.</li>
+                    <li>The customer must have the necessary authority to access, operate, and modify the CCTV system at the premises.</li>
+                    <li>The customer should inform the technician of known electrical, access, or site safety issues before work begins.</li>
+                </ul>
+            </section>
+
+            <!-- Third-party equipment -->
+            <section class="terms-section" id="third-party">
+                <div class="terms-icon">
+                    <i class="bi bi-cpu"></i>
+                </div>
+
+                <h2>12. Third-Party Equipment</h2>
+
+                <ul>
+                    <li>We may provide service for equipment from different manufacturers, subject to technical feasibility.</li>
+                    <li>Repair or configuration may not be possible for obsolete, damaged, unsupported, or incompatible equipment.</li>
+                    <li>Availability of manufacturer support, firmware, replacement parts, and compatible accessories may affect the service outcome.</li>
+                    <li>If replacement is recommended, we will explain the available options and applicable charges before proceeding.</li>
+                </ul>
+            </section>
+
+            <!-- Service limitations -->
+            <section class="terms-section" id="limitations">
+                <div class="terms-icon">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+
+                <h2>13. Service Limitations</h2>
+
+                <ul>
+                    <li>Service appointments depend on technician availability and site accessibility.</li>
+                    <li>We may decline a visit where the site is unsafe, inaccessible, or outside our service area.</li>
+                    <li>Estimated repair and completion times may change depending on the fault, parts availability, and technical complexity.</li>
+                    <li>We will communicate significant changes to the expected scope or cost of work where reasonably practicable.</li>
+                </ul>
+            </section>
+
+            <!-- Acceptance -->
+            <section class="terms-section" id="acceptance">
+                <div class="terms-icon">
+                    <i class="bi bi-check2-circle"></i>
+                </div>
+
+                <h2>14. Acceptance of Terms</h2>
+
+                <p class="mb-0">
+                    By placing an order or service booking through Camura.in,
+                    the customer acknowledges these Terms & Conditions and the
+                    applicable policies presented during the transaction.
+                    Nothing in these terms is intended to exclude or limit
+                    consumer rights that cannot legally be excluded under
+                    applicable Indian law.
+                </p>
+            </section>
+
+            <!-- Contact -->
+            <section class="terms-contact" id="contact">
+                <div class="d-flex align-items-start gap-3">
+                    <div class="terms-icon mb-0 flex-shrink-0">
+                        <i class="bi bi-headset"></i>
+                    </div>
+
+                    <div>
+                        <h2>Questions About These Terms?</h2>
+
+                        <p class="text-secondary mb-3">
+                            Contact Camura if you need clarification about a
+                            product, service booking, inspection charge,
+                            payment, or cancellation.
+                        </p>
+
+                        <p class="mb-2">
+                            <i class="bi bi-telephone me-2"></i>
+                            <a href="tel:+919766052176">+91 97660 52176</a>
+                        </p>
+
+                        <p class="mb-2">
+                            <i class="bi bi-envelope me-2"></i>
+                            <a href="mailto:support@camura.in">support@camura.in</a>
+                        </p>
+
+                        <p class="mb-0 text-secondary">
+                            <i class="bi bi-geo-alt me-2"></i>
+                            Pawar Complex, Shop No. 1, Opp. Judge Quarter,
+                            Behind Tuljabhawani Stadium, Dharashiv – 413501,
+                            Maharashtra, India.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <p class="text-secondary small mt-4 mb-0">
+                These terms should be read together with the applicable
+                Shipping & Delivery, Warranty, and Refund, Return &
+                Cancellation policies. Please review them before placing
+                an order or booking a service.
+            </p>
+
+        </div>
+    </div>
 </div>
 
 {% endblock %}
-```
