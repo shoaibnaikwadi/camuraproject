@@ -1,95 +1,182 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 
+{% block title %}Book CCTV Service in Dharashiv | Camura{% endblock %}
+
 {% block content %}
 
-<style>
-    body {
-        background: #f8f9fa;
-    }
-
-    .booking-card {
-        max-width: 600px;
-        margin: 30px auto;
-        border-radius: 12px;
-    }
-
-    .form-container {
-        padding: 20px;
-    }
-
-    .btn-group-custom {
-        display: flex;
-        gap: 10px;
-        margin-top: 15px;
-    }
-</style>
-<div class="alert alert-warning text-center mb-0 rounded-0" role="alert">
-    <span class="blink-text">
-        ⚠️ We provide service only in Dharashiv City.
+<!-- Service Area Banner -->
+<div class="alert alert-warning border-0 rounded-0 mb-0 py-2 shadow-sm text-center bg-warning-subtle text-dark-emphasis">
+  <div class="container d-flex align-items-center justify-content-center gap-2">
+    <span class="badge bg-warning text-dark pill-pulse">
+      <i class="bi bi-geo-alt-fill me-1"></i> Local Service
     </span>
+    <span class="fw-semibold small">
+      On-site CCTV installation and repair services are strictly available within <strong>Dharashiv City</strong>.
+    </span>
+  </div>
 </div>
 
 <style>
-    .blink-text {
-        font-weight: 600;
-        animation: blink 1.2s linear infinite;
-    }
+  /* Pulsing Animation for Badge */
+  .pill-pulse {
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(255, 193, 7, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); }
+  }
 
-    @keyframes blink {
-        50% {
-            opacity: 0;
-        }
-    }
+  /* Booking Container Styling */
+  .booking-wrapper {
+    max-width: 680px;
+    margin: 2.5rem auto;
+  }
+
+  .booking-card {
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 1rem;
+    overflow: hidden;
+    background: #ffffff;
+  }
+
+  .booking-card-header {
+    background: linear-gradient(135deg, #0b1329 0%, #164b80 100%);
+    color: #ffffff;
+    padding: 2rem 1.5rem;
+  }
+
+  .form-container {
+    padding: 2rem;
+  }
+
+  /* Feature Badges */
+  .trust-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.825rem;
+    color: #4a5568;
+    background: #f8fafc;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+  }
+
+  /* Form Tweaks */
+  .form-container .btn-primary {
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+  }
+
+  .form-container .btn-outline-secondary {
+    padding: 0.65rem 1.5rem;
+    border-radius: 0.5rem;
+  }
+
+  /* Success Modal Tweaks */
+  .modal-icon-circle {
+    width: 64px;
+    height: 64px;
+    background: #d1e7dd;
+    color: #0f5132;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin: 0 auto 1rem;
+  }
 </style>
 
 <div class="container">
+  <div class="booking-wrapper">
     <div class="card booking-card shadow-lg">
-        <div class="card-header bg-primary text-white text-center py-3">
-            <h4 class="mb-0">Service Booking Form</h4>
+      
+      <!-- Card Header -->
+      <div class="booking-card-header text-center">
+        <span class="badge bg-warning text-dark mb-2 fw-bold">CAMURA SERVICE BOOKING</span>
+        <h2 class="h3 fw-bold mb-1">Schedule On-Site CCTV Support</h2>
+        <p class="small text-light opacity-75 mb-0">Book an inspection or repair service for your CCTV setup</p>
+      </div>
+
+      <!-- Form Body -->
+      <div class="card-body form-container">
+        
+        <!-- Trust Indicators -->
+        <div class="row g-2 mb-4">
+          <div class="col-4">
+            <div class="trust-badge justify-content-center">
+              <i class="bi bi-clock-history text-primary"></i> Fast Visit
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="trust-badge justify-content-center">
+              <i class="bi bi-shield-check text-success"></i> Expert Techs
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="trust-badge justify-content-center">
+              <i class="bi bi-currency-rupee text-warning"></i> Clear Quotes
+            </div>
+          </div>
         </div>
 
-        <div class="card-body form-container">
+        <!-- Form Elements -->
+        <form method="POST" enctype="multipart/form-data" class="needs-validation">
+          {% csrf_token %}
+          {% crispy form %}
+          
+          <div class="d-grid gap-2 mt-4">
+            <a href="/productlist/" class="btn btn-outline-secondary">
+              <i class="bi bi-arrow-left me-1"></i> Cancel & Return
+            </a>
+          </div>
+        </form>
 
-            <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                {% crispy form %}
-            
-                <!-- <button type="submit" class="btn btn-primary w-100 mt-2">Submit</button> -->
-                <a href="/productlist/" class="btn btn-outline-secondary w-100 mt-2">Cancel</a>
-            </form>
-            <p class="text-muted small mt-3"> By booking this service, you agree to our <a href="https://camura.in/terms-and-conditions/" target="_blank" rel="noopener"> Terms & Conditions </a>. </p>
-
-
+        <!-- Terms Footer -->
+        <div class="text-center border-top pt-3 mt-4">
+          <p class="text-muted small mb-0">
+            <i class="bi bi-info-circle me-1"></i>
+            By booking this service, you agree to our 
+            <a href="https://camura.in/terms-and-conditions/" target="_blank" rel="noopener" class="text-decoration-underline text-secondary">Terms & Conditions</a>.
+          </p>
         </div>
+
+      </div>
     </div>
+  </div>
 </div>
 
-<!-- SUCCESS POPUP -->
+<!-- SUCCESS POPUP MODAL -->
 {% if booking_id %}
-<div class="modal fade show" id="successModal" style="display:block; background: rgba(0,0,0,0.45);" aria-modal="true"
-    role="dialog">
-
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-success shadow-lg">
-
-            <div class="modal-header bg-success text-white">
-                <h5 class="modal-title">Booking Successful!</h5>
-            </div>
-
-            <div class="modal-body text-center">
-                <p>Your booking has been submitted successfully.</p>
-                <h4>Your Booking ID: <strong>#{{ booking_id }}</strong></h4>
-            </div>
-
-            <div class="modal-footer">
-                <a href="" class="btn btn-success w-100">OK</a>
-            </div>
-
+<div class="modal fade show" id="successModal" tabindex="-1" style="display: block; background: rgba(11, 19, 41, 0.65); backdrop-filter: blur(4px);" aria-modal="true" role="dialog">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+      
+      <div class="modal-body p-4 text-center">
+        <div class="modal-icon-circle">
+          <i class="bi bi-check-lg"></i>
         </div>
-    </div>
+        
+        <h3 class="fw-bold text-dark mb-2">Booking Submitted!</h3>
+        <p class="text-muted small mb-3">Our technician will get in touch with you shortly to confirm the appointment date and details.</p>
+        
+        <div class="bg-light p-3 rounded-3 mb-4 border">
+          <div class="text-uppercase small fw-semibold text-secondary">Your Booking Reference</div>
+          <div class="h3 fw-bold text-primary mb-0">#{{ booking_id }}</div>
+        </div>
 
+        <a href="" class="btn btn-primary btn-lg w-100 fw-semibold">
+          Done
+        </a>
+      </div>
+
+    </div>
+  </div>
 </div>
 {% endif %}
 
-{% endblock %} 
+{% endblock %}
