@@ -12,80 +12,51 @@
 
 {% block content %}
 
-<div class="container py-4 py-md-5">
+<div class="container py-3 py-md-4">
 
-    <!-- PAGE HEADER -->
-    <header class="text-center mb-4">
-        <span class="text-primary fw-semibold small text-uppercase">
-            Camura CCTV Store
-        </span>
+    <!-- COMPACT SEARCH, FILTERS & HEADER PANEL -->
+    <section class="search-filter-panel mb-4" aria-label="Search and filter CCTV packages">
+        <form id="product-filter-form" method="get" action="{% url 'product_list' %}">
 
-        <h1 class="fw-bold mt-2 mb-2">
-            CCTV Camera Packages
-        </h1>
+            <!-- HEADER & SEARCH ROW -->
+            <div class="row align-items-center g-3 mb-3">
+                <div class="col-lg-4">
+                    <span class="text-primary fw-semibold small text-uppercase d-block">Camura Store</span>
+                    <h1 class="h4 fw-bold mb-0">CCTV Packages</h1>
+                </div>
 
-        <p class="text-muted mb-0">
-            Find the right security package for your home, shop or office.
-        </p>
-    </header>
-
-    <!-- SEARCH BAR AND FILTERS -->
-    <section class="search-filter-panel mb-4 mb-md-5"
-             aria-label="Search and filter CCTV packages">
-
-        <form id="product-filter-form"
-              method="get"
-              action="{% url 'product_list' %}">
-
-            <!-- SEARCH -->
-            <label for="product-search" class="form-label fw-semibold">
-                Search CCTV Packages
-            </label>
-
-            <div class="input-group search-input-group">
-                <span class="input-group-text bg-white">
-                    <i class="bi bi-search" aria-hidden="true"></i>
-                </span>
-
-                <input
-                    type="search"
-                    id="product-search"
-                    name="q"
-                    class="form-control"
-                    placeholder="Search by product name, brand or SKU..."
-                    value="{{ selected_query }}"
-                    aria-label="Search CCTV packages"
-                >
-
-                <button type="submit" class="btn btn-primary px-4">
-                    Search
-                </button>
+                <!-- COMPACT SEARCH INPUT GROUP -->
+                <div class="col-lg-8">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white text-muted">
+                            <i class="bi bi-search" aria-hidden="true"></i>
+                        </span>
+                        <input
+                            type="search"
+                            id="product-search"
+                            name="q"
+                            class="form-control"
+                            placeholder="Search by name, brand or SKU..."
+                            value="{{ selected_query }}"
+                            aria-label="Search CCTV packages"
+                        >
+                        <button type="submit" class="btn btn-primary px-3">
+                            Search
+                        </button>
+                    </div>
+                </div>
             </div>
 
-            <!-- FILTERS -->
-            <div class="filter-heading d-flex align-items-center gap-2 mt-4 mb-3">
-                <i class="bi bi-sliders2-vertical text-primary"
-                   aria-hidden="true"></i>
-
-                <h2 class="h6 fw-bold mb-0">Filter Packages</h2>
-            </div>
-
-            <div class="row g-3">
+            <!-- FILTERS (Single Row on Desktop) -->
+            <div class="row g-2 align-items-end pt-2 border-top">
 
                 <!-- BRAND -->
-                <div class="col-6 col-lg-3">
-                    <label for="brand-filter" class="form-label">
-                        Brand
-                    </label>
-
-                    <select name="brand"
-                            id="brand-filter"
-                            class="form-select auto-filter">
+                <div class="col-6 col-md-3 col-lg">
+                    <label for="brand-filter" class="form-label small mb-1">Brand</label>
+                    <select name="brand" id="brand-filter" class="form-select form-select-sm auto-filter">
                         <option value="">All Brands</option>
-
                         {% for item_brand in brands %}
-                            <option value="{{ item_brand }}"
-                                {% if selected_brand == item_brand %}selected{% endif %}>
+                            <option value="{{ item_brand }}" {% if selected_brand == item_brand %}selected{% endif %}>
                                 {{ item_brand }}
                             </option>
                         {% endfor %}
@@ -93,19 +64,12 @@
                 </div>
 
                 <!-- CAMERA TYPE -->
-                <div class="col-6 col-lg-3">
-                    <label for="camera-type-filter" class="form-label">
-                        Camera Type
-                    </label>
-
-                    <select name="camera_type"
-                            id="camera-type-filter"
-                            class="form-select auto-filter">
+                <div class="col-6 col-md-3 col-lg">
+                    <label for="camera-type-filter" class="form-label small mb-1">Type</label>
+                    <select name="camera_type" id="camera-type-filter" class="form-select form-select-sm auto-filter">
                         <option value="">All Types</option>
-
                         {% for value, label in camera_type_choices %}
-                            <option value="{{ value }}"
-                                {% if selected_camera_type == value %}selected{% endif %}>
+                            <option value="{{ value }}" {% if selected_camera_type == value %}selected{% endif %}>
                                 {{ label }}
                             </option>
                         {% endfor %}
@@ -113,19 +77,12 @@
                 </div>
 
                 <!-- CAMERA QUANTITY -->
-                <div class="col-6 col-lg-3">
-                    <label for="quantity-filter" class="form-label">
-                        Number of Cameras
-                    </label>
-
-                    <select name="camera_quantity"
-                            id="quantity-filter"
-                            class="form-select auto-filter">
+                <div class="col-6 col-md-3 col-lg">
+                    <label for="quantity-filter" class="form-label small mb-1">Cameras</label>
+                    <select name="camera_quantity" id="quantity-filter" class="form-select form-select-sm auto-filter">
                         <option value="">All Quantities</option>
-
                         {% for qty in camera_quantities %}
-                            <option value="{{ qty }}"
-                                {% if selected_camera_quantity == qty|stringformat:"s" %}selected{% endif %}>
+                            <option value="{{ qty }}" {% if selected_camera_quantity == qty|stringformat:"s" %}selected{% endif %}>
                                 {{ qty }} Cameras
                             </option>
                         {% endfor %}
@@ -133,69 +90,24 @@
                 </div>
 
                 <!-- SORT -->
-                <div class="col-6 col-lg-3">
-                    <label for="sort-filter" class="form-label">
-                        Sort By
-                    </label>
-
-                    <select name="sort"
-                            id="sort-filter"
-                            class="form-select auto-filter">
-                        <option value="newest"
-                            {% if selected_sort == "newest" %}selected{% endif %}>
-                            Newest First
-                        </option>
-
-                        <option value="quantity_low"
-                            {% if selected_sort == "quantity_low" %}selected{% endif %}>
-                            Cameras: Low to High
-                        </option>
-
-                        <option value="quantity_high"
-                            {% if selected_sort == "quantity_high" %}selected{% endif %}>
-                            Cameras: High to Low
-                        </option>
-
-                        <option value="brand_asc"
-                            {% if selected_sort == "brand_asc" %}selected{% endif %}>
-                            Brand: A to Z
-                        </option>
-
-                        <option value="brand_desc"
-                            {% if selected_sort == "brand_desc" %}selected{% endif %}>
-                            Brand: Z to A
-                        </option>
-
-                        <option value="price_low"
-                            {% if selected_sort == "price_low" %}selected{% endif %}>
-                            Price: Low to High
-                        </option>
-
-                        <option value="price_high"
-                            {% if selected_sort == "price_high" %}selected{% endif %}>
-                            Price: High to Low
-                        </option>
-
-                        <option value="name_asc"
-                            {% if selected_sort == "name_asc" %}selected{% endif %}>
-                            Name: A to Z
-                        </option>
+                <div class="col-6 col-md-3 col-lg">
+                    <label for="sort-filter" class="form-label small mb-1">Sort By</label>
+                    <select name="sort" id="sort-filter" class="form-select form-select-sm auto-filter">
+                        <option value="newest" {% if selected_sort == "newest" %}selected{% endif %}>Newest First</option>
+                        <option value="quantity_low" {% if selected_sort == "quantity_low" %}selected{% endif %}>Cameras: Low to High</option>
+                        <option value="quantity_high" {% if selected_sort == "quantity_high" %}selected{% endif %}>Cameras: High to Low</option>
+                        <option value="brand_asc" {% if selected_sort == "brand_asc" %}selected{% endif %}>Brand: A to Z</option>
+                        <option value="brand_desc" {% if selected_sort == "brand_desc" %}selected{% endif %}>Brand: Z to A</option>
+                        <option value="price_low" {% if selected_sort == "price_low" %}selected{% endif %}>Price: Low to High</option>
+                        <option value="price_high" {% if selected_sort == "price_high" %}selected{% endif %}>Price: High to Low</option>
+                        <option value="name_asc" {% if selected_sort == "name_asc" %}selected{% endif %}>Name: A to Z</option>
                     </select>
                 </div>
 
-                <!-- FILTER INFORMATION AND RESET -->
-                <div class="col-12 d-flex flex-wrap align-items-center justify-content-between gap-2">
-                    <small class="text-muted">
-                        <i class="bi bi-lightning-charge me-1"
-                           aria-hidden="true"></i>
-                        Filters update automatically when changed.
-                    </small>
-
-                    <a href="{% url 'product_list' %}"
-                       class="btn btn-outline-secondary btn-sm">
-                        <i class="bi bi-arrow-counterclockwise me-1"
-                           aria-hidden="true"></i>
-                        Clear Search &amp; Filters
+                <!-- CLEAR BUTTON -->
+                <div class="col-12 col-lg-auto d-flex align-items-end mt-2 mt-lg-0">
+                    <a href="{% url 'product_list' %}" class="btn btn-outline-secondary btn-sm w-100">
+                        <i class="bi bi-arrow-counterclockwise me-1" aria-hidden="true"></i> Clear
                     </a>
                 </div>
 
@@ -205,43 +117,26 @@
 
     <!-- RESULTS HEADING -->
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-        <h2 class="h5 fw-bold mb-0">Available CCTV Packages</h2>
-
+        <h2 class="h6 fw-bold mb-0">Available Packages</h2>
         <span class="text-muted small">
-            {{ combos|length }}
-            package{{ combos|length|pluralize }} found
+            {{ combos|length }} package{{ combos|length|pluralize }} found
         </span>
     </div>
 
     <!-- PRODUCT GRID -->
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
 
         {% for combo in combos %}
         <div class="col">
             <article class="card h-100 border-0 shadow-sm product-card">
 
                 <!-- PRODUCT IMAGE -->
-                <a href="{% url 'product_detail' combo.pk %}"
-                   class="product-image-link"
-                   aria-label="View {{ combo.name }}">
-
+                <a href="{% url 'product_detail' combo.pk %}" class="product-image-link" aria-label="View {{ combo.name }}">
                     <div class="product-img-wrap">
                         {% if combo.main_image %}
-                            <img
-                                src="{{ combo.main_image.url }}"
-                                alt="{{ combo.name }} CCTV camera package"
-                                loading="lazy"
-                                width="400"
-                                height="300"
-                            >
+                            <img src="{{ combo.main_image.url }}" alt="{{ combo.name }} CCTV camera package" loading="lazy" width="400" height="300">
                         {% else %}
-                            <img
-                                src="{% static 'img/no-image.png' %}"
-                                alt="Image unavailable for {{ combo.name }}"
-                                loading="lazy"
-                                width="400"
-                                height="300"
-                            >
+                            <img src="{% static 'img/no-image.png' %}" alt="Image unavailable for {{ combo.name }}" loading="lazy" width="400" height="300">
                         {% endif %}
                     </div>
                 </a>
@@ -250,116 +145,67 @@
                 <div class="card-body d-flex flex-column p-3">
 
                     <h3 class="product-title">
-                        <a href="{% url 'product_detail' combo.pk %}"
-                           class="text-decoration-none text-dark">
+                        <a href="{% url 'product_detail' combo.pk %}" class="text-decoration-none text-dark">
                             {{ combo.name }}
                         </a>
                     </h3>
 
                     {% if combo.sku %}
-                        <p class="text-muted small mb-2">
-                            SKU: {{ combo.sku }}
-                        </p>
+                        <p class="text-muted small mb-2">SKU: {{ combo.sku }}</p>
                     {% endif %}
 
                     <!-- PRODUCT ATTRIBUTE BADGES -->
-                    <div class="d-flex flex-wrap gap-1 mb-3">
-
+                    <div class="d-flex flex-wrap gap-1 mb-2">
                         {% if combo.brand %}
                             <span class="product-badge brand-badge">
-                                <i class="bi bi-patch-check me-1"
-                                   aria-hidden="true"></i>
-                                {{ combo.brand }}
+                                <i class="bi bi-patch-check me-1" aria-hidden="true"></i>{{ combo.brand }}
                             </span>
                         {% endif %}
-
                         {% if combo.camera_type %}
-                            <span class="product-badge technology-badge">
-                                {{ combo.get_camera_type_display }}
-                            </span>
+                            <span class="product-badge technology-badge">{{ combo.get_camera_type_display }}</span>
                         {% endif %}
-
                         {% if combo.camera_quantity > 0 %}
                             <span class="product-badge quantity-badge">
-                                <i class="bi bi-camera-video me-1"
-                                   aria-hidden="true"></i>
-                                {{ combo.camera_quantity }} Cameras
+                                <i class="bi bi-camera-video me-1" aria-hidden="true"></i>{{ combo.camera_quantity }} Cameras
                             </span>
                         {% endif %}
-
                     </div>
 
                     <!-- DESCRIPTION -->
                     {% if combo.description %}
-                        <p class="product-description text-muted small">
-                            {{ combo.description|striptags|truncatechars:100 }}
+                        <p class="product-description text-muted small mb-2">
+                            {{ combo.description|striptags|truncatechars:80 }}
                         </p>
                     {% endif %}
 
                     <!-- PRICE & DISCOUNT -->
-                <div class="product-price mt-auto mb-3">
-                    <div class="d-flex align-items-center flex-wrap gap-2">
-                        <!-- DISCOUNTED PRICE -->
-                        <span class="text-success fw-bold fs-4">
-                            ₹{{ combo.price|floatformat:2 }}
-                        </span>
-
-                        <!-- MRP & DISCOUNT PERCENTAGE (Shown only if MRP exists and is greater than price) -->
-                        {% if combo.mrp and combo.mrp > combo.price %}
-                            <span class="text-muted text-decoration-line-through small">
-                              ₹{{ combo.mrp|floatformat:2 }}
-                            </span>
-
-                            {% with discount=combo.mrp|add:"-"|add:combo.price %}
-                                <!-- Using custom template math or pre-calculated property in models.py is recommended, 
-                                     alternatively you can compute discount percentage directly in your view/model -->
-                            {% endwith %}
-
-                            <span class="badge bg-danger text-white px-2 py-1 small fw-semibold">
-                                {{ combo.discount_percentage }}% off
-                            </span>
-                        {% endif %}
+                    <div class="product-price mt-auto mb-2">
+                        <div class="d-flex align-items-center flex-wrap gap-2">
+                            <span class="text-success fw-bold fs-5">₹{{ combo.price|floatformat:2 }}</span>
+                            {% if combo.mrp and combo.mrp > combo.price %}
+                                <span class="text-muted text-decoration-line-through small">₹{{ combo.mrp|floatformat:2 }}</span>
+                                <span class="badge bg-danger text-white px-1.5 py-0.5 small fw-semibold">{{ combo.discount_percentage }}% off</span>
+                            {% endif %}
+                        </div>
                     </div>
-                </div>
 
                     <!-- STOCK STATUS -->
                     {% if combo.available_stock > 0 %}
-                        <p class="small text-success mb-3">
-                            <i class="bi bi-check-circle-fill me-1"
-                               aria-hidden="true"></i>
-                            In stock
-                        </p>
+                        <p class="small text-success mb-2"><i class="bi bi-check-circle-fill me-1" aria-hidden="true"></i> In stock</p>
                     {% else %}
-                        <p class="small text-danger mb-3">
-                            <i class="bi bi-x-circle-fill me-1"
-                               aria-hidden="true"></i>
-                            Currently unavailable
-                        </p>
+                        <p class="small text-danger mb-2"><i class="bi bi-x-circle-fill me-1" aria-hidden="true"></i> Currently unavailable</p>
                     {% endif %}
 
                     <!-- ADD TO CART AND SHARE -->
                     <div class="d-flex align-items-center gap-2">
-
-                        <form
-                            method="post"
-                            action="{% url 'add_to_cart' product_type=combo.product_type product_id=combo.pk %}"
-                            class="flex-grow-1"
-                        >
+                        <form method="post" action="{% url 'add_to_cart' product_type=combo.product_type product_id=combo.pk %}" class="flex-grow-1">
                             {% csrf_token %}
                             <input type="hidden" name="quantity" value="1">
-
-                            <button
-                                type="submit"
-                                class="btn btn-primary btn-sm w-100"
-                                {% if combo.available_stock < 1 %}disabled{% endif %}
-                            >
-                                <i class="bi bi-cart-plus me-1"
-                                   aria-hidden="true"></i>
-                                Add to Cart
+                            <button type="submit" class="btn btn-primary btn-sm w-100" {% if combo.available_stock < 1 %}disabled{% endif %}>
+                                <i class="bi bi-cart-plus me-1" aria-hidden="true"></i> Add to Cart
                             </button>
                         </form>
 
-                        <!-- SHARE: AFFILIATES GET THEIR OWN REFERRAL CODE -->
                         <button
                             type="button"
                             class="btn btn-outline-primary btn-sm share-btn"
@@ -370,65 +216,30 @@
                             title="Share product"
                             aria-label="Share {{ combo.name }}"
                         >
-                            <i class="bi bi-share"
-                               aria-hidden="true"></i>
+                            <i class="bi bi-share" aria-hidden="true"></i>
                         </button>
-
                     </div>
 
                     <!-- BUY NOW -->
-                    <form
-                        method="post"
-                        action="{% url 'buy_now' combo.pk %}"
-                        class="mt-2"
-                    >
+                    <form method="post" action="{% url 'buy_now' combo.pk %}" class="mt-1">
                         {% csrf_token %}
                         <input type="hidden" name="qty" value="1">
-
-                        <button
-                            type="submit"
-                            class="btn btn-warning btn-sm w-100"
-                            {% if combo.available_stock < 1 %}disabled{% endif %}
-                        >
-                            <i class="bi bi-lightning-charge-fill me-1"
-                               aria-hidden="true"></i>
-                            Buy Now
+                        <button type="submit" class="btn btn-warning btn-sm w-100" {% if combo.available_stock < 1 %}disabled{% endif %}>
+                            <i class="bi bi-lightning-charge-fill me-1" aria-hidden="true"></i> Buy Now
                         </button>
                     </form>
-
-                    <!-- VIEW DETAILS -->
-                    <a
-                        href="{% url 'product_detail' combo.pk %}"
-                        class="btn btn-outline-secondary btn-sm w-100 mt-2"
-                    >
-                        View Details
-                        <i class="bi bi-arrow-right ms-1"
-                           aria-hidden="true"></i>
-                    </a>
 
                 </div>
             </article>
         </div>
 
         {% empty %}
-        <!-- NO RESULTS -->
         <div class="col-12">
-            <div class="empty-products text-center p-4 p-md-5 rounded-4">
-                <i class="bi bi-camera-video display-4 text-secondary"
-                   aria-hidden="true"></i>
-
-                <h2 class="h5 fw-bold mt-3">
-                    No matching CCTV packages found
-                </h2>
-
-                <p class="text-muted mb-3">
-                    Try another brand, camera type or camera quantity.
-                </p>
-
-                <a href="{% url 'product_list' %}"
-                   class="btn btn-outline-primary">
-                    View All Packages
-                </a>
+            <div class="empty-products text-center p-4 rounded-3">
+                <i class="bi bi-camera-video display-5 text-secondary" aria-hidden="true"></i>
+                <h2 class="h6 fw-bold mt-2">No matching CCTV packages found</h2>
+                <p class="text-muted small mb-3">Try changing your search parameters or filters.</p>
+                <a href="{% url 'product_list' %}" class="btn btn-outline-primary btn-sm">View All Packages</a>
             </div>
         </div>
         {% endfor %}
@@ -436,340 +247,103 @@
     </div>
 </div>
 
-<!-- PAGE CSS -->
+<!-- COMPACT PAGE CSS -->
 <style>
     .search-filter-panel {
-        padding: 22px;
+        padding: 16px;
         background: #fff;
         border: 1px solid #e8edf3;
-        border-radius: 16px;
-        box-shadow: 0 5px 22px rgba(20, 40, 70, .06);
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(20, 40, 70, .04);
     }
-
-    .search-input-group .form-control,
-    .search-input-group .input-group-text,
-    .search-input-group .btn {
-        min-height: 48px;
-    }
-
-    .search-input-group .input-group-text {
-        color: #6c757d;
-        border-right: 0;
-    }
-
-    .search-input-group .form-control {
-        border-left: 0;
-        box-shadow: none;
-    }
-
-    .search-input-group .form-control:focus {
-        border-color: #dee2e6;
-        box-shadow: none;
-    }
-
-    .filter-heading {
-        padding-top: 18px;
-        border-top: 1px solid #edf0f4;
-    }
-
-    .search-filter-panel .form-label {
-        margin-bottom: 7px;
-        color: #344054;
-        font-size: .875rem;
-        font-weight: 600;
-    }
-
-    .search-filter-panel .form-select {
-        min-height: 43px;
-        border-color: #dfe4ea;
-        border-radius: 8px;
-        font-size: .9rem;
-    }
-
-    .search-filter-panel .btn {
-        min-height: 38px;
-        border-radius: 8px;
-        font-weight: 600;
-    }
-
     .product-card {
         overflow: hidden;
-        border-radius: 14px;
-        transition: transform .25s ease, box-shadow .25s ease;
+        border-radius: 12px;
+        transition: transform .2s ease, box-shadow .2s ease;
     }
-
     .product-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 28px rgba(0, 0, 0, .12) !important;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, .08) !important;
     }
-
-    .product-image-link {
-        display: block;
-        text-decoration: none;
-    }
-
     .product-img-wrap {
         display: flex;
         align-items: center;
         justify-content: center;
         width: 100%;
-        height: 190px;
-        padding: 15px;
-        overflow: hidden;
+        height: 160px;
+        padding: 10px;
         background: #f8f9fa;
     }
-
     .product-img-wrap img {
-        display: block;
         width: 100%;
         height: 100%;
         object-fit: contain;
-        transition: transform .3s ease;
     }
-
-    .product-card:hover .product-img-wrap img {
-        transform: scale(1.04);
-    }
-
     .product-title {
         display: -webkit-box;
         overflow: hidden;
-        margin-bottom: .4rem;
-        font-size: 1rem;
+        margin-bottom: 0.3rem;
+        font-size: 0.95rem;
         font-weight: 700;
-        line-height: 1.5;
+        line-height: 1.4;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 2;
     }
-
-    .product-title a:hover {
-        color: #0d6efd !important;
-    }
-
-    .product-description {
-        min-height: 3em;
-        overflow-wrap: anywhere;
-        line-height: 1.5;
-    }
-
     .product-badge {
         display: inline-flex;
         align-items: center;
-        padding: 5px 8px;
-        border-radius: 6px;
-        font-size: .72rem;
-        font-weight: 600;
-        line-height: 1.25;
-    }
-
-    .brand-badge {
-        color: #344054;
-        background: #f1f4f8;
-    }
-
-    .technology-badge {
-        color: #075985;
-        background: #e0f2fe;
-    }
-
-    .quantity-badge {
-        color: #166534;
-        background: #dcfce7;
-    }
-
-    .product-price {
-        padding-top: 12px;
-        border-top: 1px solid #f0f0f0;
-    }
-
-    .product-card .btn {
-        border-radius: 7px;
+        padding: 3px 6px;
+        border-radius: 4px;
+        font-size: 0.7rem;
         font-weight: 600;
     }
-
+    .brand-badge { color: #344054; background: #f1f4f8; }
+    .technology-badge { color: #075985; background: #e0f2fe; }
+    .quantity-badge { color: #166534; background: #dcfce7; }
     .share-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        flex: 0 0 40px;
-        width: 40px;
-        height: 32px;
+        flex: 0 0 32px;
+        width: 32px;
+        height: 31px;
         padding: 0;
-    }
-
-    .product-card button:disabled {
-        cursor: not-allowed;
-        opacity: .6;
-    }
-
-    .empty-products {
-        border: 1px dashed #ced4da;
-        background: #f8f9fa;
-    }
-
-    @media (max-width: 575.98px) {
-        .search-filter-panel {
-            padding: 15px;
-            border-radius: 12px;
-        }
-
-        .search-input-group .btn {
-            padding-right: 13px !important;
-            padding-left: 13px !important;
-        }
-
-        .product-img-wrap {
-            height: 210px;
-        }
-
-        .product-card {
-            border-radius: 12px;
-        }
-
-        .product-title {
-            font-size: .95rem;
-        }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-        .product-card,
-        .product-img-wrap img {
-            transition: none;
-        }
-
-        .product-card:hover {
-            transform: none;
-        }
     }
 </style>
 
-<!-- AUTOMATIC FILTERING -->
+<!-- AUTOMATIC FILTERING & SHARING JS -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const filterForm = document.getElementById("product-filter-form");
-
-    if (!filterForm) {
-        return;
-    }
-
-    filterForm.querySelectorAll(".auto-filter").forEach(function (field) {
-        field.addEventListener("change", function () {
-            if (typeof filterForm.requestSubmit === "function") {
-                filterForm.requestSubmit();
-            } else {
-                filterForm.submit();
-            }
+    if (filterForm) {
+        filterForm.querySelectorAll(".auto-filter").forEach(function (field) {
+            field.addEventListener("change", function () {
+                if (typeof filterForm.requestSubmit === "function") {
+                    filterForm.requestSubmit();
+                } else {
+                    filterForm.submit();
+                }
+            });
         });
-    });
+    }
 });
-</script>
 
-<!-- PRODUCT SHARING -->
-<script>
 function shareProductFromButton(button) {
     const name = button.dataset.productName || "CCTV product";
     const relativeUrl = button.dataset.productUrl;
-    const referralCode = (
-        button.dataset.referralCode || ""
-    ).trim();
+    const referralCode = (button.dataset.referralCode || "").trim();
+    if (!relativeUrl) return;
 
-    if (!relativeUrl) {
-        alert("The product link is unavailable.");
-        return;
-    }
-
-    // Create the regular product URL first.
-    const url = new URL(
-        relativeUrl,
-        window.location.origin
-    );
-
-    // Add a referral code only for an approved affiliate.
-    if (referralCode) {
-        url.searchParams.set("ref", referralCode);
-    }
-
-    const productUrl = url.href;
+    const url = new URL(relativeUrl, window.location.origin);
+    if (referralCode) url.searchParams.set("ref", referralCode);
 
     if (navigator.share) {
-        navigator.share({
-            title: name,
-            text: "Check out this CCTV product from Camura: " + name,
-            url: productUrl
-        }).catch(function (error) {
-            if (error.name !== "AbortError") {
-                copyProductLink(productUrl);
-            }
-        });
+        navigator.share({ title: name, text: "Check out this CCTV product from Camura: " + name, url: url.href })
+            .catch((err) => { if (err.name !== "AbortError") copyLink(url.href); });
     } else {
-        copyProductLink(productUrl);
+        copyLink(url.href);
     }
 }
 
-function copyProductLink(url) {
-    if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(url)
-            .then(function () {
-                showShareMessage("Product link copied!");
-            })
-            .catch(function () {
-                fallbackCopyProductLink(url);
-            });
-    } else {
-        fallbackCopyProductLink(url);
-    }
-}
-
-function fallbackCopyProductLink(url) {
-    const textarea = document.createElement("textarea");
-    textarea.value = url;
-    textarea.style.position = "fixed";
-    textarea.style.left = "-9999px";
-
-    document.body.appendChild(textarea);
-    textarea.select();
-
-    let copied = false;
-
-    try {
-        copied = document.execCommand("copy");
-    } catch (error) {
-        copied = false;
-    }
-
-    textarea.remove();
-
-    if (copied) {
-        showShareMessage("Product link copied!");
-    } else {
-        window.prompt("Copy this product link:", url);
-    }
-}
-
-function showShareMessage(message) {
-    const toast = document.createElement("div");
-    toast.textContent = message;
-    toast.setAttribute("role", "status");
-
-    Object.assign(toast.style, {
-        position: "fixed",
-        bottom: "25px",
-        left: "50%",
-        transform: "translateX(-50%)",
-        background: "#212529",
-        color: "#fff",
-        padding: "11px 18px",
-        borderRadius: "8px",
-        fontSize: "14px",
-        zIndex: "9999",
-        boxShadow: "0 4px 12px rgba(0,0,0,.2)"
-    });
-
-    document.body.appendChild(toast);
-
-    window.setTimeout(function () {
-        toast.remove();
-    }, 2200);
+function copyLink(url) {
+    navigator.clipboard.writeText(url).then(() => alert("Product link copied!"));
 }
 </script>
 
