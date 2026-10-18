@@ -136,6 +136,11 @@ def home(request):
         product_type="combo",
         camera_quantity=4,
     )[:10]
+    
+    three_camera_kits = active_products.filter(
+            product_type="combo",
+            camera_quantity=3,
+        )[:10]
 
     return render(
         request,
@@ -143,6 +148,8 @@ def home(request):
         {
             "latest_products": latest_products,
             "four_camera_kits": four_camera_kits,
+            "three_camera_kits": three_camera_kits,
+
         },
     )
 

@@ -377,6 +377,105 @@
     </div>
 </section>
 
+
+
+
+<!-- Three Camera Combo Kits -->
+<section class="camura-products-section">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+            <div>
+                <span class="text-primary fw-semibold small">
+                    CCTV COMBO OFFERS
+                </span>
+                <h2 class="h4 fw-bold mb-1 mt-1">
+                    3 Camera CCTV Combo Kits
+                </h2>
+                <p class="text-muted small mb-0">
+                    Complete CCTV packages for homes and shops
+                </p>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <a class="btn btn-sm btn-outline-primary"
+                   href="/productlist/?q=&brand=&camera_type=&camera_quantity=3&sort=newest">
+                    View All
+                </a>
+                <button class="camura-slider-btn d-none d-md-inline-block"
+                        type="button"
+                        aria-label="Scroll four camera products left"
+                        onclick="scrollCamuraProducts('four-camera-track', -1)">
+                    &#8249;
+                </button>
+                <button class="camura-slider-btn d-none d-md-inline-block"
+                        type="button"
+                        aria-label="Scroll four camera products right"
+                        onclick="scrollCamuraProducts('four-camera-track', 1)">
+                    &#8250;
+                </button>
+            </div>
+        </div>
+
+        {% if three_camera_kits %}
+        <div class="camura-product-track" id="four-camera-track">
+            {% for product in three_camera_kits %}
+            <article class="camura-product-card">
+                <a href="{% url 'product_detail' product.pk %}"
+                   class="text-decoration-none">
+                    <div class="camura-product-image">
+                        {% if product.main_image %}
+                        <img src="{{ product.main_image.url }}"
+                             alt="{{ product.name }}"
+                             loading="lazy">
+                        {% else %}
+                        <div class="text-center text-muted">
+                            <i class="bi bi-camera-video fs-1"></i>
+                            <div class="small">CCTV Product</div>
+                        </div>
+                        {% endif %}
+
+                        {% if product.discount_percentage %}
+                        <span class="camura-product-off position-absolute top-0 start-0 m-2">
+                            {{ product.discount_percentage }}% OFF
+                        </span>
+                        {% endif %}
+                    </div>
+                </a>
+
+                <div class="camura-product-info">
+                    <div class="camura-product-name">
+                        <a href="{% url 'product_detail' product.pk %}">
+                            {{ product.name|truncatechars:55 }}
+                        </a>
+                    </div>
+
+                    <div class="camura-product-price">
+                        ₹{{ product.price|floatformat:0 }}
+                    </div>
+
+                    {% if product.mrp and product.mrp > product.price %}
+                    <div class="camura-product-mrp">
+                        MRP ₹{{ product.mrp|floatformat:0 }}
+                    </div>
+                    {% endif %}
+
+                    <a href="{% url 'product_detail' product.pk %}"
+                       class="btn btn-primary btn-sm w-100 mt-3">
+                        View Product
+                    </a>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-muted">
+            Three-camera combo kits will appear here when available.
+        </p>
+        {% endif %}
+    </div>
+</section>
+
+
+
 <!-- Latest Products -->
 <section class="camura-products-section">
     <div class="container">
