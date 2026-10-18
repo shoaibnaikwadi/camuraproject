@@ -143,7 +143,7 @@
 }
 </script>
 
-
+ 
 <style>
 .camura-hero{background:linear-gradient(115deg,#101d35,#164b80);color:white;padding:5rem 0}
 .camura-hero .lead{max-width:700px}.camura-section{padding:4.5rem 0}.camura-card{height:100%;border:1px solid #e9eef5;border-radius:1rem;transition:transform .2s,box-shadow .2s}.camura-card:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,.08)}.camura-icon{font-size:2rem;color:#0d6efd}.camura-muted{color:#526277}.camura-section h2{letter-spacing:-.025em}.camura-faq .accordion-button{font-weight:600}
@@ -161,6 +161,325 @@
     </div>
   </div>
 </section>
+
+<!-- Camura Homepage Product Showcase -->
+<style>
+.camura-products-section {
+    padding: 32px 0;
+    background: #fff;
+}
+.camura-products-section + .camura-products-section {
+    border-top: 1px solid #edf0f4;
+}
+.camura-product-track {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    padding: 8px 2px 18px;
+    scrollbar-width: thin;
+}
+.camura-product-card {
+    flex: 0 0 220px;
+    max-width: 220px;
+    scroll-snap-align: start;
+    border: 1px solid #e8edf3;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #fff;
+    transition: box-shadow .2s, transform .2s;
+}
+.camura-product-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 22px rgba(20,40,70,.10);
+}
+.camura-product-image {
+    height: 185px;
+    padding: 12px;
+    position: relative;
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.camura-product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+.camura-product-info {
+    padding: 14px;
+}
+.camura-product-name {
+    font-size: .94rem;
+    font-weight: 600;
+    line-height: 1.45;
+    min-height: 42px;
+    margin-bottom: 8px;
+}
+.camura-product-name a {
+    color: #172337;
+    text-decoration: none;
+}
+.camura-product-price {
+    color: #102c50;
+    font-size: 1.12rem;
+    font-weight: 750;
+}
+.camura-product-mrp {
+    color: #7a8493;
+    font-size: .82rem;
+    text-decoration: line-through;
+}
+.camura-product-off {
+    display: inline-block;
+    background: #dc3545;
+    color: white;
+    border-radius: 4px;
+    padding: 3px 6px;
+    font-size: .75rem;
+    font-weight: 700;
+}
+.camura-slider-btn {
+    width: 38px;
+    height: 38px;
+    border: 1px solid #dce3ec;
+    border-radius: 50%;
+    background: white;
+    color: #173b68;
+}
+.camura-slider-btn:hover {
+    background: #0d6efd;
+    color: white;
+}
+.camura-product-track::-webkit-scrollbar {
+    height: 5px;
+}
+.camura-product-track::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+@media (max-width: 575.98px) {
+    .camura-products-section {
+        padding: 24px 0;
+    }
+    .camura-product-card {
+        flex-basis: 165px;
+        max-width: 165px;
+    }
+    .camura-product-image {
+        height: 145px;
+    }
+    .camura-product-info {
+        padding: 10px;
+    }
+    .camura-product-name {
+        font-size: .85rem;
+    }
+    .camura-product-price {
+        font-size: 1rem;
+    }
+}
+</style>
+
+<!-- Four Camera Combo Kits -->
+<section class="camura-products-section">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+            <div>
+                <span class="text-primary fw-semibold small">
+                    CCTV COMBO OFFERS
+                </span>
+                <h2 class="h4 fw-bold mb-1 mt-1">
+                    4 Camera CCTV Combo Kits
+                </h2>
+                <p class="text-muted small mb-0">
+                    Complete CCTV packages for homes and shops
+                </p>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <a class="btn btn-sm btn-outline-primary"
+                   href="/productlist/?q=&brand=&camera_type=&camera_quantity=4&sort=newest">
+                    View All
+                </a>
+                <button class="camura-slider-btn d-none d-md-inline-block"
+                        type="button"
+                        aria-label="Scroll four camera products left"
+                        onclick="scrollCamuraProducts('four-camera-track', -1)">
+                    &#8249;
+                </button>
+                <button class="camura-slider-btn d-none d-md-inline-block"
+                        type="button"
+                        aria-label="Scroll four camera products right"
+                        onclick="scrollCamuraProducts('four-camera-track', 1)">
+                    &#8250;
+                </button>
+            </div>
+        </div>
+
+        {% if four_camera_kits %}
+        <div class="camura-product-track" id="four-camera-track">
+            {% for product in four_camera_kits %}
+            <article class="camura-product-card">
+                <a href="{% url 'product_detail' product.pk %}"
+                   class="text-decoration-none">
+                    <div class="camura-product-image">
+                        {% if product.main_image %}
+                        <img src="{{ product.main_image.url }}"
+                             alt="{{ product.name }}"
+                             loading="lazy">
+                        {% else %}
+                        <div class="text-center text-muted">
+                            <i class="bi bi-camera-video fs-1"></i>
+                            <div class="small">CCTV Product</div>
+                        </div>
+                        {% endif %}
+
+                        {% if product.discount_percentage %}
+                        <span class="camura-product-off position-absolute top-0 start-0 m-2">
+                            {{ product.discount_percentage }}% OFF
+                        </span>
+                        {% endif %}
+                    </div>
+                </a>
+
+                <div class="camura-product-info">
+                    <div class="camura-product-name">
+                        <a href="{% url 'product_detail' product.pk %}">
+                            {{ product.name|truncatechars:55 }}
+                        </a>
+                    </div>
+
+                    <div class="camura-product-price">
+                        ₹{{ product.price|floatformat:0 }}
+                    </div>
+
+                    {% if product.mrp and product.mrp > product.price %}
+                    <div class="camura-product-mrp">
+                        MRP ₹{{ product.mrp|floatformat:0 }}
+                    </div>
+                    {% endif %}
+
+                    <a href="{% url 'product_detail' product.pk %}"
+                       class="btn btn-primary btn-sm w-100 mt-3">
+                        View Product
+                    </a>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-muted">
+            Four-camera combo kits will appear here when available.
+        </p>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Latest Products -->
+<section class="camura-products-section">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+            <div>
+                <span class="text-primary fw-semibold small">
+                    NEW IN STORE
+                </span>
+                <h2 class="h4 fw-bold mb-1 mt-1">Latest CCTV Products</h2>
+                <p class="text-muted small mb-0">
+                    Explore our latest cameras and CCTV packages
+                </p>
+            </div>
+
+            <div class="d-flex align-items-center gap-2">
+                <a href="/productlist/?sort=newest"
+                   class="btn btn-sm btn-outline-primary">
+                    View All
+                </a>
+                <button class="camura-slider-btn d-none d-md-inline-block"
+                        type="button"
+                        aria-label="Scroll latest products left"
+                        onclick="scrollCamuraProducts('latest-products-track', -1)">
+                    &#8249;
+                </button>
+                <button class="camura-slider-btn d-none d-md-inline-block"
+                        type="button"
+                        aria-label="Scroll latest products right"
+                        onclick="scrollCamuraProducts('latest-products-track', 1)">
+                    &#8250;
+                </button>
+            </div>
+        </div>
+
+        {% if latest_products %}
+        <div class="camura-product-track" id="latest-products-track">
+            {% for product in latest_products %}
+            <article class="camura-product-card">
+                <a href="{% url 'product_detail' product.pk %}"
+                   class="text-decoration-none">
+                    <div class="camura-product-image">
+                        {% if product.main_image %}
+                        <img src="{{ product.main_image.url }}"
+                             alt="{{ product.name }}"
+                             loading="lazy">
+                        {% else %}
+                        <div class="text-center text-muted">
+                            <i class="bi bi-camera-video fs-1"></i>
+                            <div class="small">CCTV Product</div>
+                        </div>
+                        {% endif %}
+
+                        {% if product.discount_percentage %}
+                        <span class="camura-product-off position-absolute top-0 start-0 m-2">
+                            {{ product.discount_percentage }}% OFF
+                        </span>
+                        {% endif %}
+                    </div>
+                </a>
+
+                <div class="camura-product-info">
+                    <div class="camura-product-name">
+                        <a href="{% url 'product_detail' product.pk %}">
+                            {{ product.name|truncatechars:55 }}
+                        </a>
+                    </div>
+
+                    <div class="camura-product-price">
+                        ₹{{ product.price|floatformat:0 }}
+                    </div>
+
+                    {% if product.mrp and product.mrp > product.price %}
+                    <div class="camura-product-mrp">
+                        MRP ₹{{ product.mrp|floatformat:0 }}
+                    </div>
+                    {% endif %}
+
+                    <a href="{% url 'product_detail' product.pk %}"
+                       class="btn btn-primary btn-sm w-100 mt-3">
+                        View Product
+                    </a>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-muted">New products will appear here soon.</p>
+        {% endif %}
+    </div>
+</section>
+
+<script>
+function scrollCamuraProducts(trackId, direction) {
+    const track = document.getElementById(trackId);
+    if (!track) return;
+
+    track.scrollBy({
+        left: direction * track.clientWidth * 0.8,
+        behavior: "smooth"
+    });
+}
+</script>
+
 <div class="bg-warning-subtle border-bottom py-3"><div class="container text-center fw-semibold"><i class="bi bi-geo-alt-fill me-1"></i> On-site CCTV installation and repair services are available within Dharashiv city only.</div></div>
 <section class="camura-section" id="about"><div class="container"><div class="row g-5 align-items-center"><div class="col-lg-7"><span class="text-primary fw-semibold">ABOUT CAMURA</span><h2 class="fw-bold mt-2">CCTV Security Solutions for Homes, Shops & Offices</h2><p>Camura helps customers in Dharashiv choose and maintain surveillance systems suited to their property. Whether you need a new CCTV setup or support for an existing system, we can help with camera selection, placement, recording equipment and viewing footage on a compatible mobile app.</p><p>We work with common CCTV system types, including HD analogue cameras, IP cameras, DVRs, NVRs and Wi-Fi cameras. The right system depends on your coverage area, lighting, recording requirements, internet availability and budget.</p><a href="/blog/" class="btn btn-outline-primary">Read Our CCTV Blog</a></div><div class="col-lg-5"><div class="p-4 p-lg-5 bg-light rounded-4"><h3 class="h4 fw-bold">What can we help with?</h3><ul class="list-unstyled mb-0"><li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>New CCTV camera installation</li><li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>Existing camera inspection & repair</li><li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>DVR/NVR setup & recording checks</li><li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>Mobile viewing & network setup</li><li><i class="bi bi-check-circle-fill text-success me-2"></i>CCTV products & accessories</li></ul></div></div></div></div></section>
 <section class="camura-section bg-light" id="services"><div class="container"><div class="text-center mb-5"><span class="text-primary fw-semibold">OUR SERVICES</span><h2 class="fw-bold mt-2">CCTV Installation, Repair & Configuration</h2><p class="camura-muted mx-auto" style="max-width:720px">From installing a new camera to diagnosing an older system, choose the service that matches your requirements.</p></div><div class="row g-4">

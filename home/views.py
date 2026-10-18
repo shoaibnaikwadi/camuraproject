@@ -116,9 +116,35 @@ def get_or_create_user_profile(user):
 # HOME
 # ============================================================
 
-def home(request):
-    return render(request, "home/index.html")
+# def home(request):
+#     return render(request, "home/index.html")
 
+from django.shortcuts import render
+from .models import Product
+
+from django.shortcuts import render
+from .models import Product
+
+def home(request):
+    active_products = Product.objects.filter(
+        is_active=True
+    ).order_by("-created_at")
+
+    latest_products = active_products[:10]
+
+    four_camera_kits = active_products.filter(
+        product_type="combo",
+        camera_quantity=4,
+    )[:10]
+
+    return render(
+        request,
+        "home/index.html",
+        {
+            "latest_products": latest_products,
+            "four_camera_kits": four_camera_kits,
+        },
+    )
 
 # ============================================================
 # SEND OTP
