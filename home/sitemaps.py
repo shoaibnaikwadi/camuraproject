@@ -14,6 +14,8 @@ from .models import Product, JobOpening
 class StaticViewSitemap(Sitemap):
     priority = 0.7
     changefreq = "monthly"
+    protocol = "https"
+
 
     def items(self):
         return [
@@ -41,6 +43,8 @@ class StaticViewSitemap(Sitemap):
 class ProductSitemap(Sitemap):
     priority = 0.9
     changefreq = "daily"
+    protocol = "https"
+
 
     def items(self):
         return Product.objects.filter(
@@ -61,6 +65,8 @@ class ProductSitemap(Sitemap):
 class JobOpeningSitemap(Sitemap):
     priority = 0.7
     changefreq = "weekly"
+    protocol = "https"
+
 
     def items(self):
         today = timezone.localdate()

@@ -20,12 +20,9 @@ Disallow: /my-bookings/
 Disallow: /admin-orders/
 Disallow: /registered-engineers/
 
-
+Allow: /static/
 Allow: /staticfiles/
-Allow: /media/
 Allow: /google-feed/
 Allow: /engineer/register/
 
-
-Sitemap: https://www.camura.in/sitemap.xml
-
+Sitemap: https://camura.in/sitemap.xml
