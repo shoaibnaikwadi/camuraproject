@@ -125,22 +125,25 @@ from .models import Product
 from django.shortcuts import render
 from .models import Product
 
+
 def home(request):
     active_products = Product.objects.filter(
         is_active=True
-    ).order_by("-created_at")
+    )
 
-    latest_products = active_products[:10]
+    latest_products = active_products.order_by(
+        "-created_at"
+    )[:10]
 
     four_camera_kits = active_products.filter(
         product_type="combo",
         camera_quantity=4,
-    )[:10]
-    
+    ).order_by("-created_at")[:10]
+
     three_camera_kits = active_products.filter(
-            product_type="combo",
-            camera_quantity=3,
-        )[:10]
+        product_type="combo",
+        camera_quantity=3,
+    ).order_by("-created_at")[:10]
 
     return render(
         request,
@@ -149,7 +152,6 @@ def home(request):
             "latest_products": latest_products,
             "four_camera_kits": four_camera_kits,
             "three_camera_kits": three_camera_kits,
-
         },
     )
 

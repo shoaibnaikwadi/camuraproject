@@ -125,6 +125,10 @@
 
     <!-- Google Font -->
 
+    <!-- Preconnect to font servers -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
           rel="stylesheet">
 
@@ -1719,9 +1723,11 @@ document.addEventListener("DOMContentLoaded", function () {
    title="Chat with us on WhatsApp"
    aria-label="Chat with Camura on WhatsApp">
 
-    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
+    <img src="{% static 'img/whatsapp.svg.webp' %}"
          alt="WhatsApp"
-         class="whatsapp-icon">
+         class="whatsapp-icon"
+         width="45"
+         height="45">
 
 </a>
 
