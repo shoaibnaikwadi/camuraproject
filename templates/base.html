@@ -84,7 +84,7 @@
          GOOGLE ANALYTICS
     ====================================================== -->
 
-    <script async
+    <!-- <script async
             src="https://www.googletagmanager.com/gtag/js?id=G-68ZCLQF1JX">
     </script>
 
@@ -100,7 +100,58 @@
 
         gtag('config', 'G-68ZCLQF1JX');
 
+    </script> -->
+
+
+
+
+    
+    <script>
+    (function () {
+        const CONSENT_KEY = "camura_cookie_consent";
+
+        let consent = null;
+
+        try {
+            consent = localStorage.getItem(CONSENT_KEY);
+        } catch (error) {
+            // Keep analytics disabled if storage is unavailable.
+        }
+
+        // Do not load Google Analytics without saved consent.
+        if (consent !== "accepted") {
+            return;
+        }
+
+        window.dataLayer = window.dataLayer || [];
+
+        window.gtag = function () {
+            window.dataLayer.push(arguments);
+        };
+
+        gtag("consent", "default", {
+            analytics_storage: "denied",
+            ad_storage: "denied",
+            ad_user_data: "denied",
+            ad_personalization: "denied"
+        });
+
+        gtag("consent", "update", {
+            analytics_storage: "granted"
+        });
+
+        gtag("js", new Date());
+        gtag("config", "G-68ZCLQF1JX");
+
+        const script = document.createElement("script");
+        script.async = true;
+        script.src =
+            "https://www.googletagmanager.com/gtag/js?id=G-68ZCLQF1JX";
+
+        document.head.appendChild(script);
+    })();
     </script>
+
 
 
 
@@ -802,6 +853,97 @@
 @media (prefers-reduced-motion: reduce) {
     .finance-blink {
         animation: none;
+    }
+}
+
+
+
+
+/* CAMURA COOKIE CONSENT */
+.camura-cookie-banner {
+    position: fixed;
+    left: 20px;
+    bottom: 20px;
+    z-index: 12000;
+    width: min(560px, calc(100% - 40px));
+    padding: 22px;
+    color: #212529;
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 16px;
+    box-shadow: 0 8px 35px rgba(0, 0, 0, .18);
+}
+
+.camura-cookie-banner[hidden] {
+    display: none !important;
+}
+
+.camura-cookie-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.camura-cookie-icon {
+    font-size: 30px;
+}
+
+.camura-cookie-text h5 {
+    margin: 0 0 8px;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.camura-cookie-text p {
+    margin: 0;
+    color: #555;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.camura-cookie-text a {
+    color: #0d6efd;
+    text-decoration: underline;
+}
+
+.camura-cookie-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.camura-cookie-btn {
+    flex: 1;
+    min-height: 44px;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.camura-cookie-reject {
+    background: #fff;
+    color: #212529;
+    border: 1px solid #ced4da;
+}
+
+.camura-cookie-accept {
+    background: #0d6efd;
+    color: #fff;
+    border: 1px solid #0d6efd;
+}
+
+@media (max-width: 480px) {
+    .camura-cookie-banner {
+        left: 10px;
+        bottom: 85px;
+        width: calc(100% - 20px);
+        padding: 16px;
+    }
+
+    .camura-cookie-actions {
+        flex-direction: column-reverse;
     }
 }
 
@@ -1822,6 +1964,52 @@ if ("serviceWorker" in navigator) {
         </div>
     </div>
 </div>
+
+
+
+
+<!-- CAMURA COOKIE CONSENT BANNER -->
+<div id="camuraCookieBanner"
+     class="camura-cookie-banner"
+     role="dialog"
+     aria-label="Cookie consent"
+     aria-describedby="camuraCookieMessage"
+     hidden>
+
+    <div class="camura-cookie-content">
+        <div class="camura-cookie-icon" aria-hidden="true">🍪</div>
+
+        <div class="camura-cookie-text">
+            <h5>We use cookies</h5>
+            <p id="camuraCookieMessage">
+                Camura uses cookies to improve your browsing experience
+                and measure website traffic through Google Analytics.
+                You can accept all cookies or reject non-essential cookies.
+                Read our
+                <a href="{% url 'privacy_policy' %}">Privacy Policy</a>.
+            </p>
+        </div>
+    </div>
+
+    <div class="camura-cookie-actions">
+        <button type="button"
+                id="camuraRejectCookies"
+                class="camura-cookie-btn camura-cookie-reject">
+            Reject Non-Essential
+        </button>
+
+        <button type="button"
+                id="camuraAcceptCookies"
+                class="camura-cookie-btn camura-cookie-accept">
+            Accept All
+        </button>
+    </div>
+</div>
+
+
+
+
+
 <script>
 
 let deferredPrompt = null;
@@ -1972,6 +2160,64 @@ window.addEventListener("appinstalled", function () {
     deferredPrompt = null;
 
 });
+
+
+
+
+
+
+/* CAMURA COOKIE CONSENT */
+(function () {
+    const KEY = "camura_cookie_consent";
+
+    const banner = document.getElementById("camuraCookieBanner");
+    const acceptButton = document.getElementById("camuraAcceptCookies");
+    const rejectButton = document.getElementById("camuraRejectCookies");
+
+    if (!banner || !acceptButton || !rejectButton) {
+        return;
+    }
+
+    function getConsent() {
+        try {
+            return localStorage.getItem(KEY);
+        } catch (error) {
+            return null;
+        }
+    }
+
+    function saveConsent(value) {
+        try {
+            localStorage.setItem(KEY, value);
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    const choice = getConsent();
+
+    // Show the banner unless the visitor has already made a choice.
+    banner.hidden = choice === "accepted" || choice === "rejected";
+
+    acceptButton.addEventListener("click", function () {
+        if (!saveConsent("accepted")) {
+            return;
+        }
+
+        // The consent-aware GA loader in <head> will now run.
+        window.location.reload();
+    });
+
+    rejectButton.addEventListener("click", function () {
+        if (!saveConsent("rejected")) {
+            return;
+        }
+
+        banner.hidden = true;
+    });
+})();
+
 
 </script>
 
