@@ -3051,28 +3051,32 @@ def careers(request):
 
 
 
+import json
 
+from django.shortcuts import render, get_object_or_404
+from django.utils import timezone
+from django.utils.html import escape
 
+from .models import JobOpening
 
 
 def job_detail(request, job_id):
-
     job = get_object_or_404(
         JobOpening,
         id=job_id,
         is_active=True
     )
 
-    if job.last_date and job.last_date < timezone.localdate():
-        job_schema = None
+    today = timezone.localdate()
+    job_schema = None
 
-    else:
+    if not job.last_date or job.last_date >= today:
         description = (
-            f"<p>{escape(job.description)}</p>"
-            f"<p>Responsibilities: {escape(job.responsibilities)}</p>"
-            f"<p>Requirements: {escape(job.requirements)}</p>"
-            f"<p>Qualification: {escape(job.qualification)}</p>"
-            f"<p>Experience: {escape(job.experience)}</p>"
+            f"<p>{escape(job.description or '')}</p>"
+            f"<p>Responsibilities: {escape(job.responsibilities or '')}</p>"
+            f"<p>Requirements: {escape(job.requirements or '')}</p>"
+            f"<p>Qualification: {escape(job.qualification or '')}</p>"
+            f"<p>Experience: {escape(job.experience or '')}</p>"
         )
 
         schema = {
@@ -3083,14 +3087,13 @@ def job_detail(request, job_id):
             "identifier": {
                 "@type": "PropertyValue",
                 "name": "Camura",
-                "value": str(job.id)
+                "value": str(job.id),
             },
             "datePosted": job.created_at.date().isoformat(),
-            "employmentType": job.job_type.upper().replace(" ", "_"),
             "hiringOrganization": {
                 "@type": "Organization",
                 "name": "N S Corporation",
-                "sameAs": "https://camura.in"
+                "sameAs": "https://camura.in",
             },
             "jobLocation": {
                 "@type": "Place",
@@ -3098,14 +3101,19 @@ def job_detail(request, job_id):
                     "@type": "PostalAddress",
                     "addressLocality": job.location,
                     "addressRegion": "Maharashtra",
-                    "addressCountry": "IN"
-                }
-            }
+                    "addressCountry": "IN",
+                },
+            },
         }
 
         if job.last_date:
             schema["validThrough"] = (
                 job.last_date.isoformat() + "T23:59:59+05:30"
+            )
+
+        if job.job_type:
+            schema["employmentType"] = (
+                job.job_type.upper().replace(" ", "_")
             )
 
         job_schema = json.dumps(schema)
@@ -3115,10 +3123,10 @@ def job_detail(request, job_id):
         "home/job_detail.html",
         {
             "job": job,
-            "job_schema": job_schema
-        }
-    )
-    
+            "job_schema": job_schema,
+            "today": today,
+        },
+    )    
     
     
     
