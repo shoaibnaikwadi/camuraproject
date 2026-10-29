@@ -30,6 +30,7 @@ class StaticViewSitemap(Sitemap):
             "terms_and_conditions",
             "refund_cancellation_policy",
             "careers",
+            "videos",
         ]
 
     def location(self, item):

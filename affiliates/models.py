@@ -8,10 +8,18 @@ from django.db import models
 from django.utils import timezone
 
 
+from django.conf import settings
+from django.db import models
+
+
 def generate_referral_code():
-    alphabet = string.ascii_uppercase + string.digits
+    import secrets
+    import string
+
+    characters = string.ascii_uppercase + string.digits
+
     return "CAM" + "".join(
-        secrets.choice(alphabet) for _ in range(8)
+        secrets.choice(characters) for _ in range(8)
     )
 
 
@@ -34,12 +42,16 @@ class AffiliateProfile(models.Model):
     application_submitted = models.BooleanField(default=False)
     applied_at = models.DateTimeField(null=True, blank=True)
 
-    # Payout details for manual payments.
-    upi_id = models.CharField(max_length=100, blank=True)
-    account_holder_name = models.CharField(max_length=150, blank=True)
-    bank_name = models.CharField(max_length=150, blank=True)
-    account_number = models.CharField(max_length=40, blank=True)
-    ifsc_code = models.CharField(max_length=20, blank=True)
+    # Only the affiliate's name and PhonePe mobile number.
+    name = models.CharField(
+        max_length=150,
+        blank=True,
+    )
+
+    phonepe_mobile = models.CharField(
+        max_length=10,
+        blank=True,
+    )
 
     invited_by = models.ForeignKey(
         "self",

@@ -16,6 +16,14 @@ from .models import (
     AffiliateCommission,
 )
 
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect, render
+from django.utils import timezone
+
+from .models import AffiliateProfile
+
+
 @login_required
 def affiliate_apply(request):
     profile, _ = AffiliateProfile.objects.get_or_create(
@@ -26,36 +34,44 @@ def affiliate_apply(request):
         return redirect("affiliate:dashboard")
 
     if request.method == "POST":
-        profile.upi_id = request.POST.get("upi_id", "").strip()
-        profile.account_holder_name = request.POST.get(
-            "account_holder_name", ""
-        ).strip()
-        profile.bank_name = request.POST.get(
-            "bank_name", ""
-        ).strip()
-        profile.account_number = request.POST.get(
-            "account_number", ""
-        ).strip()
-        profile.ifsc_code = request.POST.get(
-            "ifsc_code", ""
+        name = request.POST.get("name", "").strip()
+        phonepe_mobile = request.POST.get(
+            "phonepe_mobile", ""
         ).strip()
 
-        profile.application_submitted = True
-        profile.applied_at = timezone.now()
-        profile.save()
+        if not name:
+            messages.error(request, "Please enter your name.")
 
-        messages.success(
-            request,
-            "Your affiliate application has been submitted for review.",
-        )
+        elif (
+            not phonepe_mobile.isascii()
+            or not phonepe_mobile.isdigit()
+            or len(phonepe_mobile) != 10
+        ):
+            messages.error(
+                request,
+                "Please enter a valid 10-digit PhonePe mobile number.",
+            )
 
-        return redirect("affiliate:dashboard")
+        else:
+            profile.name = name
+            profile.phonepe_mobile = phonepe_mobile
+            profile.application_submitted = True
+            profile.applied_at = timezone.now()
+            profile.save()
+
+            messages.success(
+                request,
+                "Your affiliate application has been submitted for review.",
+            )
+
+            return redirect("affiliate:dashboard")
 
     return render(
         request,
         "affiliates/apply.html",
         {"profile": profile},
     )
+
 
 @login_required
 def affiliate_dashboard(request):
