@@ -1,0 +1,62 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}CCTV Videos & Tutorials | Camura{% endblock %}
+
+{% block content %}
+
+<section class="container py-5">
+
+    <div class="text-center mb-5">
+        <span class="badge text-bg-primary mb-3">
+            CAMURA CCTV DHARASHIV
+        </span>
+
+        <h1 class="fw-bold">CCTV Videos & Tutorials</h1>
+
+        <p class="text-muted mx-auto" style="max-width:650px;">
+            Explore CCTV camera reviews, installation guides,
+            troubleshooting tips and security solutions from Camura.
+        </p>
+
+        <a href="https://www.youtube.com/@camuracctvdharashiv"
+           target="_blank"
+           rel="noopener noreferrer"
+           class="btn btn-danger mt-2">
+            <i class="bi bi-youtube me-2"></i>
+            Visit YouTube Channel
+        </a>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-12">
+            <div class="card border-0 shadow-sm overflow-hidden">
+                <div class="ratio ratio-16x9">
+                    <iframe
+                        src="https://www.youtube.com/embed/videoseries?list=UU7916SHmtoqlB4xAD4T5gfQ"
+                        title="Camura CCTV videos"
+                        loading="lazy"
+                        allow="accelerometer; autoplay; clipboard-write;
+                               encrypted-media; gyroscope; picture-in-picture;
+                               web-share"
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+
+                <div class="card-body">
+                    <h2 class="h5 fw-bold">Watch Camura Videos</h2>
+                    <p class="text-muted mb-0">
+                        Watch our CCTV tutorials and product videos.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

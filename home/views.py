@@ -3131,6 +3131,10 @@ def job_detail(request, job_id):
     )    
     
     
+from django.shortcuts import render
+
+def videos(request):
+    return render(request, "home/videos.html")
     
     
     
