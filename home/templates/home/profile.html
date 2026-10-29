@@ -1,42 +1,544 @@
+
 {% extends "base.html" %}
+
+{% block title %}My Profile | Camura{% endblock %}
+
 {% block content %}
 
-<div class="container mt-5">
-  <div class="col-md-6 mx-auto">
+<style>
+    .camura-profile-page {
+        min-height: 75vh;
+        padding: 40px 0 60px;
+        background: #f5f7fb;
+    }
 
-    <div class="card shadow-sm">
-      <div class="card-header bg-primary text-white text-center">
-        <h4>Complete Your Profile</h4>
-      </div>
+    .profile-shell {
+        max-width: 780px;
+        margin: 0 auto;
+    }
 
-      <div class="card-body">
-        <form method="POST">
-          {% csrf_token %}
+    .profile-card {
+        border: 1px solid #e8edf5;
+        border-radius: 20px;
+        overflow: hidden;
+        background: #ffffff;
+        box-shadow: 0 12px 35px rgba(20, 40, 80, 0.07);
+    }
 
-          <!-- Full Name -->
-          <div class="mb-3">
-            <label class="form-label">Full Name *</label>
-            <input type="text" name="full_name" class="form-control" value="{{ profile.full_name }}" required>
-          </div>
+    .profile-banner {
+        padding: 30px;
+        background: linear-gradient(120deg, #102d59, #1769aa);
+        color: #ffffff;
+    }
 
-          <!-- Email (optional) -->
-          <div class="mb-3">
-            <label class="form-label">Email (Optional)</label>
-            <input type="email" name="email" class="form-control" value="{{ profile.email }}">
-          </div>
+    .profile-avatar {
+        width: 76px;
+        height: 76px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.16);
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 30px;
+        font-weight: 700;
+        color: #ffffff;
+        flex-shrink: 0;
+    }
 
-          <!-- Mobile (read-only) -->
-          <div class="mb-3">
-            <label class="form-label">Mobile</label>
-            <input type="text" class="form-control" value="{{ profile.mobile }}" readonly>
-          </div>
+    .profile-body {
+        padding: 30px;
+    }
 
-          <button class="btn btn-success w-100">Save Profile</button>
-        </form>
-      </div>
+    .profile-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border-radius: 30px;
+        padding: 7px 12px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .status-complete {
+        color: #146c43;
+        background: #d9f5e5;
+    }
+
+    .status-pending {
+        color: #805500;
+        background: #fff0c2;
+    }
+
+    .profile-field {
+        padding: 16px;
+        border: 1px solid #e8edf5;
+        border-radius: 12px;
+        background: #fbfcfe;
+        height: 100%;
+    }
+
+    .profile-field-label {
+        display: block;
+        color: #718096;
+        font-size: 13px;
+        margin-bottom: 7px;
+    }
+
+    .profile-field-value {
+        color: #1b2b44;
+        font-weight: 600;
+        overflow-wrap: anywhere;
+    }
+
+    .profile-form .form-label {
+        color: #344054;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .profile-form .form-control {
+        min-height: 48px;
+        border-radius: 10px;
+        border-color: #dce3ed;
+    }
+
+    .profile-form .form-control:focus {
+        border-color: #1769aa;
+        box-shadow: 0 0 0 0.2rem rgba(23, 105, 170, 0.12);
+    }
+
+    .profile-btn {
+        border-radius: 10px;
+        padding: 11px 20px;
+        font-weight: 600;
+    }
+
+    .profile-progress {
+        height: 7px;
+        border-radius: 10px;
+        background: #e9edf4;
+        overflow: hidden;
+    }
+
+    .profile-progress-bar {
+        height: 100%;
+        border-radius: 10px;
+        background: #16a36a;
+        transition: width 0.3s ease;
+    }
+
+    .profile-help {
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.7;
+    }
+
+    @media (max-width: 576px) {
+        .camura-profile-page {
+            padding: 20px 0 35px;
+        }
+
+        .profile-banner {
+            padding: 23px 18px;
+        }
+
+        .profile-body {
+            padding: 22px 18px;
+        }
+
+        .profile-avatar {
+            width: 62px;
+            height: 62px;
+            font-size: 25px;
+        }
+
+        .profile-btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="camura-profile-page">
+    <div class="container">
+        <div class="profile-shell">
+
+            <!-- Django messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show mb-3"
+                         role="alert">
+                        {{ message }}
+                        <button type="button"
+                                class="btn-close"
+                                data-bs-dismiss="alert"
+                                aria-label="Close">
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="profile-card">
+
+                <!-- Profile header -->
+                <div class="profile-banner">
+                    <div class="d-flex align-items-center gap-3">
+
+                        <div class="profile-avatar">
+                            {% if profile.full_name %}
+                                {{ profile.full_name|slice:":1"|upper }}
+                            {% else %}
+                                <i class="bi bi-person"></i>
+                            {% endif %}
+                        </div>
+
+                        <div class="flex-grow-1">
+                            <div class="small mb-1" style="opacity: 0.8;">
+                                CAMURA ACCOUNT
+                            </div>
+
+                            <h2 class="h4 fw-bold mb-2">
+                                {% if is_complete and not edit_mode %}
+                                    {{ profile.full_name }}
+                                {% elif is_complete %}
+                                    Edit Your Profile
+                                {% else %}
+                                    Complete Your Profile
+                                {% endif %}
+                            </h2>
+
+                            <div class="small" style="opacity: 0.85;">
+                                Manage your personal information
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="profile-body">
+
+                    {% if is_complete and not edit_mode %}
+
+                        <!-- COMPLETED PROFILE: READ-ONLY DASHBOARD -->
+
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+
+                            <div>
+                                <h3 class="h5 fw-bold mb-1">
+                                    Personal Information
+                                </h3>
+                                <p class="text-secondary small mb-0">
+                                    Your profile details are saved.
+                                </p>
+                            </div>
+
+                            <span class="profile-status status-complete">
+                                <i class="bi bi-check-circle-fill"></i>
+                                Profile Complete
+                            </span>
+
+                        </div>
+
+                        <!-- 100% completion -->
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between small mb-2">
+                                <span class="text-secondary">
+                                    Profile completion
+                                </span>
+                                <strong>100%</strong>
+                            </div>
+
+                            <div class="profile-progress">
+                                <div class="profile-progress-bar"
+                                     style="width: 100%;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Saved details -->
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+                                <div class="profile-field">
+                                    <span class="profile-field-label">
+                                        <i class="bi bi-person me-1"></i>
+                                        Full Name
+                                    </span>
+
+                                    <div class="profile-field-value">
+                                        {{ profile.full_name }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="profile-field">
+                                    <span class="profile-field-label">
+                                        <i class="bi bi-envelope me-1"></i>
+                                        Email Address
+                                    </span>
+
+                                    <div class="profile-field-value">
+                                        {{ profile.email }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="profile-field">
+                                    <span class="profile-field-label">
+                                        <i class="bi bi-phone me-1"></i>
+                                        Registered Mobile Number
+                                    </span>
+
+                                    <div class="profile-field-value">
+                                        {{ profile.mobile|default:"Not available" }}
+
+                                        <span class="badge bg-light text-secondary border ms-2">
+                                            Read only
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Dashboard actions -->
+                        <div class="d-flex flex-wrap gap-2 mt-4">
+
+                            <a href="{% url 'profile' %}?edit=1"
+                               class="btn btn-primary profile-btn">
+                                <i class="bi bi-pencil-square me-2"></i>
+                                Edit Profile
+                            </a>
+
+                            <a href="{% url 'product_list' %}"
+                               class="btn btn-outline-secondary profile-btn">
+                                <i class="bi bi-shop me-2"></i>
+                                Continue Shopping
+                            </a>
+
+                        </div>
+
+                    {% else %}
+
+                        <!-- INCOMPLETE PROFILE OR EDIT FORM -->
+
+                        {% if is_complete %}
+
+                            <div class="alert alert-primary border-0 rounded-3 mb-4">
+                                <i class="bi bi-pencil-square me-2"></i>
+                                Update your personal information below.
+                            </div>
+
+                        {% else %}
+
+                            <div class="rounded-3 p-3 mb-4"
+                                 style="background: #fff8e6; border: 1px solid #ffebba;">
+
+                                <div class="d-flex gap-3">
+                                    <i class="bi bi-person-exclamation fs-4"
+                                       style="color: #946200;">
+                                    </i>
+
+                                    <div>
+                                        <h3 class="h6 fw-bold mb-1">
+                                            Let's complete your profile
+                                        </h3>
+
+                                        <p class="small mb-0 text-secondary">
+                                            Add your name and email address
+                                            to complete your Camura account.
+                                        </p>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        {% endif %}
+
+                        <!-- Completion progress -->
+                        <div class="mb-4">
+
+                            <div class="d-flex justify-content-between small mb-2">
+                                <span class="text-secondary">
+                                    Profile completion
+                                </span>
+
+                                {% if profile.full_name and profile.email %}
+                                    <strong>100%</strong>
+                                {% elif profile.full_name or profile.email %}
+                                    <strong>50%</strong>
+                                {% else %}
+                                    <strong>0%</strong>
+                                {% endif %}
+                            </div>
+
+                            <div class="profile-progress">
+
+                                {% if profile.full_name and profile.email %}
+
+                                    <div class="profile-progress-bar"
+                                         style="width: 100%;">
+                                    </div>
+
+                                {% elif profile.full_name or profile.email %}
+
+                                    <div class="profile-progress-bar"
+                                         style="width: 50%;">
+                                    </div>
+
+                                {% else %}
+
+                                    <div class="profile-progress-bar"
+                                         style="width: 0%;">
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+                        </div>
+
+                        <h3 class="h5 fw-bold mb-1">
+                            {% if is_complete %}
+                                Edit Personal Information
+                            {% else %}
+                                Your Personal Information
+                            {% endif %}
+                        </h3>
+
+                        <p class="text-secondary small mb-4">
+                            Fields marked with * are required.
+                        </p>
+
+                        <!-- Profile form -->
+                        <form method="POST"
+                              action="{% url 'profile' %}"
+                              class="profile-form">
+
+                            {% csrf_token %}
+
+                            <div class="mb-3">
+                                <label for="full_name" class="form-label">
+                                    Full Name *
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="full_name"
+                                    name="full_name"
+                                    class="form-control"
+                                    placeholder="Enter your full name"
+                                    value="{{ profile.full_name|default:'' }}"
+                                    maxlength="150"
+                                    autocomplete="name"
+                                    required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label">
+                                    Email Address *
+                                </label>
+
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    class="form-control"
+                                    placeholder="Enter your email address"
+                                    value="{{ profile.email|default:'' }}"
+                                    autocomplete="email"
+                                    required>
+
+                                <div class="form-text">
+                                    Use an email address you can access.
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="mobile" class="form-label">
+                                    Registered Mobile Number
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="mobile"
+                                    class="form-control bg-light"
+                                    value="{{ profile.mobile|default:'Not available' }}"
+                                    readonly>
+
+                                <div class="form-text">
+                                    Your registered mobile number cannot
+                                    be changed here.
+                                </div>
+                            </div>
+
+                            <!-- Form buttons -->
+                            <div class="d-flex flex-wrap gap-2">
+
+                                <button type="submit"
+                                        class="btn btn-primary profile-btn">
+
+                                    <i class="bi bi-check2-circle me-2"></i>
+
+                                    {% if is_complete %}
+                                        Save Changes
+                                    {% else %}
+                                        Complete Profile
+                                    {% endif %}
+
+                                </button>
+
+                                {% if is_complete %}
+
+                                    <a href="{% url 'profile' %}"
+                                       class="btn btn-outline-secondary profile-btn">
+                                        Cancel
+                                    </a>
+
+                                {% else %}
+
+                                    <a href="{% url 'product_list' %}"
+                                       class="btn btn-outline-secondary profile-btn">
+                                        Continue Shopping
+                                    </a>
+
+                                {% endif %}
+
+                            </div>
+
+                        </form>
+
+                    {% endif %}
+
+                    <!-- Account privacy note -->
+                    <hr class="my-4">
+
+                    <div class="d-flex align-items-start gap-2 profile-help">
+                        <i class="bi bi-shield-lock mt-1"></i>
+
+                        <p class="mb-0">
+                            Your account information helps us support
+                            your Camura shopping experience. Keep your
+                            contact details up to date.
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Support link -->
+            <p class="text-center text-secondary small mt-3 mb-0">
+                Need help with your account?
+
+                <a href="{% url 'contact' %}"
+                   class="text-decoration-none">
+                    Contact Camura Support
+                </a>
+            </p>
+
+        </div>
     </div>
-
-  </div>
 </div>
 
 {% endblock %}

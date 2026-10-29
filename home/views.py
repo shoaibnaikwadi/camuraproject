@@ -2081,60 +2081,136 @@ from django.shortcuts import render, redirect
 from .models import Profile
 
 
+# @login_required
+# def profile(request):
+#     profile_obj = get_or_create_user_profile(request.user)
+
+#     if request.method == "POST":
+#         full_name = (request.POST.get("full_name") or "").strip()
+#         email = (request.POST.get("email") or "").strip()
+
+#         if not full_name:
+#             messages.error(request, "Full name is required.")
+#             return redirect("profile")
+
+#         if not email:
+#             messages.error(request, "Email address is required.")
+#             return redirect("profile")
+
+#         # Check if another user's profile already uses this email.
+#         email_exists = Profile.objects.filter(
+#             email__iexact=email
+#         ).exclude(
+#             pk=profile_obj.pk
+#         ).exists()
+
+#         if email_exists:
+#             messages.error(
+#                 request,
+#                 "This email address is already registered. "
+#                 "Please use another email address."
+#             )
+#             return redirect("profile")
+
+#         try:
+#             with transaction.atomic():
+#                 profile_obj.full_name = full_name
+#                 profile_obj.email = email
+#                 profile_obj.save()
+
+#         except IntegrityError:
+#             # Handles a duplicate email if another request saves it
+#             # between our initial check and the database save.
+#             messages.error(
+#                 request,
+#                 "This email address is already registered. "
+#                 "Please use another email address."
+#             )
+#             return redirect("profile")
+
+#         messages.success(request, "Profile updated successfully.")
+#         return redirect("product_list")
+
+#     return render(
+#         request,
+#         "home/profile.html",
+#         {"profile": profile_obj},
+#     )
+
+
+
+
+
+
+
 @login_required
 def profile(request):
     profile_obj = get_or_create_user_profile(request.user)
 
+    edit_mode = request.GET.get("edit") == "1"
+
+    def profile_is_complete():
+        return bool(
+            (profile_obj.full_name or "").strip()
+            and (profile_obj.email or "").strip()
+        )
+
     if request.method == "POST":
+        edit_mode = True
+
         full_name = (request.POST.get("full_name") or "").strip()
         email = (request.POST.get("email") or "").strip()
 
         if not full_name:
             messages.error(request, "Full name is required.")
-            return redirect("profile")
 
-        if not email:
+        elif not email:
             messages.error(request, "Email address is required.")
-            return redirect("profile")
 
-        # Check if another user's profile already uses this email.
-        email_exists = Profile.objects.filter(
-            email__iexact=email
-        ).exclude(
-            pk=profile_obj.pk
-        ).exists()
+        else:
+            email_exists = Profile.objects.filter(
+                email__iexact=email
+            ).exclude(
+                pk=profile_obj.pk
+            ).exists()
 
-        if email_exists:
-            messages.error(
-                request,
-                "This email address is already registered. "
-                "Please use another email address."
-            )
-            return redirect("profile")
+            if email_exists:
+                messages.error(
+                    request,
+                    "This email address is already registered. "
+                    "Please use another email address."
+                )
+            else:
+                try:
+                    with transaction.atomic():
+                        profile_obj.full_name = full_name
+                        profile_obj.email = email
+                        profile_obj.save()
 
-        try:
-            with transaction.atomic():
-                profile_obj.full_name = full_name
-                profile_obj.email = email
-                profile_obj.save()
+                    messages.success(
+                        request,
+                        "Your profile has been updated successfully."
+                    )
 
-        except IntegrityError:
-            # Handles a duplicate email if another request saves it
-            # between our initial check and the database save.
-            messages.error(
-                request,
-                "This email address is already registered. "
-                "Please use another email address."
-            )
-            return redirect("profile")
+                    return redirect("profile")
 
-        messages.success(request, "Profile updated successfully.")
-        return redirect("product_list")
+                except IntegrityError:
+                    messages.error(
+                        request,
+                        "This email address is already registered. "
+                        "Please use another email address."
+                    )
+
+    context = {
+        "profile": profile_obj,
+        "is_complete": profile_is_complete(),
+        "edit_mode": edit_mode,
+    }
 
     return render(
         request,
         "home/profile.html",
-        {"profile": profile_obj},
+        context,
     )
 
 # ============================================================
